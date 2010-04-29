@@ -5,8 +5,8 @@ QT += opengl \
     webkit
 TARGET = gorgoneye
 TEMPLATE = app
-INCLUDEPATH += "C:\opencv\include\opencv"
-LIBS += -L"C:\opencv\lib" \
+INCLUDEPATH += "C:\OpenCV2.0\include\opencv"
+LIBS += -L"C:\OpenCV2.0\lib" \
     -lcv200 \
     -lcvaux200 \
     -lhighgui200 \
