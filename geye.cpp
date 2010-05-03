@@ -1,11 +1,5 @@
-
-#include "geye/ge_head.h"
-#include "geye/ge_eye.h"
-#include "geye/ge_gaze.h"
-
 #include <cv.h>
 #include <highgui.h>
-
 using namespace cv;
 
 
@@ -13,7 +7,7 @@ using namespace cv;
 void testrun()
 {
     // create window to display webcam capture
-    const char* WIN_NAME = "Capture";
+    const char *WIN_NAME = "Capture";
     namedWindow(WIN_NAME, 1);
 
     // create video-from-webcam capture object and capture buffer

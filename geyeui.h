@@ -3,11 +3,13 @@
 
 #include <QMainWindow>
 
-namespace Ui {
+namespace Ui
+{
     class geyeui;
 }
 
-class geyeui : public QMainWindow {
+class geyeui : public QMainWindow
+{
     Q_OBJECT
 public:
     geyeui(QWidget *parent = 0);

@@ -14,7 +14,10 @@ LIBS += -L"C:\OpenCV2.0\lib" \
     -lml200
 SOURCES += main.cpp \
     geye.cpp \
-    geyeui.cpp
+    geyeui.cpp \
+    geyeview.cpp
 HEADERS += geye.h \
-    geyeui.h
-FORMS += geyeui.ui
+    geyeui.h \
+    geyeview.h
+FORMS += geyeui.ui \
+    geyeview.ui
