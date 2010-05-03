@@ -3,6 +3,10 @@
 
 #include <QMainWindow>
 
+#include <cv.h>
+#include <highgui.h>
+using namespace cv;
+
 namespace Ui
 {
     class geyeui;
