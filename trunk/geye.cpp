@@ -1,51 +1,127 @@
-#include <cv.h>
-#include <highgui.h>
-using namespace cv;
+#include <geye.h>
 
-
-// testing for the moment
-void testrun()
+// --------------------------------------------
+// constructor(s) & destructor
+//
+Tracker::Tracker()
 {
-    // create window to display webcam capture
-    const char *WIN_NAME = "Capture";
-    namedWindow(WIN_NAME, 1);
+    // initialise important variables
+    frame = Mat();
 
-    // create video-from-webcam capture object and capture buffer
-    VideoCapture ge_cap(0); Mat ge_cap_img;
+    // debugging properties
+    show = true;
+    draw_roi_face = true;
+    draw_roi_eyes = true;
 
-    // check that opencv found a webcam
-    if(!ge_cap.isOpened()) exit(1);
+    // face tracking properties
+    haar_cc = CascadeClassifier(HAAR_CC_FACE_DEFAULT);
+    haar_cc_scale = 1.1;
+    haar_cc_minneighbours = 4;
+    haar_cc_minsize = Size(96,132);
 
-    // create haar classifier cascade
-    CascadeClassifier ge_cap_haar("c:\\opencv\\data\\haarcascades\\haarcascade_frontalface_default.xml");
+    // tracking variables
+    roi_face = Rect(Point(-1,-1),Point(-1,-1));
+    roi_leye = Rect(Point(-1,-1),Point(-1,-1));
+    roi_reye = Rect(Point(-1,-1),Point(-1,-1));
+    poi_gaze = Point(-1,-1);
+}
 
+Tracker::~Tracker()
+{
 
-    // temporary variables for the loop
-    vector<Rect> faces; int count, i;
+}
 
-    // grab frames, process and display them
-    while(waitKey(12) != 'q')
+// --------------------------------------------
+// public functions (main)
+//
+void Tracker::track()
+{
+    // run all methods in sequence
+    runpreproc();
+    trackface();
+    runf2eproc();
+    trackeyes();
+    rune2gproc();
+    trackgaze();
+    runposproc();
+
+    // show in cv::namedWindow if set
+    if(show)
     {
-        // grab frame and place in buffer
-        ge_cap >> ge_cap_img;
-
-        // do image processing stuff here
-//        ge_cap_haar.detectMultiScale(ge_cap_img, faces, 1.1, 4, 0, Size(96,132));
-
-        // draw rectangles of faces detected
-//        count = faces.size();
-//        for(i = 0; i < count; i++)
-//        {
-//            rectangle(ge_cap_img, faces[i].tl(), faces[i].br(), CV_RGB(0,255,0));
-//        }
-
-        // show the image stored in buffer
-        imshow(WIN_NAME, ge_cap_img);
+        // draw ROIs if set
+        if(draw_roi_face)
+        {
+            drawroiface();
+        }
+        if(draw_roi_eyes)
+        {
+            drawroieyes();
+        }
+        // show in window now
+        imshow("Capture", frame);
     }
 
-//    while(waitKey(12) != 'q')
-//    {
+}
+
+// --------------------------------------------
+// private functions (debugging)
 //
-//    }
+void Tracker::drawroiface()
+{
+    if(roi_face.area()>0) rectangle(frame, roi_face.tl(), roi_face.br(), CV_RGB(0,200,0));
+}
+
+void Tracker::drawroieyes()
+{
+    if(roi_leye.area()>0) rectangle(frame, roi_leye.tl(), roi_leye.br(), CV_RGB(0,0,200));
+    if(roi_reye.area()>0) rectangle(frame, roi_reye.tl(), roi_reye.br(), CV_RGB(0,0,200));
+}
+
+// --------------------------------------------
+// private functions (tracking)
+//
+void Tracker::trackface()
+{
+    // temporary processing variables
+    vector<Rect> faces;
+
+    // haar cascade classifier face detection
+    haar_cc.detectMultiScale(frame, faces, haar_cc_scale, haar_cc_minneighbours, NULL, haar_cc_minsize);
+
+    // simply store first face found for now
+    if(faces.size()>0) roi_face = faces[0];
+    else roi_face = Rect(Point(-1,-1),Point(-1,-1));
+}
+
+void Tracker::trackeyes()
+{
+
+}
+
+void Tracker::trackgaze()
+{
+
+}
+
+// --------------------------------------------
+// private functions (processing)
+//
+void Tracker::runpreproc()
+{
+
+}
+
+void Tracker::runf2eproc()
+{
+
+}
+
+void Tracker::rune2gproc()
+{
+
+}
+
+void Tracker::runposproc()
+{
 
 }
