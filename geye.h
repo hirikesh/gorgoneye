@@ -98,15 +98,15 @@ private:
     void drawroieyes();
 
     // main tracking functions
-    void trackface();
-    void trackeyes();
-    void trackgaze();
+    void trackFace();
+    void trackEyes();
+    void trackGaze();
 
     // preprocessing & postprocessing
-    void runpreproc(); // initial preprocessing
-    void runf2eproc(); // face-to-eyes processing
-    void rune2gproc(); // eyes-to-gaze processing
-    void runposproc(); // final postprocessing
+    void runPreProc(); // initial preprocessing
+    void runF2eProc(); // face-to-eyes processing
+    void runE2gProc(); // eyes-to-gaze processing
+    void runPosProc(); // final postprocessing
 };
 
 #endif // GEYE_H

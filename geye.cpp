@@ -50,13 +50,13 @@ Tracker::~Tracker()
 void Tracker::track()
 {
     // run all methods in sequence
-    runpreproc();
-    trackface();
-    runf2eproc();
-    trackeyes();
-    rune2gproc();
-    trackgaze();
-    runposproc();
+    runPreProc();
+    trackFace();
+    runF2eProc();
+    trackEyes();
+    runE2gProc();
+    trackGaze();
+    runPosProc();
 
     // show in cv::namedWindow if set
     if(show)
@@ -93,7 +93,7 @@ void Tracker::drawroieyes()
 // --------------------------------------------
 // private functions (tracking)
 //
-void Tracker::trackface()
+void Tracker::trackFace()
 {
     // temporary processing variables
     vector<Rect> faces;
@@ -112,7 +112,7 @@ void Tracker::trackface()
     else roi_face = roi_ignore;
 }
 
-void Tracker::trackeyes()
+void Tracker::trackEyes()
 {
     // make sure roi is valid
     if(roi_face.x<0) return;
@@ -146,7 +146,7 @@ void Tracker::trackeyes()
     else roi_reye = roi_ignore;
 }
 
-void Tracker::trackgaze()
+void Tracker::trackGaze()
 {
 
 }
@@ -154,12 +154,12 @@ void Tracker::trackgaze()
 // --------------------------------------------
 // private functions (processing)
 //
-void Tracker::runpreproc()
+void Tracker::runPreProc()
 {
 
 }
 
-void Tracker::runf2eproc()
+void Tracker::runF2eProc()
 {
     // set image roi to face for eye tracking (if valid)
     if(roi_face.x>0)
@@ -170,12 +170,12 @@ void Tracker::runf2eproc()
     }
 }
 
-void Tracker::rune2gproc()
+void Tracker::runE2gProc()
 {
 
 }
 
-void Tracker::runposproc()
+void Tracker::runPosProc()
 {
 
 }
