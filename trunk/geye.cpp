@@ -165,8 +165,8 @@ void Tracker::runf2eproc()
     if(roi_face.x>0)
     {
         frame_roi_face = Mat(frame, roi_face);
-        frame_roi_face_left  = Mat(frame_roi_face, Rect(roi_face.width/2, 0, roi_face.width/2, roi_face.height/2));
-        frame_roi_face_right = Mat(frame_roi_face, Rect(0, 0, roi_face.width/2, roi_face.height/2));
+        frame_roi_face_left = Mat(frame_roi_face, Rect(0, 0, roi_face.width/2, roi_face.height/2));
+        frame_roi_face_right  = Mat(frame_roi_face, Rect(roi_face.width/2, 0, roi_face.width/2, roi_face.height/2));
     }
 }
 
