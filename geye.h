@@ -16,14 +16,14 @@ namespace geye
 class Tracker
 {
 public:
-    // constructor & destructor
+    // constructor and destructor
     Tracker();
     ~Tracker();
 
-    // public read/write image buffer
+    // image data to process
     Mat frame;
 
-    // perform tracking & update state with results
+    // perform tracking & update results
     void track();
 
 protected:
@@ -42,10 +42,11 @@ protected:
 #define HAAR_CC_FACE_ALT_TREE "c:\\opencv2.0\\data\\haarcascades\\haarcascade_frontalface_alt_tree.xml"
 #define HAAR_CC_PROFILE_FACE "c:\\opencv2.0\\data\\haarcascades\\haarcascade_profileface.xml"
 
-    CascadeClassifier haar_cc;
+    CascadeClassifier haar_cc; // HAAR cascade classification
     double haar_cc_scale; // downsamples image by haar_cc_scale each pass
     int haar_cc_minneighbours; // min. no. of nearby matches req. to give positive
-    Size haar_cc_minsize; // min. size of faces in pixels
+    int haar_cc_minwidth; // min. size of faces in pixels
+    int haar_cc_minheight; // min. size of faces in pixels
 
     // face-to-eyes processing properties
 
