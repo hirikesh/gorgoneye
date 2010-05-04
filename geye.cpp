@@ -64,11 +64,11 @@ void Tracker::track()
         // draw ROIs if set
         if(draw_roi_face)
         {
-            drawroiface();
+            drawRoiFace();
         }
         if(draw_roi_eyes)
         {
-            drawroieyes();
+            drawRoiEyes();
         }
         // show in window now
         imshow("Capture", frame);
@@ -79,12 +79,12 @@ void Tracker::track()
 // --------------------------------------------
 // private functions (debugging)
 //
-void Tracker::drawroiface()
+void Tracker::drawRoiFace()
 {
     if(roi_face.x>0) rectangle(frame, roi_face.tl(), roi_face.br(), roi_colour_face);
 }
 
-void Tracker::drawroieyes()
+void Tracker::drawRoiEyes()
 {
     if(roi_face.x>0 && roi_leye.x>0) rectangle(frame_roi_face_left, roi_leye.tl(), roi_leye.br(), roi_colour_eyes);
     if(roi_face.x>0 && roi_reye.x>0) rectangle(frame_roi_face_right, roi_reye.tl(), roi_reye.br(), roi_colour_eyes);
