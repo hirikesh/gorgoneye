@@ -94,8 +94,8 @@ private:
     Point poi_gaze; // gaze point
 
     // debugging functions
-    void drawroiface();
-    void drawroieyes();
+    void drawRoiFace();
+    void drawRoiEyes();
 
     // main tracking functions
     void trackFace();
