@@ -38,11 +38,11 @@ protected:
 
 
     // face tracking properties
-    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.0\\data\\haarcascades\\haarcascade_frontalface_default.xml"
-    #define HAAR_CC_FACE_ALT "c:\\opencv2.0\\data\\haarcascades\\haarcascade_frontalface_alt.xml"
-    #define HAAR_CC_FACE_ALT2 "c:\\opencv2.0\\data\\haarcascades\\haarcascade_frontalface_alt2.xml"
-    #define HAAR_CC_FACE_ALT_TREE "c:\\opencv2.0\\data\\haarcascades\\haarcascade_frontalface_alt_tree.xml"
-    #define HAAR_CC_FACE_PROFILE "c:\\opencv2.0\\data\\haarcascades\\haarcascade_profileface.xml"
+    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
+    #define HAAR_CC_FACE_ALT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_alt.xml"
+    #define HAAR_CC_FACE_ALT2 "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_alt2.xml"
+    #define HAAR_CC_FACE_ALT_TREE "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_alt_tree.xml"
+    #define HAAR_CC_FACE_PROFILE "c:\\opencv2.1\\data\\haarcascades\\haarcascade_profileface.xml"
 
     CascadeClassifier haar_cc_face; // HAAR cascade classification
     double haar_cc_scale_face; // downsamples image by haar_cc_scale each pass
@@ -54,11 +54,11 @@ protected:
 
 
     // eye tracking properties
-    #define HAAR_CC_EYE "c:\\opencv2.0\\data\\haarcascades\\haarcascade_eye.xml"
-    #define HAAR_CC_LEYE_2SPLITS "c:\\opencv2.0\\data\\haarcascades\\haarcascade_lefteye_2splits.xml"
-    #define HAAR_CC_REYE_2SPLITS "c:\\opencv2.0\\data\\haarcascades\\haarcascade_righteye_2splits.xml"
-    #define HAAR_CC_LEYE_MSC "c:\\opencv2.0\\data\\haarcascades\\haarcascade_mcs_lefteye.xml"
-    #define HAAR_CC_REYE_MSC "c:\\opencv2.0\\data\\haarcascades\\haarcascade_mcs_righteye.xml"
+    #define HAAR_CC_EYE "c:\\opencv2.1\\data\\haarcascades\\haarcascade_eye.xml"
+    #define HAAR_CC_LEYE_2SPLITS "c:\\opencv2.1\\data\\haarcascades\\haarcascade_lefteye_2splits.xml"
+    #define HAAR_CC_REYE_2SPLITS "c:\\opencv2.1\\data\\haarcascades\\haarcascade_righteye_2splits.xml"
+    #define HAAR_CC_LEYE_MSC "c:\\opencv2.1\\data\\haarcascades\\haarcascade_mcs_lefteye.xml"
+    #define HAAR_CC_REYE_MSC "c:\\opencv2.1\\data\\haarcascades\\haarcascade_mcs_righteye.xml"
 
     CascadeClassifier haar_cc_leye; // HAAR cascade classification
     CascadeClassifier haar_cc_reye; // HAAR cascade classification
