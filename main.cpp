@@ -6,13 +6,16 @@
 
 int main(int argc, char *argv[])
 {
-//    QApplication a(argc, argv);
-    // geyeview - gorgoneye tracking view
-//    geyeview w;
-    // geyeui - gorgoneye user interface
+    QApplication a(argc, argv);
+
+    /* geyeview - gorgoneye tracking view */
+    geyeview w;
+
+    /* geyeui - gorgoneye user interface */
 //    geyeui w;
-//    w.show();
-//    return a.exec();
+
+    w.show();
+    return a.exec();
 
 
     // create video-from-webcam capture object
