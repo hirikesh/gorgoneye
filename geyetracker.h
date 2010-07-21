@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QTimer>
 
+#include "geyedetector.h"
 #include <cv.h>
 #include <highgui.h>
 using namespace cv;
@@ -27,11 +28,11 @@ private:
     Ui::GEyeTracker *ui;
 
     QImage m_i;
-    QRect* m_faceLoc;
+    QRect m_faceLoc;
     QTimer* m_timer;
     VideoCapture capture;
     Mat image;
-
+    GEyeDetector ged;
     void paintEvent(QPaintEvent* e);
 };
 
