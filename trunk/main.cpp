@@ -1,5 +1,5 @@
 #include <QtGui/QApplication>
-
+#include "geyetracker.h"
 #include "geyeview.h"
 #include "geyeui.h"
 #include "geye.h"
@@ -9,10 +9,12 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     /* geyeview - gorgoneye tracking view */
-    geyeview w;
+    //geyeview w;
 
     /* geyeui - gorgoneye user interface */
-//    geyeui w;
+    // geyeui w;
+
+    GEyeTracker w;
 
     w.show();
     return a.exec();

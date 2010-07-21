@@ -14,7 +14,10 @@ geyeview::geyeview(QWidget *parent) :
     ge_cap >> ge_img;
 
     // create qt image container using mat image data
-    ge_img_qt = QImage(ge_img.data,RES_W,RES_H,QImage::Format_RGB888);
+    ge_img_qt = QImage(ge_img.data,
+                       ge_img.size().width,
+                       ge_img.size().height,
+                       QImage::Format_RGB888);
 
     // Webcam frame-grab timer
     ge_cap_timer = new QTimer(this);
@@ -55,5 +58,5 @@ void geyeview::paintEvent(QPaintEvent *e)
 {
     // Paint image centered inside the frame widget
     QPainter p(this);
-    p.drawImage(QPoint(ui->frame->x()+3,ui->frame->y()+3),ge_img_qt);
+    //p.drawImage(QPoint(ui->frame->x()+3,ui->frame->y()+3),ge_img_qt);
 }

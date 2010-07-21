@@ -36,8 +36,6 @@ private:
     // GorgonEye detector class instance
     // STUB FOR NOW
 
-    // Default capture resolution
-    enum { RES_W = 640, RES_H = 480 };
     // Default timeout between frames
     enum { GRAB_MS = 30 };
 

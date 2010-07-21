@@ -24,10 +24,13 @@ CONFIG(debug, debug|release) {
 }
 SOURCES += main.cpp \
     geye.cpp \
+    geyetracker.cpp \
     geyeui.cpp \
     geyeview.cpp
 HEADERS += geye.h \
+    geyetracker.h \
     geyeui.h \
     geyeview.h
 FORMS += geyeui.ui \
+    geyetracker.ui \
     geyeview.ui
