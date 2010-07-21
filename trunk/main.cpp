@@ -1,4 +1,5 @@
 #include <QtGui/QApplication>
+#include "geyedetector.h"
 #include "geyetracker.h"
 #include "geyeview.h"
 #include "geyeui.h"

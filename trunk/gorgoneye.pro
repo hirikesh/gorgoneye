@@ -26,11 +26,13 @@ SOURCES += main.cpp \
     geye.cpp \
     geyetracker.cpp \
     geyeui.cpp \
-    geyeview.cpp
+    geyeview.cpp \
+    geyedetector.cpp
 HEADERS += geye.h \
     geyetracker.h \
     geyeui.h \
-    geyeview.h
+    geyeview.h \
+    geyedetector.h
 FORMS += geyeui.ui \
     geyetracker.ui \
     geyeview.ui

@@ -52,11 +52,11 @@ void Tracker::track()
     // run all methods in sequence
     runPreProc();
     trackFace();
-    runF2eProc();
-    trackEyes();
-    runE2gProc();
-    trackGaze();
-    runPosProc();
+    //runF2eProc();
+    //trackEyes();
+    //runE2gProc();
+    //trackGaze();
+    //runPosProc();
 
     // show in cv::namedWindow if set
     if(show)
