@@ -33,7 +33,7 @@ Rect GEyeDetector::detect()
     }
 }
 
-void GEyeDetector::setScaleFactor(int sf)
+void GEyeDetector::setScaleFactor(double sf)
 {
     scaleFactor = sf;
 }
@@ -45,4 +45,19 @@ void GEyeDetector::setMinNeighbours(int mn)
 void GEyeDetector::setMinSize(Size ms)
 {
     minSize = ms;
+}
+
+Size GEyeDetector::size()
+{
+    return minSize;
+}
+
+double GEyeDetector::scale()
+{
+    return scaleFactor;
+}
+
+int GEyeDetector::minneighbours()
+{
+    return minNeighbours;
 }

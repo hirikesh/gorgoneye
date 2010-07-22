@@ -17,10 +17,14 @@ public:
     GEyeDetector();
     GEyeDetector(Mat* img, double sf, int mn, Size ms);
 
-    void setScaleFactor(int);
+    void setScaleFactor(double);
     void setMinNeighbours(int);
     void setMinSize(Size);
+
     Rect detect();
+    Size size();
+    double scale();
+    int minneighbours();
 private:
 
     Mat image;

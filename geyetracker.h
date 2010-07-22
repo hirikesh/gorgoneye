@@ -24,6 +24,12 @@ public:
 
 public slots:
     void procFrame();
+    void setScale(double);
+    void setWidth(int);
+    void setHeight(int);
+    void setMinN(int);
+    void disableParams();
+    void enableParams();
 private:
     Ui::GEyeTracker *ui;
 
