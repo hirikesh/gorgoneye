@@ -14,7 +14,7 @@ class GEyeDetector
 {
 public:
     GEyeDetector();
-    GEyeDetector(Mat* img, double sf, int mn, Size ms);
+    GEyeDetector(Mat*, double, int, Size);
 
     void setScaleFactor(double);
     void setMinNeighbours(int);
@@ -22,17 +22,32 @@ public:
     void setCC(CascadeClassifier*);
 
     Rect detect();
-    Size getSize();
+
+    bool isTracking;
     double getScale();
     int getMinNeighbours();
-private:
+    Size getSize();
 
-    Rect roi;
-    CascadeClassifier* haar;
+private:
+    Rect featureDetect();
+    Rect haarDetect();
+
     Mat* image;
+    Rect currROI;
+
+    // used for haarDetect
     double scaleFactor;
     int minNeighbours;
     Size minSize;
+    CascadeClassifier* haar;
+
+    // used for featureDetect
+    Mat cHSVImg;
+    //Mat hueImg;
+    //Mat maskImg;
+    Mat probImg;
+    MatND hist;
+
 };
 
 #endif // GEYEDETECTOR_H

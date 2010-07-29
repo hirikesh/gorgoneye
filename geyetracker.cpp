@@ -58,7 +58,6 @@ GEyeTracker::~GEyeTracker()
 void GEyeTracker::procFrame()
 {
     capture >> image;
-    cvtColor(image, image, CV_BGR2RGB);
     Rect r = ged.detect();
     faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
     this->update();
