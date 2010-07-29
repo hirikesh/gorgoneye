@@ -15,12 +15,14 @@ int main(int argc, char *argv[])
     /* geyeui - gorgoneye user interface */
     // geyeui w;
 
+    /* GEyeTracker - latest UI + tracking */
     GEyeTracker w;
 
+    // QT UI initialisation
     w.show();
     return a.exec();
 
-
+    /* OLD CODE:
     // create video-from-webcam capture object
     VideoCapture ge_capture(0);
 
@@ -41,4 +43,5 @@ int main(int argc, char *argv[])
     }
 
     return 0;
+    */
 }
