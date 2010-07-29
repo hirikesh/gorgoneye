@@ -1,23 +1,19 @@
 #include <geyedetector.h>
 GEyeDetector::GEyeDetector()
-{
-    cc = CascadeClassifier(HAAR_CC_FACE_DEFAULT);
-}
+{}
 
-GEyeDetector::GEyeDetector(Mat* img, double sf = 1.1, int mn = 4, Size ms = Size(96,132))
-{
-    cc = CascadeClassifier(HAAR_CC_FACE_DEFAULT);
-    image = *img;
-    scaleFactor = sf;
-    minNeighbours = mn;
-    minSize = ms;
-}
+GEyeDetector::GEyeDetector(Mat* img, double sf = 1.1, int mn = 4, Size ms = Size(96,132)) :
+    image(img),
+    scaleFactor(sf),
+    minNeighbours(mn),
+    minSize(ms)
+{}
 
 Rect GEyeDetector::detect()
 {
     vector<Rect> rois;
 
-    cc.detectMultiScale(image,
+    haar->detectMultiScale(*image,
                         rois,
                         scaleFactor,
                         minNeighbours,
@@ -47,17 +43,22 @@ void GEyeDetector::setMinSize(Size ms)
     minSize = ms;
 }
 
-Size GEyeDetector::size()
+void GEyeDetector::setCC(CascadeClassifier* cc)
+{
+    haar = cc;
+}
+
+Size GEyeDetector::getSize()
 {
     return minSize;
 }
 
-double GEyeDetector::scale()
+double GEyeDetector::getScale()
 {
     return scaleFactor;
 }
 
-int GEyeDetector::minneighbours()
+int GEyeDetector::getMinNeighbours()
 {
     return minNeighbours;
 }

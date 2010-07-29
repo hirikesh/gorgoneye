@@ -5,25 +5,28 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker)
 {
+    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
+
     ui->setupUi(this);
 
     capture = VideoCapture(0);
     capture >> image;
 
     ged = GEyeDetector(&image, 1.1, 4, Size(96,132));
+    ged.setCC(new CascadeClassifier(HAAR_CC_FACE_DEFAULT));
 
-    m_i = QImage(image.data,
+    qImage = QImage(image.data,
                  image.size().width,
                  image.size().height,
                  QImage::Format_RGB888);
 
-    m_timer = new QTimer(this);
-    m_timer->setInterval(40);
+    timer = new QTimer(this);
+    timer->setInterval(33); // timer signals every 33 ms
+    connect(timer, SIGNAL(timeout()), this, SLOT(procFrame()));
 
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(procFrame()));
-    connect(ui->startBtn, SIGNAL(clicked()), m_timer, SLOT(start()));
+    connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
     connect(ui->startBtn, SIGNAL(clicked()), this, SLOT(disableParams()));
-    connect(ui->stopBtn, SIGNAL(clicked()), m_timer, SLOT(stop()));
+    connect(ui->stopBtn, SIGNAL(clicked()), timer, SLOT(stop()));
     connect(ui->stopBtn, SIGNAL(clicked()), this, SLOT(enableParams()));
 
     connect(ui->heightSlider, SIGNAL(valueChanged(int)), ui->heightSpinBox, SLOT(setValue(int)));
@@ -38,10 +41,10 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     connect(ui->minNSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setMinN(int)));
     connect(ui->scaleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setScale(double)));
 
-    ui->heightSpinBox->setValue(ged.size().height);
-    ui->widthSpinBox->setValue(ged.size().width);
-    ui->minNSpinBox->setValue(ged.minneighbours());
-    ui->scaleSpinBox->setValue(ged.scale());
+    ui->heightSpinBox->setValue(ged.getSize().height);
+    ui->widthSpinBox->setValue(ged.getSize().width);
+    ui->minNSpinBox->setValue(ged.getMinNeighbours());
+    ui->scaleSpinBox->setValue(ged.getScale());
 
 }
 
@@ -50,28 +53,30 @@ GEyeTracker::~GEyeTracker()
     delete ui;
 }
 
+// Event Handlers
+
 void GEyeTracker::procFrame()
 {
     capture >> image;
     cvtColor(image, image, CV_BGR2RGB);
     Rect r = ged.detect();
-    m_faceLoc = QRect(QPoint(r.x,r.y),QSize(r.width,r.height));
+    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
     this->update();
 }
 
 void GEyeTracker::paintEvent(QPaintEvent* e)
 {
-    QPainter p(this);
-    p.drawImage(QPoint(ui->trackView->x(),ui->trackView->y()), m_i);
+    QPainter painter(this);
+    painter.drawImage(QPoint(ui->trackView->x(),ui->trackView->y()), qImage);
 
-    if(m_faceLoc.x() > 0 && m_faceLoc.y() > 0)
+    if(faceLoc.x() > 0 && faceLoc.y() > 0)
     {
-        p.setBrush(Qt::NoBrush);
-        p.setPen(QColor(255,0,0));
-        p.drawRect(QRect(m_faceLoc.x()+ui->trackView->x(),
-                         m_faceLoc.y()+ui->trackView->y(),
-                         m_faceLoc.width(),
-                         m_faceLoc.height()));
+        painter.setBrush(Qt::NoBrush);
+        painter.setPen(QColor(255,0,0));
+        painter.drawRect(QRect(faceLoc.x()+ui->trackView->x(),
+                         faceLoc.y()+ui->trackView->y(),
+                         faceLoc.width(),
+                         faceLoc.height()));
     }
 }
 
@@ -87,12 +92,12 @@ void GEyeTracker::setMinN(int mn)
 
 void GEyeTracker::setWidth(int w)
 {
-    ged.setMinSize(Size(w, ged.size().height));
+    ged.setMinSize(Size(w, ged.getSize().height));
 }
 
 void GEyeTracker::setHeight(int h)
 {
-    ged.setMinSize(Size(ged.size().width, h));
+    ged.setMinSize(Size(ged.getSize().width, h));
 }
 
 void GEyeTracker::disableParams()
