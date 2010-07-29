@@ -12,7 +12,6 @@ namespace geye {
 
 class GEyeDetector
 {
-#define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
 public:
     GEyeDetector();
     GEyeDetector(Mat* img, double sf, int mn, Size ms);
@@ -20,16 +19,17 @@ public:
     void setScaleFactor(double);
     void setMinNeighbours(int);
     void setMinSize(Size);
+    void setCC(CascadeClassifier*);
 
     Rect detect();
-    Size size();
-    double scale();
-    int minneighbours();
+    Size getSize();
+    double getScale();
+    int getMinNeighbours();
 private:
 
-    Mat image;
     Rect roi;
-    CascadeClassifier cc;
+    CascadeClassifier* haar;
+    Mat* image;
     double scaleFactor;
     int minNeighbours;
     Size minSize;
