@@ -45,7 +45,7 @@ private:
 
     // used for featureDetect
     Mat cHSVImg;
-    Mat hueImg;
+    Mat hueImg, satImg, valImg;
     Mat maskImg;
     Mat backProjImg;
     MatND hist;

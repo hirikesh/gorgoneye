@@ -4,21 +4,23 @@ GEyeDetector::GEyeDetector()
 
 GEyeDetector::GEyeDetector(Mat* img, double sf, int mn, Size ms) :
     image(img),
+    isTracking(false),
+    beginTrack(false),
     scaleFactor(sf),
     minNeighbours(mn),
     minSize(ms)
 {
-   // init Camshift
-    hueImg = Mat(image->rows, image->cols, CV_8UC1);
-    maskImg = Mat(image->rows, image->cols, CV_8UC1, Scalar(0));
-    isTracking = false;
-    beginTrack= false;
+    int w = img->cols;
+    int h = img->rows;
+    maskImg = Mat(h, w, CV_8UC1);
+    hueImg = Mat(h, w, CV_8UC1);
+    satImg = Mat(h, w, CV_8UC1);
+    valImg = Mat(h, w, CV_8UC1);
 }
 
 Rect GEyeDetector::detect()
 {
     // helper function for detection
-    //return haarDetect();
     if(isTracking)
     {
         return featureDetect();
@@ -57,30 +59,27 @@ Rect GEyeDetector::haarDetect()
 Rect GEyeDetector::featureDetect()
 {
     // Extract Hue Info
-    // TO DO: filter HSV image
     cvtColor(*image, cHSVImg, CV_BGR2HSV);
     cvtColor(*image, *image, CV_BGR2RGB);
-    // Extracts hue channel from hsv multi-channel image.
-    // mixChannels requires pre-allocated matrices.
-    int fromTo[] = {0,0};
-    mixChannels(&cHSVImg, 1, &hueImg, 1, fromTo, 1);
+    Mat cHSVChannels[] = {hueImg, satImg, valImg};
+    split(cHSVImg, cHSVChannels);
 
-    // visualise Hue for debugging
-    Mat hueVisImg(hueImg.rows, hueImg.cols, CV_8UC3);
-    Mat satImg(hueImg.rows, hueImg.cols, CV_8UC1, Scalar(255));
-    Mat valImg(hueImg.rows, hueImg.cols, CV_8UC1, Scalar(255));
-
-    Mat hueVis[] = {hueImg, satImg, valImg};
-    merge(hueVis, 3, hueVisImg);
-    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
-    imshow("Hue Visualisation", hueVisImg);
-
+//    // visualise Hue for debugging
+//    Mat hueVisImg(cHSVImg.rows, cHSVImg.cols, CV_8UC3);
+//    satImg = Scalar(255);
+//    valImg = Scalar(255);
+//    Mat hueVis[] = {hueImg, satImg, valImg};
+//    merge(hueVis, 3, hueVisImg);
+//    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
+//    imshow("Hue Visualisation", hueVisImg);
 
     // set mask ROI
-    Mat maskImg(cHSVImg.rows, cHSVImg.cols, CV_8UC1, Scalar(0));
+    inRange(cHSVImg,
+            Scalar(0, 40, 40),
+            Scalar(180, 256, 256),
+            maskImg);
     Mat maskROI(maskImg, currROI);
-    maskROI = Scalar(255); // alters original image data
-    imshow("Mask", maskImg);
+    Mat hueImgROI(hueImg, currROI);
 
     // Histogram properties ------------------
     int hBins = 30; // no. of hue bins
@@ -93,10 +92,10 @@ Rect GEyeDetector::featureDetect()
     {
         beginTrack = false;
         // Calculate Histogram ------------------
-        calcHist(&cHSVImg,  // array of source images
+        calcHist(&hueImgROI,  // array of source images
                  1,         // number of source images
                  channels,  // list of channels
-                 maskImg,   // image mask
+                 maskROI,   // image mask
                  hist,      // output histogram
                  1,         // histogram dimensionality - just hue
                  histSize,  // array containing hist sizes
@@ -108,49 +107,55 @@ Rect GEyeDetector::featureDetect()
     // Calculate Back Projection ------------------
     double maxVal = 0;
     minMaxLoc(hist, 0, &maxVal, 0, 0);
-    calcBackProject(&cHSVImg,                // array of source images
+    double scaleHist = maxVal? 255.0/maxVal : 0;
+
+    calcBackProject(&hueImg,                 // array of source images
                     1,                       // no. of source images
                     channels,                // list of channels
                     hist,                    // destination backproject array
                     backProjImg,             // output image of back projection
                     histRanges,              // array containing bin boundaries
-                    maxVal? 255.0/maxVal : 0,// scale factor
+                    scaleHist,               // scale factor to improve contrast
                     true);                   // uniform histogram
-    maskImg = Scalar(255); // reset mask
     bitwise_and(backProjImg, maskImg, backProjImg, Mat());
 
-    // show back projection - debugging
-    imshow("Back Projected Image", backProjImg);
+    // show back projection for debugging / parameter tweaking
+   // imshow("Filtered Back Projected Image", backProjImg);
 
     // CAMShift Calculations ---------
     // Search Window begins at region of interest determined using Haar
     // The algorithm will auto increase search window
-/*
+
     RotatedRect rotTemp;
     rotTemp = CamShift(backProjImg, // back projected image
                        currROI,     // initial search window
-                       TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 10, 1));
+                       TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 20, 1));
 
-    // TODO: Update face location and angle (if required).
     currROI = rotTemp.boundingRect();
 
     // Modify bounds on camshift rectangle
-    if (currROI.x + currROI.width > image->cols)
-        currROI.width = image->cols - currROI.x;
-    if (currROI.y + currROI.height > image->rows)
-        currROI.height = image->rows - currROI.y;
-    if (currROI.x < 0)
-        currROI.x = 0;
-    if (currROI.x > image->cols)
-        currROI.x = image->cols;
-    if (currROI.y < 0)
-        currROI.y = 0;
-    if (currROI.y > image->rows)
-        currROI.y = image->rows;
+    // TODO: A more elegant range check function
+    if (currROI.x <= 0)
+    {currROI.x = 0;}
+    if (currROI.width <= 0)
+    {currROI.width = 0;}
+    if (currROI.y <= 0)
+    {currROI.y = 0;}
+    if (currROI.height <= 0)
+    {currROI.height = 0;}
+    if (currROI.width >= image->cols)
+    {currROI.width = image->cols;}
+    if (currROI.x >= image->cols)
+    {currROI.x = image->cols;}
+    if (currROI.y >= image->rows)
+    {currROI.y = image->rows;}
+    if (currROI.height >= image->rows)
+    {currROI.height = image->rows;}
+    if (currROI.x + currROI.width >= image->cols)
+    {currROI.width = image->cols - currROI.x;}
+    if (currROI.y + currROI.height >= image->rows)
+    {currROI.height = image->rows - currROI.y;}
     return currROI;
-*/
-    Rect temp(-1, -1, 0, 0);
-    return temp;
 }
 
 void GEyeDetector::setScaleFactor(double sf)
