@@ -58,5 +58,5 @@ void geyeview::paintEvent(QPaintEvent *e)
 {
     // Paint image centered inside the frame widget
     QPainter p(this);
-    //p.drawImage(QPoint(ui->frame->x()+3,ui->frame->y()+3),ge_img_qt);
+    p.drawImage(QPoint(ui->frame->x()+3,ui->frame->y()+3),ge_img_qt);
 }
