@@ -18,15 +18,15 @@ public:
 
     void setScaleFactor(double);
     void setMinNeighbours(int);
-    void setMinSize(Size);
+    void setWidth(int);
+    void setHeight(int);
     void setCC(CascadeClassifier*);
 
     Rect detect();
-
-    bool isTracking;
     double getScale();
     int getMinNeighbours();
-    Size getSize();
+    int getWidth();
+    int getHeight();
 
 private:
     Rect featureDetect();
@@ -36,6 +36,8 @@ private:
     Rect currROI;
 
     // used for haarDetect
+    bool isTracking;
+    bool beginTrack;
     double scaleFactor;
     int minNeighbours;
     Size minSize;
@@ -43,9 +45,9 @@ private:
 
     // used for featureDetect
     Mat cHSVImg;
-    //Mat hueImg;
-    //Mat maskImg;
-    Mat probImg;
+    Mat hueImg;
+    Mat maskImg;
+    Mat backProjImg;
     MatND hist;
 
 };

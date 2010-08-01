@@ -12,7 +12,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     capture = VideoCapture(0);
     capture >> image;
 
-    ged = GEyeDetector(&image, 1.1, 4, Size(96,132));
+    ged = GEyeDetector(&image, 1.2, 2, Size(160,160));
     ged.setCC(new CascadeClassifier(HAAR_CC_FACE_DEFAULT));
 
     qImage = QImage(image.data,
@@ -21,7 +21,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
                  QImage::Format_RGB888);
 
     timer = new QTimer(this);
-    timer->setInterval(33); // timer signals every 33 ms
+    timer->setInterval(40); // timer signals every N ms
     connect(timer, SIGNAL(timeout()), this, SLOT(procFrame()));
 
     connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
@@ -41,11 +41,10 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     connect(ui->minNSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setMinN(int)));
     connect(ui->scaleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setScale(double)));
 
-    ui->heightSpinBox->setValue(ged.getSize().height);
-    ui->widthSpinBox->setValue(ged.getSize().width);
+    ui->heightSpinBox->setValue(ged.getHeight());
+    ui->widthSpinBox->setValue(ged.getWidth());
     ui->minNSpinBox->setValue(ged.getMinNeighbours());
     ui->scaleSpinBox->setValue(ged.getScale());
-
 }
 
 GEyeTracker::~GEyeTracker()
@@ -91,12 +90,12 @@ void GEyeTracker::setMinN(int mn)
 
 void GEyeTracker::setWidth(int w)
 {
-    ged.setMinSize(Size(w, ged.getSize().height));
+    ged.setWidth(w);
 }
 
 void GEyeTracker::setHeight(int h)
 {
-    ged.setMinSize(Size(ged.getSize().width, h));
+    ged.setHeight(h);
 }
 
 void GEyeTracker::disableParams()
