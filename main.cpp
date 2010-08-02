@@ -1,28 +1,29 @@
 #include <QtGui/QApplication>
 #include "geyedetector.h"
 #include "geyetracker.h"
-#include "geyeview.h"
-#include "geyeui.h"
-#include "geye.h"
+
+#include "deprecated/geyeview.h"
+//#include "deprecated/geyeui.h"
+//#include "deprecated/geye.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
     /* geyeview - gorgoneye tracking view */
-    //geyeview w;
+    geyeview w;
 
     /* geyeui - gorgoneye user interface */
     // geyeui w;
 
     /* GEyeTracker - latest UI + tracking */
-    GEyeTracker w;
+//    GEyeTracker w;
 
     // QT UI initialisation
     w.show();
     return a.exec();
 
-    /* OLD CODE:
+    /* DEPRECATED:
     // create video-from-webcam capture object
     VideoCapture ge_capture(0);
 

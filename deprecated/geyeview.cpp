@@ -1,4 +1,4 @@
-#include "geyeview.h"
+#include "deprecated/geyeview.h"
 #include "ui_geyeview.h"
 
 geyeview::geyeview(QWidget *parent) :

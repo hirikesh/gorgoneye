@@ -1,4 +1,4 @@
-#include <geye.h>
+#include "deprecated/geye.h"
 
 // --------------------------------------------
 // constructor(s) & destructor
