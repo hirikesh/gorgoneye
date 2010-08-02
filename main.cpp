@@ -2,7 +2,7 @@
 #include "geyedetector.h"
 #include "geyetracker.h"
 
-#include "deprecated/geyeview.h"
+//#include "deprecated/geyeview.h"
 //#include "deprecated/geyeui.h"
 //#include "deprecated/geye.h"
 
@@ -11,13 +11,13 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     /* geyeview - gorgoneye tracking view */
-    geyeview w;
+    // geyeview w;
 
     /* geyeui - gorgoneye user interface */
     // geyeui w;
 
     /* GEyeTracker - latest UI + tracking */
-//    GEyeTracker w;
+    GEyeTracker w;
 
     // QT UI initialisation
     w.show();
