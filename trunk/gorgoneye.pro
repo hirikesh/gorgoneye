@@ -6,33 +6,40 @@ QT += opengl \
 TARGET = gorgoneye
 TEMPLATE = app
 INCLUDEPATH += "C:\OpenCV2.1\include\opencv"
-
-CONFIG(debug, debug|release) {
-   LIBS += -L"C:\OpenCV2.1\lib\debug" \
-        -lcv210d \
-        -lcvaux210d \
-        -lhighgui210d \
-        -lcxcore210d \
-        -lml210d
-} else {
-   LIBS += -L"C:\OpenCV2.1\lib\release" \
-        -lcv210 \
-        -lcvaux210 \
-        -lhighgui210 \
-        -lcxcore210 \
-        -lml210
-}
+debug:LIBS += -L"C:\OpenCV2.1\lib\debug" \
+    -lcv210d \
+    -lcvaux210d \
+    -lhighgui210d \
+    -lcxcore210d \
+    -lml210d
+release:LIBS += -L"C:\OpenCV2.1\lib\release" \
+    -lcv210 \
+    -lcvaux210 \
+    -lhighgui210 \
+    -lcxcore210 \
+    -lml210
 SOURCES += main.cpp \
-    geye.cpp \
     geyetracker.cpp \
-    geyeui.cpp \
-    geyeview.cpp \
-    geyedetector.cpp
-HEADERS += geye.h \
-    geyetracker.h \
-    geyeui.h \
-    geyeview.h \
-    geyedetector.h
-FORMS += geyeui.ui \
-    geyetracker.ui \
-    geyeview.ui
+    geyedetector.cpp \
+    control.cpp \
+    store.cpp \
+    geyedetector.cpp \
+    detector.cpp \
+    deprecated/geyeview.cpp \
+    deprecated/geyeui.cpp \
+    deprecated/geye.cpp \
+    detectors/haar.cpp \
+    detectors/feature.cpp
+HEADERS += geyetracker.h \
+    geyedetector.h \
+    control.h \
+    store.h \
+    detector.h \
+    deprecated/geyeview.h \
+    deprecated/geyeui.h \
+    deprecated/geye.h \
+    detectors/haar.h \
+    detectors/feature.h
+FORMS += geyetracker.ui \
+    deprecated/geyeview.ui \
+    deprecated/geyeui.ui

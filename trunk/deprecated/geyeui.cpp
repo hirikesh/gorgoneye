@@ -1,4 +1,4 @@
-#include "geyeui.h"
+#include "deprecated/geyeui.h"
 #include "ui_geyeui.h"
 
 geyeui::geyeui(QWidget *parent) :
