@@ -14,12 +14,13 @@ class GEyeDetector
 {
 public:
     GEyeDetector();
+    GEyeDetector(Mat*);
     GEyeDetector(Mat*, double, int, Size);
 
-    void setScaleFactor(double);
-    void setMinNeighbours(int);
-    void setWidth(int);
-    void setHeight(int);
+    void setScaleFactor(const double&);
+    void setMinNeighbours(const int&);
+    void setWidth(const int&);
+    void setHeight(const int&);
     void setCC(CascadeClassifier*);
 
     Rect detect();
@@ -45,7 +46,7 @@ private:
 
     // used for featureDetect
     Mat cHSVImg;
-    Mat hueImg, satImg, valImg;
+    Mat hueImg;
     Mat maskImg;
     Mat backProjImg;
     MatND hist;

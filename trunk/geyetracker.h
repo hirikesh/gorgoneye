@@ -24,10 +24,10 @@ public:
 
 public slots:
     void procFrame();
-    void setScale(double);
-    void setWidth(int);
-    void setHeight(int);
-    void setMinN(int);
+    void setScale(const double&);
+    void setWidth(const int&);
+    void setHeight(const int&);
+    void setMinN(const int&);
     void disableParams();
     void enableParams();
 private:

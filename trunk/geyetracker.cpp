@@ -12,7 +12,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     capture = VideoCapture(0);
     capture >> image;
 
-    ged = GEyeDetector(&image, 1.2, 2, Size(160,160));
+    ged = GEyeDetector(&image);
     ged.setCC(new CascadeClassifier(HAAR_CC_FACE_DEFAULT));
 
     qImage = QImage(image.data,
@@ -45,6 +45,9 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     ui->widthSpinBox->setValue(ged.getWidth());
     ui->minNSpinBox->setValue(ged.getMinNeighbours());
     ui->scaleSpinBox->setValue(ged.getScale());
+    ui->heightSlider->setValue(ged.getHeight());
+    ui->widthSlider->setValue(ged.getWidth());
+    ui->minNSlider->setValue(ged.getMinNeighbours());
 }
 
 GEyeTracker::~GEyeTracker()
@@ -78,22 +81,22 @@ void GEyeTracker::paintEvent(QPaintEvent* e)
     }
 }
 
-void GEyeTracker::setScale(double sf)
+void GEyeTracker::setScale(const double& sf)
 {
     ged.setScaleFactor(sf);
 }
 
-void GEyeTracker::setMinN(int mn)
+void GEyeTracker::setMinN(const int& mn)
 {
     ged.setMinNeighbours(mn);
 }
 
-void GEyeTracker::setWidth(int w)
+void GEyeTracker::setWidth(const int& w)
 {
     ged.setWidth(w);
 }
 
-void GEyeTracker::setHeight(int h)
+void GEyeTracker::setHeight(const int& h)
 {
     ged.setHeight(h);
 }

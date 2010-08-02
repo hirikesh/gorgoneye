@@ -2,6 +2,21 @@
 GEyeDetector::GEyeDetector()
 {}
 
+GEyeDetector::GEyeDetector(Mat* img) :
+        image(img),
+        isTracking(false),
+        beginTrack(false),
+        scaleFactor(1.1),
+        minNeighbours(3),
+        minSize(Size(80,80))
+{
+    int w = img->cols;
+    int h = img->rows;
+    maskImg = Mat(h, w, CV_8UC1);
+    hueImg = Mat(h, w, CV_8UC1);
+
+}
+
 GEyeDetector::GEyeDetector(Mat* img, double sf, int mn, Size ms) :
     image(img),
     isTracking(false),
@@ -14,8 +29,7 @@ GEyeDetector::GEyeDetector(Mat* img, double sf, int mn, Size ms) :
     int h = img->rows;
     maskImg = Mat(h, w, CV_8UC1);
     hueImg = Mat(h, w, CV_8UC1);
-    satImg = Mat(h, w, CV_8UC1);
-    valImg = Mat(h, w, CV_8UC1);
+
 }
 
 Rect GEyeDetector::detect()
@@ -61,6 +75,8 @@ Rect GEyeDetector::featureDetect()
     // Extract Hue Info
     cvtColor(*image, cHSVImg, CV_BGR2HSV);
     cvtColor(*image, *image, CV_BGR2RGB);
+    Mat satImg(cHSVImg.rows, cHSVImg.cols, CV_8UC1);
+    Mat valImg(cHSVImg.rows, cHSVImg.cols, CV_8UC1);
     Mat cHSVChannels[] = {hueImg, satImg, valImg};
     split(cHSVImg, cHSVChannels);
 
@@ -75,7 +91,7 @@ Rect GEyeDetector::featureDetect()
 
     // set mask ROI
     inRange(cHSVImg,
-            Scalar(0, 40, 40),
+            Scalar(0, 45, 45),
             Scalar(180, 256, 256),
             maskImg);
     Mat maskROI(maskImg, currROI);
@@ -117,10 +133,9 @@ Rect GEyeDetector::featureDetect()
                     histRanges,              // array containing bin boundaries
                     scaleHist,               // scale factor to improve contrast
                     true);                   // uniform histogram
-    bitwise_and(backProjImg, maskImg, backProjImg, Mat());
 
     // show back projection for debugging / parameter tweaking
-   // imshow("Filtered Back Projected Image", backProjImg);
+    //imshow("Filtered Back Projected Image", backProjImg);
 
     // CAMShift Calculations ---------
     // Search Window begins at region of interest determined using Haar
@@ -158,19 +173,19 @@ Rect GEyeDetector::featureDetect()
     return currROI;
 }
 
-void GEyeDetector::setScaleFactor(double sf)
+void GEyeDetector::setScaleFactor(const double& sf)
 {
     scaleFactor = sf;
 }
-void GEyeDetector::setMinNeighbours(int mn)
+void GEyeDetector::setMinNeighbours(const int& mn)
 {
     minNeighbours = mn;
 }
-void GEyeDetector::setWidth(int w)
+void GEyeDetector::setWidth(const int& w)
 {
     minSize.width = w;
 }
-void GEyeDetector::setHeight(int h)
+void GEyeDetector::setHeight(const int& h)
 {
     minSize.height = h;
 }
