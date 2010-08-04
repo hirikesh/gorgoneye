@@ -23,7 +23,6 @@ SOURCES += main.cpp \
     geyedetector.cpp \
     control.cpp \
     store.cpp \
-    geyedetector.cpp \
     detector.cpp \
     deprecated/geyeview.cpp \
     deprecated/geyeui.cpp \
