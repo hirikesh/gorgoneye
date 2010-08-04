@@ -3,3 +3,7 @@
 Detector::Detector(Store *store)
 {
 }
+
+void Detector::locate()
+{
+}
