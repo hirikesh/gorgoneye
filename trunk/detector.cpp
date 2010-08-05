@@ -1,6 +1,7 @@
+#include "store.h"
 #include "detector.h"
 
-Detector::Detector(Store *store)
+Detector::Detector(Store *st) : store(st)
 {
 }
 

@@ -20,13 +20,20 @@ protected:
     // external entities inheriting this object.
 
 private:
+    // Images to process / already processed
     Mat sceneImg;
     Mat faceImg;
     Mat eyeImg;
 
+    // Tracked region of interests
     Rect faceRoi; // relative to sceneImg
-    Rect eyeRoi;  // relative to faceImg
+    Rect eyesRoi;  // relative to faceImg
     Rect gazeRoi; // relative to screen
+
+    // Status flags
+    bool faceLocated;
+    bool eyesLocated;
+    bool gazeLocated;
 };
 
 #endif // STORE_H

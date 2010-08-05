@@ -11,12 +11,12 @@
 class Detector
 {
 public:
-    Detector(Store *store);
+    Detector(Store* st);
 
     virtual void locate();
 
 private:
-    Store *store;
+    Store* store;
 };
 
 #endif // DETECTOR_H

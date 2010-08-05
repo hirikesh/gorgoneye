@@ -3,7 +3,7 @@
 #include "geyedetector.h"
 #include "geyetracker.h"
 
-#include "deprecated/geyeview.h"
+//#include "deprecated/geyeview.h"
 //#include "deprecated/geye.h"
 
 int main(int argc, char *argv[])
