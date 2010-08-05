@@ -25,7 +25,6 @@ SOURCES += main.cpp \
     store.cpp \
     detector.cpp \
     deprecated/geyeview.cpp \
-    deprecated/geyeui.cpp \
     deprecated/geye.cpp \
     detectors/haar.cpp \
     detectors/feature.cpp
@@ -35,10 +34,8 @@ HEADERS += geyetracker.h \
     store.h \
     detector.h \
     deprecated/geyeview.h \
-    deprecated/geyeui.h \
     deprecated/geye.h \
     detectors/haar.h \
     detectors/feature.h
 FORMS += geyetracker.ui \
-    deprecated/geyeview.ui \
-    deprecated/geyeui.ui
+    deprecated/geyeview.ui

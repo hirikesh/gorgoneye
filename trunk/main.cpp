@@ -1,9 +1,9 @@
 #include <QtGui/QApplication>
+
 #include "geyedetector.h"
 #include "geyetracker.h"
 
-//#include "deprecated/geyeview.h"
-//#include "deprecated/geyeui.h"
+#include "deprecated/geyeview.h"
 //#include "deprecated/geye.h"
 
 int main(int argc, char *argv[])
@@ -12,9 +12,6 @@ int main(int argc, char *argv[])
 
     /* geyeview - gorgoneye tracking view */
     // geyeview w;
-
-    /* geyeui - gorgoneye user interface */
-    // geyeui w;
 
     /* GEyeTracker - latest UI + tracking */
     GEyeTracker w;
@@ -34,7 +31,7 @@ int main(int argc, char *argv[])
     Tracker ge_tracker;
 
     // loop the loop processing
-    while(waitKey(12) != 'q')
+    while(waitKey(20) != 'q')
     {
         // grab frame and place in buffer
         ge_capture >> ge_tracker.frame;
