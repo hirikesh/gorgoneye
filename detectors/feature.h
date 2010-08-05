@@ -2,6 +2,7 @@
    Concreate Detector class using
    CAMshift tracking. */
 
+#include "store.h"
 #include "detector.h"
 
 #ifndef FEATURE_H
@@ -10,7 +11,7 @@
 class Feature : public Detector
 {
 public:
-//    Feature();
+    Feature(Store* st);
 
     void locate();
 

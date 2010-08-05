@@ -2,6 +2,7 @@
    Concreate Detector class using
    HAAR classification. */
 
+#include "store.h"
 #include "detector.h"
 
 #ifndef HAAR_H
@@ -10,7 +11,7 @@
 class Haar : public Detector
 {
 public:
-//    Haar();
+    Haar(Store* st);
 
     void locate();
 
