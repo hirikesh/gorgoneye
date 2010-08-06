@@ -4,7 +4,9 @@
 #include "detectors/feature.h"
 #include "face.h"
 
-Face::Face(Store* st) : Tracker(st)
+Face::Face(Store* st) : Tracker(st),
+    haarDetector(new Haar(st)),
+    featureDetector(new Feature(st))
 {
 }
 
@@ -27,9 +29,9 @@ void Face::setDetector(int type)
     switch(type)
     {
     case HAAR:
-        detector = new Haar(store);
+        detector = haarDetector; // new Haar(store);
     case FEAT:
-        detector = new Feature(store);
+        detector = featureDetector; // new Feature(store);
     default:
         detector = new Detector(store);
     }
