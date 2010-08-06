@@ -7,6 +7,7 @@
    the UI). */
 
 #include "store.h"
+#include "tracker.h"
 
 #include <cv.h>
 #include <highgui.h>
@@ -23,8 +24,14 @@ class Control
 public:
     Control();
 
+    void start();
+
 private:
     Store* store;
+
+    Tracker* faceTracker;
+    Tracker* eyesTracker;
+    Tracker* gazeTracker;
 };
 
 #endif // CONTROL_H
