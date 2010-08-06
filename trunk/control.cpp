@@ -3,10 +3,10 @@
 #include "tracker.h"
 #include "trackers/face.h"
 
-Control::Control() :
+Control::Control()
 {
-    store = &Store();
-    faceTracker = &Face(store);
+    store = new Store();
+    faceTracker = new Face(store);
 }
 
 

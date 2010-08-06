@@ -7,6 +7,8 @@
 #include "store.h"
 #include "tracker.h"
 #include "detector.h"
+#include "detectors/haar.h"
+#include "detectors/feature.h"
 
 #ifndef FACE_H
 #define FACE_H
@@ -20,6 +22,10 @@ public:
 
     enum type { HAAR, FEAT };
     void setDetector(int type);
+
+private:
+    Haar* haarDetector;
+    Feature* featureDetector;
 };
 
 #endif // FACE_H
