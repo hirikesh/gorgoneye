@@ -1,12 +1,12 @@
-#include "store.h"
 #include "detector.h"
 #include "feature.h"
 
-Feature::Feature(Store* st) : Detector(st)
+Feature::Feature() : Detector()
 {
+
 }
 
-void Feature::locate()
+bool Feature::locate(const Mat& srcImg, Rect& srcRoi)
 {
 
 }

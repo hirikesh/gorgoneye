@@ -4,13 +4,13 @@
 
 Tracker::Tracker(Store* st) :
     store(st),
-    detector(new Detector(st))
+    detector(new Detector())
 {
 }
 
 void Tracker::track()
 {
-    detector->locate();
+    detector->locate(store->sceneImg, store->faceRoi);
     // add other stuff here
     // to qualify this function
     // as "tracking". ie. state

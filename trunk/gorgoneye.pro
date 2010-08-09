@@ -23,23 +23,22 @@ SOURCES += main.cpp \
     geyedetector.cpp \
     control.cpp \
     store.cpp \
-    detector.cpp \
-#    deprecated/geyeview.cpp \
-#    deprecated/geye.cpp \
+    detector.cpp \ # deprecated/geyeview.cpp \
+# deprecated/geye.cpp \
     detectors/haar.cpp \
     detectors/feature.cpp \
     trackers/face.cpp \
-    tracker.cpp
+    tracker.cpp \
+    parameter.cpp
 HEADERS += geyetracker.h \
     geyedetector.h \
     control.h \
     store.h \
-    detector.h \
-#    deprecated/geyeview.h \
-#    deprecated/geye.h \
+    detector.h \ # deprecated/geyeview.h \
+# deprecated/geye.h \
     detectors/haar.h \
     detectors/feature.h \
     trackers/face.h \
-    tracker.h
-FORMS += geyetracker.ui \
-#    deprecated/geyeview.ui
+    tracker.h \
+    parameter.h
+FORMS += geyetracker.ui # deprecated/geyeview.ui

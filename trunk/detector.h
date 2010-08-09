@@ -3,7 +3,10 @@
    tracking algorithms under common interface.
    Follows the Strategy design pattern. */
 
-#include "store.h"
+#include <cv.h>
+#include "parameter.h"
+
+using namespace cv;
 
 #ifndef DETECTOR_H
 #define DETECTOR_H
@@ -11,12 +14,13 @@
 class Detector
 {
 public:
-    Detector(Store* st);
+    Detector();
 
-    virtual void locate();
+    virtual bool locate(const Mat& srcImg, Rect& srcRoi);
+    vector<Param>* getParams();
 
 private:
-    Store* store;
+    vector<Param> params;
 };
 
 #endif // DETECTOR_H

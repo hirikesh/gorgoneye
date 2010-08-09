@@ -1,10 +1,15 @@
-#include "store.h"
 #include "detector.h"
 
-Detector::Detector(Store *st) : store(st)
+Detector::Detector()
 {
 }
 
-void Detector::locate()
+bool Detector::locate(const Mat& srcImg, Rect& srcRoi)
 {
+    return true;
+}
+
+vector<Param>* Detector::getParams()
+{
+    return &params;
 }
