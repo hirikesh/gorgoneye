@@ -4,16 +4,22 @@
 #include "detectors/feature.h"
 #include "face.h"
 
-Face::Face(Store* st) : Tracker(st),
-    haarDetector(new Haar(st)),
-    featureDetector(new Feature(st))
+Face::Face(Store* st) : Tracker(st)
 {
+    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
+    haarDetector = new Haar(HAAR_CC_FACE_DEFAULT,
+                            1.1,
+                            3,
+                            NULL,
+                            Size(96,96));
+    featureDetector = new Feature();
 }
 
 
 void Face::track()
 {
-    detector->locate();
+    //    cvtColor(store->sceneImg, store->sceneImg, CV_BGR2RGB);
+    detector->locate(store->sceneImg, store->faceRoi);
 
     // Now add other stuff here
     // to fulfill the function of
@@ -33,6 +39,6 @@ void Face::setDetector(int type)
     case FEAT:
         detector = featureDetector; // new Feature(store);
     default:
-        detector = new Detector(store);
+        detector = new Detector();
     }
 }

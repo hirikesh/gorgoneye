@@ -11,13 +11,12 @@
 class Feature : public Detector
 {
 public:
-    Feature(Store* st);
+    Feature();
 
-    void locate();
+    bool locate(const Mat& srcImg, Rect& srcRoi);
 
 private:
     // configuration parameters
-    // as an object should go here.
 };
 
 #endif // FEATURE_H

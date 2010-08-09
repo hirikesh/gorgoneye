@@ -14,16 +14,10 @@ class Store
 public:
     Store();
 
-protected:
-    // may need to move private members here
-    // later on, depending on the needs of
-    // external entities inheriting this object.
-
-private:
     // Images to process / already processed
     Mat sceneImg;
     Mat faceImg;
-    Mat eyeImg;
+    Mat eyesImg;
 
     // Tracked region of interests
     Rect faceRoi; // relative to sceneImg
