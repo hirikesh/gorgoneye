@@ -8,5 +8,5 @@ Feature::Feature() : Detector()
 
 bool Feature::locate(const Mat& srcImg, Rect& srcRoi)
 {
-
+    return false;
 }
