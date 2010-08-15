@@ -15,7 +15,6 @@ Face::Face(Store* st) : Tracker(st)
     featureDetector = new Feature();
 }
 
-
 void Face::track()
 {
     //    cvtColor(store->sceneImg, store->sceneImg, CV_BGR2RGB);

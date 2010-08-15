@@ -30,9 +30,11 @@ public slots:
     void setMinN(const int&);
     void disableParams();
     void enableParams();
+    void setParam(int* const, int);
+    void setParam(bool* const, bool);
+    void setParam(double* const, double);
 private:
     Ui::GEyeTracker *ui;
-
     QImage qImage;
     QRect faceLoc;
     QTimer* timer;

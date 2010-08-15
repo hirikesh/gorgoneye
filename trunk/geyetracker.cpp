@@ -1,6 +1,9 @@
 #include "geyetracker.h"
 #include "ui_geyetracker.h"
 #include "geyedetector.h"
+#include "parameter.h"
+#include "guiparam.h"
+#include <QDebug>
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker)
@@ -8,6 +11,42 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
 
     ui->setupUi(this);
+
+
+    // Vector of Parameters will be created and linked in Algorithm
+    Vector<Param*> params(4);
+    int minN = 3; // Param One
+    int minG = 4; // Param Two
+    int a = 1; // Param Three
+    int b = 2; // Param Four
+    params[0] = new RangeParam("Param One", &minN, 0, 100, 10);
+    params[1] = new ModeParam("Param Two", &minG, false);
+    params[2] = new RangeParam("Param Three", &a, 0, 200, 20);
+    params[3] = new RangeParam("Param Four", &b, 1, 5, 1);
+    // Dynamic GUI Generator
+    // Should accept an vector of Params
+    Vector<QWidget*> gparams(params.size());
+    Vector<QGridLayout*> guiItems(params.size()); // item wrapper
+    for (unsigned int i = 0; i < params.size(); i++)
+    {
+        guiItems[i] = new QGridLayout(); // create gui item
+        if (params[i]->getType() == Param::MODE)
+        {
+            gparams[i] = new GUICheckBox((ModeParam*)params[i]); // create widget
+            guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
+        }
+        else if (params[i]->getType() == Param::RANGE)
+        {
+            gparams[i] = new GUISlider((RangeParam*)params[i]); // create widget
+            // generate the other parts of the gui item
+            guiItems[i]->addWidget(new QLabel(params[i]->getName().c_str()), 0, 0);
+            guiItems[i]->addWidget(gparams[i], 1, 0);
+            guiItems[i]->addWidget(new QLabel(QString("SpinBox")), 1, 1);
+
+        }
+        ui->paramLayout->addLayout(guiItems[i]);
+        connect(gparams[i], SIGNAL(valueChanged(int* const, int)), this, SLOT(setParam(int* const, int)));
+    }
 
     capture = VideoCapture(0);
     capture >> image;
@@ -121,4 +160,22 @@ void GEyeTracker::enableParams()
     ui->heightSpinBox->setEnabled(true);
     ui->minNSlider->setEnabled(true);
     ui->minNSpinBox->setEnabled(true);
+}
+
+void GEyeTracker::setParam(int* const param, int value)
+{
+   *param = value;
+   qDebug() << value;
+}
+
+void GEyeTracker::setParam(bool* const param, bool value)
+{
+   *param = value;
+   qDebug() << value;
+}
+
+void GEyeTracker::setParam(double* const param, double value)
+{
+   *param = value;
+   qDebug() << value;
 }

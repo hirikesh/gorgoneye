@@ -12,7 +12,6 @@ int main(int argc, char *argv[])
 
     /* geyeview - gorgoneye tracking view */
     // geyeview w;
-
     /* GEyeTracker - latest UI + tracking */
     GEyeTracker w;
 
