@@ -1,10 +1,9 @@
 #include <cv.h>
-#include "detector.h"
-#include "haar.h"
-#include <QDebug>
+#include "haardetector.h"
+
 using namespace cv;
 
-Haar::Haar(char* td, double sf, int mn, int fg, Size ms) : Detector(),
+HaarDetector::HaarDetector(string td, double sf, int mn, int fg, Size ms) : BaseDetector(),
     trainingData(td),
     scaleFactor(sf),
     minNeighbours(mn),
@@ -22,7 +21,7 @@ Haar::Haar(char* td, double sf, int mn, int fg, Size ms) : Detector(),
 
 }
 
-bool Haar::locate(const Mat& srcImg, Rect& srcRoi)
+bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
     vector<Rect> rois;
     cc->detectMultiScale(srcImg,

@@ -1,14 +1,12 @@
-#include "store.h"
-#include "tracker.h"
-#include "detector.h"
+#include "basetracker.h"
 
-Tracker::Tracker(Store* st) :
+BaseTracker::BaseTracker(Store* st) :
     store(st),
-    detector(new Detector())
+    detector(new BaseDetector())
 {
 }
 
-void Tracker::track()
+void BaseTracker::track()
 {
     detector->locate(store->sceneImg, store->faceRoi);
     // add other stuff here
@@ -18,7 +16,7 @@ void Tracker::track()
     // result of locate() etc.
 }
 
-Detector* Tracker::getDetector()
+BaseDetector* BaseTracker::getDetector()
 {
     return detector;
 }

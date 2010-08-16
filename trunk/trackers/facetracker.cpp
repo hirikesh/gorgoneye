@@ -1,21 +1,17 @@
-#include "store.h"
-#include "detector.h"
-#include "detectors/haar.h"
-#include "detectors/feature.h"
-#include "face.h"
+#include "facetracker.h"
 
-Face::Face(Store* st) : Tracker(st)
+FaceTracker::FaceTracker(Store* st) : BaseTracker(st)
 {
     #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
-    haarDetector = new Haar(HAAR_CC_FACE_DEFAULT,
+    haarDetector = new HaarDetector(HAAR_CC_FACE_DEFAULT,
                             1.1,
                             3,
                             NULL,
                             Size(96,96));
-    featureDetector = new Feature();
+    featureDetector = new FeatureDetector();
 }
 
-void Face::track()
+void FaceTracker::track()
 {
     //    cvtColor(store->sceneImg, store->sceneImg, CV_BGR2RGB);
     detector->locate(store->sceneImg, store->faceRoi);
@@ -28,18 +24,18 @@ void Face::track()
     // callbacks, etc.
 }
 
-void Face::setDetector(int type)
+void FaceTracker::setDetector(int type)
 {
     switch(type)
     {
     case HAAR:
-        detector = haarDetector; // new Haar(store);
+        detector = haarDetector;
         break;
     case FEAT:
-        detector = featureDetector; // new Feature(store);
+        detector = featureDetector;
         break;
     default:
-        detector = new Detector();
+        detector = new BaseDetector();
         break;
     }
 }
