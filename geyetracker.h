@@ -8,6 +8,7 @@
 #include "geyedetector.h"
 #include <cv.h>
 #include <highgui.h>
+
 using namespace cv;
 
 namespace Ui {

@@ -17,10 +17,10 @@ public:
     Detector();
 
     virtual bool locate(const Mat& srcImg, Rect& srcRoi);
-    vector<Param>* getParams();
+    vector<Param*> getParams();
 
-private:
-    vector<Param> params;
+protected:
+    vector<Param*> params;
 };
 
 #endif // DETECTOR_H

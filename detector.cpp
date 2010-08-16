@@ -9,7 +9,7 @@ bool Detector::locate(const Mat& srcImg, Rect& srcRoi)
     return true;
 }
 
-vector<Param>* Detector::getParams()
+vector<Param*> Detector::getParams()
 {
-    return &params;
+    return params;
 }

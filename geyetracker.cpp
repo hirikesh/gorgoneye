@@ -3,6 +3,9 @@
 #include "geyedetector.h"
 #include "parameter.h"
 #include "guiparam.h"
+#include "detectors/haar.h"
+#include "model.h"
+#include "trackers/face.h"
 #include <QDebug>
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
@@ -13,18 +16,19 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     ui->setupUi(this);
 
 
-    // Vector of Parameters will be created and linked in Algorithm
-    Vector<Param*> params(4);
-    int minN = 3; // Param One
-    int minG = 4; // Param Two
-    int a = 1; // Param Three
-    int b = 2; // Param Four
-    params[0] = new RangeParam("Param One", &minN, 0, 100, 10);
-    params[1] = new ModeParam("Param Two", &minG, false);
-    params[2] = new RangeParam("Param Three", &a, 0, 200, 20);
-    params[3] = new RangeParam("Param Four", &b, 1, 5, 1);
+    //Model* model = new Model(new Store);
+    //vector<Param*> params = model->getTrackerParams();
+    //Tracker* face1 = new Face(new Store);
+    //face1->setDetector(Face::HAAR);
+    //Detector* ccHaar = face1->getDetector();
+
+    // This Code works.
+    Detector* ccHaar = new Haar(HAAR_CC_FACE_DEFAULT, 1.1, 3, NULL, Size(96,96));
+    vector<Param*> params = ccHaar->getParams();
+    qDebug() << params.size();
     // Dynamic GUI Generator
     // Should accept an vector of Params
+
     Vector<QWidget*> gparams(params.size());
     Vector<QGridLayout*> guiItems(params.size()); // item wrapper
     for (unsigned int i = 0; i < params.size(); i++)

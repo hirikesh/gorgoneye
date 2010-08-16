@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     trackers/face.cpp \
     tracker.cpp \
     parameter.cpp \
-    guiparam.cpp
+    guiparam.cpp \
+    model.cpp
 HEADERS += geyetracker.h \
     geyedetector.h \
     control.h \
@@ -42,5 +43,6 @@ HEADERS += geyetracker.h \
     trackers/face.h \
     tracker.h \
     parameter.h \
-    guiparam.h
+    guiparam.h \
+    model.h
 FORMS += geyetracker.ui # deprecated/geyeview.ui
