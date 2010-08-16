@@ -4,6 +4,7 @@
 
 #include <cv.h>
 #include "detector.h"
+#include "parameter.h"
 
 #ifndef HAAR_H
 #define HAAR_H
@@ -14,7 +15,7 @@ public:
     Haar(char* td, double sf, int mn, int fg, Size ms);
 
     bool locate(const Mat& srcImg, Rect& srcRoi);
-
+    int getMinN();
 private:
     CascadeClassifier* cc;
 

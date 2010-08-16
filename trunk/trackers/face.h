@@ -22,10 +22,10 @@ public:
 
     enum type { HAAR, FEAT };
     void setDetector(int type);
-
+    Detector* getDetector();
 private:
-    Haar* haarDetector;
-    Feature* featureDetector;
+    Detector* haarDetector;
+    Detector* featureDetector;
 };
 
 #endif // FACE_H

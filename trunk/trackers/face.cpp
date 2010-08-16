@@ -3,6 +3,7 @@
 #include "detectors/haar.h"
 #include "detectors/feature.h"
 #include "face.h"
+#include <QDebug>
 
 Face::Face(Store* st) : Tracker(st)
 {
@@ -28,7 +29,6 @@ void Face::track()
     // callbacks, etc.
 }
 
-
 void Face::setDetector(int type)
 {
     switch(type)
@@ -40,4 +40,9 @@ void Face::setDetector(int type)
     default:
         detector = new Detector();
     }
+}
+
+Detector* Face::getDetector()
+{
+    return haarDetector;
 }
