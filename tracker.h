@@ -17,7 +17,7 @@ public:
 
     virtual void track();
     virtual void setDetector(int type) = 0;
-    virtual Detector* getDetector();
+    Detector* getDetector();
 protected:
     Store* store;
     Detector* detector;

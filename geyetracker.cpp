@@ -16,16 +16,9 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     ui->setupUi(this);
 
 
-    //Model* model = new Model(new Store);
-    //vector<Param*> params = model->getTrackerParams();
-    //Tracker* face1 = new Face(new Store);
-    //face1->setDetector(Face::HAAR);
-    //Detector* ccHaar = face1->getDetector();
+    Model* model = new Model(new Store);
+    vector<Param*> params = model->getTrackerParams();
 
-    // This Code works.
-    Detector* ccHaar = new Haar(HAAR_CC_FACE_DEFAULT, 1.1, 3, NULL, Size(96,96));
-    vector<Param*> params = ccHaar->getParams();
-    qDebug() << params.size();
     // Dynamic GUI Generator
     // Should accept an vector of Params
 
