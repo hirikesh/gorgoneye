@@ -1,9 +1,9 @@
 #include "model.h"
 
 Model::Model(Store* st) :
-        faceTracker(Face(st))
+        faceTracker(FaceTracker(st))
 {
-    faceTracker.setDetector(Face::HAAR);
+    faceTracker.setDetector(FaceTracker::HAAR);
 }
 
 vector<Param*> Model::getTrackerParams()

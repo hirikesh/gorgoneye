@@ -7,10 +7,8 @@
    the UI). */
 
 #include "store.h"
-#include "tracker.h"
+#include "trackers/basetracker.h"
 
-#include <cv.h>
-#include <highgui.h>
 using namespace cv;
 
 #ifndef CONTROL_H
@@ -29,9 +27,9 @@ public:
 private:
     Store* store;
 
-    Tracker* faceTracker;
-    Tracker* eyesTracker;
-    Tracker* gazeTracker;
+    BaseTracker* faceTracker;
+    BaseTracker* eyesTracker;
+    BaseTracker* gazeTracker;
 };
 
 #endif // CONTROL_H

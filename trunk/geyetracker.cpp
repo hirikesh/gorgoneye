@@ -3,10 +3,9 @@
 #include "geyedetector.h"
 #include "parameter.h"
 #include "guiparam.h"
-#include "detectors/haar.h"
 #include "model.h"
-#include "trackers/face.h"
 #include <QDebug>
+
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker)
@@ -20,10 +19,15 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     vector<Param*> params = model->getTrackerParams();
 
     // Dynamic GUI Generator
-    // Should accept an vector of Params
-
+    // Model Level
+    // -- Model Level GUI Code Here --
+    // Tracker Level
+    // -- Tracker Level GUI Code Here --
+    // Detector Level
     Vector<QWidget*> gparams(params.size());
     Vector<QGridLayout*> guiItems(params.size()); // item wrapper
+    RangeParam* currParam;
+    QSpinBox *spinbox;
     for (unsigned int i = 0; i < params.size(); i++)
     {
         guiItems[i] = new QGridLayout(); // create gui item
@@ -34,12 +38,17 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
         }
         else if (params[i]->getType() == Param::RANGE)
         {
+            currParam = (RangeParam*)params[i];
             gparams[i] = new GUISlider((RangeParam*)params[i]); // create widget
             // generate the other parts of the gui item
             guiItems[i]->addWidget(new QLabel(params[i]->getName().c_str()), 0, 0);
             guiItems[i]->addWidget(gparams[i], 1, 0);
-            guiItems[i]->addWidget(new QLabel(QString("SpinBox")), 1, 1);
-
+            spinbox = new QSpinBox(); // every time this loops we dont have a ref back to spinbox; can we still delete?
+            spinbox->setRange(currParam->getMinimum(),currParam->getMaximum());
+            connect(spinbox, SIGNAL(valueChanged(int)), gparams[i], SLOT(setValue(int)));
+            connect(gparams[i], SIGNAL(valueChanged(int)), spinbox, SLOT(setValue(int)));
+            spinbox->setValue(*(currParam->getValue())); // dereferencing and grabbing a ptr? better code possible?
+            guiItems[i]->addWidget(spinbox, 1, 1);
         }
         ui->paramLayout->addLayout(guiItems[i]);
         connect(gparams[i], SIGNAL(valueChanged(int* const, int)), this, SLOT(setParam(int* const, int)));
