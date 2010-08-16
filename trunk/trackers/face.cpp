@@ -3,7 +3,6 @@
 #include "detectors/haar.h"
 #include "detectors/feature.h"
 #include "face.h"
-#include <QDebug>
 
 Face::Face(Store* st) : Tracker(st)
 {
@@ -35,14 +34,12 @@ void Face::setDetector(int type)
     {
     case HAAR:
         detector = haarDetector; // new Haar(store);
+        break;
     case FEAT:
         detector = featureDetector; // new Feature(store);
+        break;
     default:
         detector = new Detector();
+        break;
     }
-}
-
-Detector* Face::getDetector()
-{
-    return haarDetector;
 }

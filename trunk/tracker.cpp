@@ -18,10 +18,6 @@ void Tracker::track()
     // result of locate() etc.
 }
 
-//void Tracker::setDetector(int type)
-//{
-//}
-
 Detector* Tracker::getDetector()
 {
     return detector;
