@@ -4,6 +4,7 @@
 #include "parameter.h"
 #include "guiparam.h"
 #include "model.h"
+#include <QLabel>
 #include <QDebug>
 #include <QGroupBox>
 
