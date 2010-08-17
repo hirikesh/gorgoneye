@@ -143,7 +143,8 @@ void GEyeTracker::createDynamicGUI(vector<Param*> params)
         paramLayout->addLayout(guiItems[i]);
     }
     ui->sideLayout->addWidget(groupBox);
-    QSpacerItem* verticalSpacer = new QSpacerItem(20, 20, QSizePolicy::Minimum,
-                                                  QSizePolicy::Expanding);
-    ui->sideLayout->addSpacerItem(verticalSpacer);
+    groupBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+    ui->sideLayout->setAlignment(groupBox, Qt::AlignTop);
+    //QSpacerItem* vertSpacer = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    //ui->sideLayout->addSpacerItem(verticalSpacer);
 }
