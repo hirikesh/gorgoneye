@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QTimer>
 
+#include "parameter.h"
 #include "geyedetector.h"
 #include <cv.h>
 #include <highgui.h>
@@ -22,13 +23,10 @@ class GEyeTracker : public QWidget
 public:
     explicit GEyeTracker(QWidget *parent = 0);
     ~GEyeTracker();
+    void createDynamicGUI(vector<Param*>);
 
 public slots:
-    void procFrame();
-    void setScale(const double&);
-    void setWidth(const int&);
-    void setHeight(const int&);
-    void setMinN(const int&);
+    void procFrame();  
     void disableParams();
     void enableParams();
     void setParam(int* const, int);

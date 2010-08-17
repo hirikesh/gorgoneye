@@ -12,7 +12,7 @@
 class HaarDetector : public BaseDetector
 {
 public:
-    HaarDetector(string td, double sf, int mn, int fg, Size ms);
+    HaarDetector(string td, double sf, int mn, bool fg, Size ms);
 
     bool locate(const Mat& srcImg, Rect& srcRoi);
     int getMinN();

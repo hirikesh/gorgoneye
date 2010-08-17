@@ -23,7 +23,7 @@ Param::paramType Param::getType() const
 }
 
 // ModeParam *******************************************************
-ModeParam::ModeParam(const string& name, int* val, bool en) :
+ModeParam::ModeParam(const string& name, bool* val, bool en) :
         Param(name, val, Param::MODE),
         enabled(en)
 {}

@@ -7,7 +7,7 @@ class Param
 {    
 
 public:
-    enum paramType {RANGE, MODE};
+    enum paramType {RANGE, RANGE_DBL, MODE};
     Param(const string&, void*, paramType);
     string getName() const;
     void* getValue() const;
@@ -22,8 +22,8 @@ template <class T>
 class RangeParam : public Param
 {
 public:
-    RangeParam(const string& nm, T* val, T min, T max, T stp) :
-            Param(nm, val, Param::RANGE),
+    RangeParam(const string& nm, paramType type, T* val, T min, T max, T stp) :
+            Param(nm, val, type),
             minimum(min),
             maximum(max),
             step(stp)
@@ -40,7 +40,7 @@ private:
 class ModeParam : public Param
 {
 public:
-    ModeParam(const string&, int*, bool);
+    ModeParam(const string&, bool*, bool);
     bool isEnabled();
 private:
     bool enabled;

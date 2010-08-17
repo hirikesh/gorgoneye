@@ -3,7 +3,7 @@
 
 using namespace cv;
 
-HaarDetector::HaarDetector(string td, double sf, int mn, int fg, Size ms) : BaseDetector(),
+HaarDetector::HaarDetector(string td, double sf, int mn, bool fg, Size ms) : BaseDetector(),
     trainingData(td),
     scaleFactor(sf),
     minNeighbours(mn),
@@ -13,11 +13,11 @@ HaarDetector::HaarDetector(string td, double sf, int mn, int fg, Size ms) : Base
     cc = new CascadeClassifier(trainingData);
 
     // Create Parameters that will be used
-    //params[0] = new RangeParam(sf1, &scaleFactor, 0, 2, 1); needs to be double
-    params.push_back(new RangeParam<int>("minNeighbours", &minNeighbours, 1, 5, 1));
-    params.push_back(new RangeParam<int>("minWidth", &minSize.width, 20, 200, 20));
-    params.push_back(new RangeParam<int>("minHeight", &minSize.height, 20, 200, 20));
-    //params[4] = new ModeParam("Canny Pruning", , false);
+    params.push_back(new RangeParam<double>("scaleFactor", Param::RANGE_DBL, &scaleFactor, 0, 2, 1));
+    params.push_back(new RangeParam<int>("minNeighbours", Param::RANGE, &minNeighbours, 1, 5, 1));
+    params.push_back(new RangeParam<int>("minWidth", Param::RANGE, &minSize.width, 20, 200, 20));
+    params.push_back(new RangeParam<int>("minHeight", Param::RANGE, &minSize.height, 20, 200, 20));
+    params.push_back(new ModeParam("Canny Pruning",&fg, false));
 
 }
 

@@ -5,6 +5,7 @@
 #include "guiparam.h"
 #include "model.h"
 #include <QDebug>
+#include <QGroupBox>
 
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
@@ -16,43 +17,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
 
 
     Model* model = new Model(new Store);
-    vector<Param*> params = model->getTrackerParams();
-
-    // Dynamic GUI Generator
-    // Model Level
-    // -- Model Level GUI Code Here --
-    // Tracker Level
-    // -- Tracker Level GUI Code Here --
-    // Detector Level
-    Vector<QWidget*> gparams(params.size());
-    Vector<QGridLayout*> guiItems(params.size()); // item wrapper
-    RangeParam<int>* currParam;
-    QSpinBox *spinbox;
-    for (unsigned int i = 0; i < params.size(); i++)
-    {
-        guiItems[i] = new QGridLayout(); // create gui item
-        if (params[i]->getType() == Param::MODE)
-        {
-            gparams[i] = new GUICheckBox((ModeParam*)params[i]); // create widget
-            guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
-        }
-        else if (params[i]->getType() == Param::RANGE)
-        {
-            currParam = (RangeParam<int>*)params[i];
-            gparams[i] = new GUISlider((RangeParam<int>*)params[i]); // create widget
-            // generate the other parts of the gui item
-            guiItems[i]->addWidget(new QLabel(params[i]->getName().c_str()), 0, 0);
-            guiItems[i]->addWidget(gparams[i], 1, 0);
-            spinbox = new QSpinBox(); // every time this loops we dont have a ref back to spinbox; can we still delete?
-            spinbox->setRange(currParam->getMinimum(),currParam->getMaximum());
-            connect(spinbox, SIGNAL(valueChanged(int)), gparams[i], SLOT(setValue(int)));
-            connect(gparams[i], SIGNAL(valueChanged(int)), spinbox, SLOT(setValue(int)));
-            spinbox->setValue(*((int*)currParam->getValue())); // dereferencing and grabbing a ptr? better code possible?
-            guiItems[i]->addWidget(spinbox, 1, 1);
-        }
-        ui->paramLayout->addLayout(guiItems[i]);
-        connect(gparams[i], SIGNAL(valueChanged(int* const, int)), this, SLOT(setParam(int* const, int)));
-    }
+    createDynamicGUI(model->getTrackerParams());
 
     capture = VideoCapture(0);
     capture >> image;
@@ -73,26 +38,6 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     connect(ui->startBtn, SIGNAL(clicked()), this, SLOT(disableParams()));
     connect(ui->stopBtn, SIGNAL(clicked()), timer, SLOT(stop()));
     connect(ui->stopBtn, SIGNAL(clicked()), this, SLOT(enableParams()));
-
-    connect(ui->heightSlider, SIGNAL(valueChanged(int)), ui->heightSpinBox, SLOT(setValue(int)));
-    connect(ui->heightSpinBox, SIGNAL(valueChanged(int)), ui->heightSlider, SLOT(setValue(int)));
-    connect(ui->widthSlider, SIGNAL(valueChanged(int)), ui->widthSpinBox, SLOT(setValue(int)));
-    connect(ui->widthSpinBox, SIGNAL(valueChanged(int)), ui->widthSlider, SLOT(setValue(int)));
-    connect(ui->minNSlider, SIGNAL(valueChanged(int)), ui->minNSpinBox, SLOT(setValue(int)));
-    connect(ui->minNSpinBox, SIGNAL(valueChanged(int)), ui->minNSlider, SLOT(setValue(int)));
-
-    connect(ui->heightSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setHeight(int)));
-    connect(ui->widthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setWidth(int)));
-    connect(ui->minNSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setMinN(int)));
-    connect(ui->scaleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setScale(double)));
-
-    ui->heightSpinBox->setValue(ged.getHeight());
-    ui->widthSpinBox->setValue(ged.getWidth());
-    ui->minNSpinBox->setValue(ged.getMinNeighbours());
-    ui->scaleSpinBox->setValue(ged.getScale());
-    ui->heightSlider->setValue(ged.getHeight());
-    ui->widthSlider->setValue(ged.getWidth());
-    ui->minNSlider->setValue(ged.getMinNeighbours());
 }
 
 GEyeTracker::~GEyeTracker()
@@ -126,46 +71,12 @@ void GEyeTracker::paintEvent(QPaintEvent* e)
     }
 }
 
-void GEyeTracker::setScale(const double& sf)
-{
-    ged.setScaleFactor(sf);
-}
-
-void GEyeTracker::setMinN(const int& mn)
-{
-    ged.setMinNeighbours(mn);
-}
-
-void GEyeTracker::setWidth(const int& w)
-{
-    ged.setWidth(w);
-}
-
-void GEyeTracker::setHeight(const int& h)
-{
-    ged.setHeight(h);
-}
-
 void GEyeTracker::disableParams()
 {
-    ui->scaleSpinBox->setEnabled(false);
-    ui->widthSlider->setEnabled(false);
-    ui->widthSpinBox->setEnabled(false);
-    ui->heightSlider->setEnabled(false);
-    ui->heightSpinBox->setEnabled(false);
-    ui->minNSlider->setEnabled(false);
-    ui->minNSpinBox->setEnabled(false);
 }
 
 void GEyeTracker::enableParams()
 {
-    ui->scaleSpinBox->setEnabled(true);
-    ui->widthSlider->setEnabled(true);
-    ui->widthSpinBox->setEnabled(true);
-    ui->heightSlider->setEnabled(true);
-    ui->heightSpinBox->setEnabled(true);
-    ui->minNSlider->setEnabled(true);
-    ui->minNSpinBox->setEnabled(true);
 }
 
 void GEyeTracker::setParam(int* const param, int value)
@@ -184,4 +95,53 @@ void GEyeTracker::setParam(double* const param, double value)
 {
    *param = value;
    qDebug() << value;
+}
+
+void GEyeTracker::createDynamicGUI(vector<Param *> params)
+{
+    // Dynamic GUI Generator
+    // Model Level
+    // -- Model Level GUI Code Here --
+    // Tracker Level
+    // -- Tracker Level GUI Code Here --
+    // Detector Level
+    QVBoxLayout *paramLayout = new QVBoxLayout();
+    QGroupBox *groupBox = new QGroupBox("Algorithm 1 Parameters:");
+    groupBox->setLayout(paramLayout);
+    Vector<QWidget*> gparams(params.size());
+    Vector<QGridLayout*> guiItems(params.size()); // item wrapper
+    for (unsigned int i = 0; i < params.size(); i++)
+    {
+        guiItems[i] = new QGridLayout(); // create gui item
+        if (params[i]->getType() == Param::MODE)
+        {
+            gparams[i] = new GUICheckBox((ModeParam*)params[i]); // create widget
+            guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
+            connect(gparams[i], SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool* const, bool)));
+        }
+        else if (params[i]->getType() == Param::RANGE)
+        {
+            RangeParam<int>* currParam = (RangeParam<int>*)params[i];
+            gparams[i] = new GUISlider((RangeParam<int>*)params[i]); // create widget
+            // generate the other parts of the gui item
+            guiItems[i]->addWidget(new QLabel(params[i]->getName().c_str()), 0, 0);
+            guiItems[i]->addWidget(gparams[i], 1, 0);
+            QSpinBox *spinbox = new QSpinBox(); // every time this loops we dont have a ref back to spinbox; can we still delete?
+            spinbox->setRange(currParam->getMinimum(),currParam->getMaximum());
+            connect(spinbox, SIGNAL(valueChanged(int)), gparams[i], SLOT(setValue(int)));
+            connect(gparams[i], SIGNAL(valueChanged(int)), spinbox, SLOT(setValue(int)));
+            spinbox->setValue(*((int*)currParam->getValue())); // dereferencing and grabbing a ptr? better code possible?
+            guiItems[i]->addWidget(spinbox, 1, 1);
+            connect(gparams[i], SIGNAL(valueChanged(int* const, int)), this, SLOT(setParam(int* const, int)));
+        }
+        else if (params[i]->getType() == Param::RANGE_DBL)
+        {
+            gparams[i] = new GUIDSpinBox((RangeParam<double>*)params[i]); // create widget
+            guiItems[i]->addWidget(new QLabel(params[i]->getName().c_str()), 0, 0);
+            guiItems[i]->addWidget(gparams[i], 0, 1);
+            connect(gparams[i], SIGNAL(valueChanged(double* const, double)), this, SLOT(setParam(double* const, double)));
+        }
+        paramLayout->addLayout(guiItems[i]);
+    }
+    ui->sideLayout->addWidget(groupBox);
 }
