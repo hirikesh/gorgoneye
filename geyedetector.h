@@ -1,7 +1,6 @@
 #ifndef GEYEDETECTOR_H
 #define GEYEDETECTOR_H
 
-
 #include <cv.h>
 #include <highgui.h>
 using namespace cv;
