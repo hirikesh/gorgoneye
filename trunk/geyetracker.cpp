@@ -7,7 +7,6 @@
 #include <QLabel>
 #include <QDebug>
 #include <QGroupBox>
-
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker)
@@ -98,7 +97,7 @@ void GEyeTracker::setParam(double* const param, double value)
    qDebug() << value;
 }
 
-void GEyeTracker::createDynamicGUI(vector<Param *> params)
+void GEyeTracker::createDynamicGUI(vector<Param*> params)
 {
     // Dynamic GUI Generator
     // Model Level
@@ -122,27 +121,29 @@ void GEyeTracker::createDynamicGUI(vector<Param *> params)
         }
         else if (params[i]->getType() == Param::RANGE)
         {
-            RangeParam<int>* currParam = (RangeParam<int>*)params[i];
             gparams[i] = new GUISlider((RangeParam<int>*)params[i]); // create widget
             // generate the other parts of the gui item
-            guiItems[i]->addWidget(new QLabel(params[i]->getName().c_str()), 0, 0);
-            guiItems[i]->addWidget(gparams[i], 1, 0);
             QSpinBox *spinbox = new QSpinBox(); // every time this loops we dont have a ref back to spinbox; can we still delete?
-            spinbox->setRange(currParam->getMinimum(),currParam->getMaximum());
+            spinbox->setRange(((GUISlider*)gparams[i])->minimum(),((GUISlider*)gparams[i])->maximum());
+            spinbox->setValue(((GUISlider*)gparams[i])->value());
+            guiItems[i]->addWidget(new QLabel(params[i]->getName()), 0, 0);
+            guiItems[i]->addWidget(gparams[i], 1, 0);
+            guiItems[i]->addWidget(spinbox, 1, 1);
             connect(spinbox, SIGNAL(valueChanged(int)), gparams[i], SLOT(setValue(int)));
             connect(gparams[i], SIGNAL(valueChanged(int)), spinbox, SLOT(setValue(int)));
-            spinbox->setValue(*((int*)currParam->getValue())); // dereferencing and grabbing a ptr? better code possible?
-            guiItems[i]->addWidget(spinbox, 1, 1);
             connect(gparams[i], SIGNAL(valueChanged(int* const, int)), this, SLOT(setParam(int* const, int)));
         }
         else if (params[i]->getType() == Param::RANGE_DBL)
         {
             gparams[i] = new GUIDSpinBox((RangeParam<double>*)params[i]); // create widget
-            guiItems[i]->addWidget(new QLabel(params[i]->getName().c_str()), 0, 0);
-            guiItems[i]->addWidget(gparams[i], 0, 1);
+            guiItems[i]->addWidget(new QLabel(params[i]->getName()), 0, 0);
+            guiItems[i]->addWidget(gparams[i], 0, 1);            
             connect(gparams[i], SIGNAL(valueChanged(double* const, double)), this, SLOT(setParam(double* const, double)));
         }
         paramLayout->addLayout(guiItems[i]);
     }
     ui->sideLayout->addWidget(groupBox);
+    QSpacerItem* verticalSpacer = new QSpacerItem(20, 20, QSizePolicy::Minimum,
+                                                  QSizePolicy::Expanding);
+    ui->sideLayout->addSpacerItem(verticalSpacer);
 }

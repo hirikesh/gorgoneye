@@ -1,15 +1,14 @@
 #include "parameter.h"
 
 // Param *******************************************************
-Param::Param(const string& nm, void* val, paramType t) :
-        name(nm),
+Param::Param(const string& s, void* val, paramType t) :
+        name(s),
         value(val),
         type(t)
 {}
-
-string Param::getName() const
+const char* Param::getName() const
 {
-    return name;
+    return name.c_str();
 }
 
 void* Param::getValue() const
@@ -23,8 +22,8 @@ Param::paramType Param::getType() const
 }
 
 // ModeParam *******************************************************
-ModeParam::ModeParam(const string& name, bool* val, bool en) :
-        Param(name, val, Param::MODE),
+ModeParam::ModeParam(const string& s, bool* val, bool en) :
+        Param(s, val, Param::MODE),
         enabled(en)
 {}
 

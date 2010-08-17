@@ -1,7 +1,7 @@
 #include "guiparam.h"
 
 GUICheckBox::GUICheckBox(ModeParam* mp) :
-        QCheckBox(mp->getName().c_str()),
+        QCheckBox(mp->getName()),
         pValue((bool*)mp->getValue())
 {
     connect(this, SIGNAL(stateChanged(int)), this, SLOT(emitWithPtr(int)));
@@ -18,6 +18,7 @@ GUISlider::GUISlider(RangeParam<int>* rp) :
 {
     setRange(rp->getMinimum(), rp->getMaximum());
     setSingleStep(rp->getStep());
+    setValue(*pValue);
     connect(this, SIGNAL(valueChanged(int)), this, SLOT(emitWithPtr(int)));
 }
 
@@ -37,6 +38,7 @@ GUIDSpinBox::GUIDSpinBox(RangeParam<double>* rp) :
 {
     setRange(rp->getMinimum(), rp->getMaximum());
     setSingleStep(rp->getStep());
+    setValue(*pValue);
     connect(this, SIGNAL(valueChanged(double)), this, SLOT(emitWithPtr(double)));
 }
 
