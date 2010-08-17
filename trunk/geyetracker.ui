@@ -136,19 +136,6 @@
    </property>
    <layout class="QVBoxLayout" name="sideLayout"/>
   </widget>
-  <widget class="QLabel" name="title">
-   <property name="geometry">
-    <rect>
-     <x>670</x>
-     <y>10</y>
-     <width>249</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>GorgonEye</string>
-   </property>
-  </widget>
  </widget>
  <resources/>
  <connections/>
