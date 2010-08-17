@@ -1,48 +1,25 @@
 #include "parameter.h"
 
 // Param *******************************************************
-Param::Param(const string& name, int* val, paramType type) :
-        pName(name),
-        pValue(val),
-        pType(type)
+Param::Param(const string& nm, void* val, paramType t) :
+        name(nm),
+        value(val),
+        type(t)
 {}
 
 string Param::getName() const
 {
-    return pName;
+    return name;
 }
 
-int* Param::getValue() const
+void* Param::getValue() const
 {
-    return pValue;
+    return value;
 }
 
 Param::paramType Param::getType() const
 {
-    return pType;
-}
-
-// RangeParam *******************************************************
-RangeParam::RangeParam(const string& name, int* val, int min, int max, int stp) :
-        Param(name, val, Param::RANGE),
-        minimum(min),
-        maximum(max),
-        step(stp)
-{}
-
-int RangeParam::getMinimum()
-{
-    return minimum;
-}
-
-int RangeParam::getMaximum()
-{
-    return maximum;
-}
-
-int RangeParam::getStep()
-{
-    return step;
+    return type;
 }
 
 // ModeParam *******************************************************

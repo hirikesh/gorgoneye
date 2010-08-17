@@ -22,7 +22,7 @@ class GUISlider : public QSlider
 {
     Q_OBJECT
 public:
-    GUISlider(RangeParam* rp);
+    GUISlider(RangeParam<int>* rp);
     int* getPtr();
 signals:
     void valueChanged(int* const, int);
