@@ -8,28 +8,33 @@ class Param
 
 public:
     enum paramType {RANGE, MODE};
-    Param(const string&, int*, paramType);
+    Param(const string&, void*, paramType);
     string getName() const;
-    int* getValue() const;
+    void* getValue() const;
     paramType getType() const;
 protected:
-    const string pName;
-    int* const pValue;
-    const paramType pType;
+    const string name;
+    void* const value;
+    const paramType type;
 };
 
-
+template <class T>
 class RangeParam : public Param
 {
 public:
-    RangeParam(const string&, int*, int, int, int);
-    int getMinimum();
-    int getMaximum();
-    int getStep();
+    RangeParam(const string& nm, T* val, T min, T max, T stp) :
+            Param(nm, val, Param::RANGE),
+            minimum(min),
+            maximum(max),
+            step(stp)
+    {}
+    T getMinimum() {return minimum;}
+    T getMaximum() {return maximum;}
+    T getStep() {return step;}
 private:
-    int minimum;
-    int maximum;
-    int step;
+    T minimum;
+    T maximum;
+    T step;
 };
 
 class ModeParam : public Param

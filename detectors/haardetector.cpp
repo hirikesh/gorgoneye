@@ -14,9 +14,9 @@ HaarDetector::HaarDetector(string td, double sf, int mn, int fg, Size ms) : Base
 
     // Create Parameters that will be used
     //params[0] = new RangeParam(sf1, &scaleFactor, 0, 2, 1); needs to be double
-    params.push_back(new RangeParam("minNeighbours", &minNeighbours, 1, 5, 1));
-    params.push_back(new RangeParam("minWidth", &minSize.width, 20, 200, 20));
-    params.push_back(new RangeParam("minHeight", &minSize.height, 20, 200, 20));
+    params.push_back(new RangeParam<int>("minNeighbours", &minNeighbours, 1, 5, 1));
+    params.push_back(new RangeParam<int>("minWidth", &minSize.width, 20, 200, 20));
+    params.push_back(new RangeParam<int>("minHeight", &minSize.height, 20, 200, 20));
     //params[4] = new ModeParam("Canny Pruning", , false);
 
 }

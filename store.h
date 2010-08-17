@@ -1,13 +1,12 @@
 /* Store:
    State-like object which houses the data
    processed by gorgoneye throughout all stages. */
+#ifndef STORE_H
+#define STORE_H
 
 #include <cv.h>
 #include <highgui.h>
 using namespace cv;
-
-#ifndef STORE_H
-#define STORE_H
 
 class Store
 {
