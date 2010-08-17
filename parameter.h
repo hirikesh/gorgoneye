@@ -9,7 +9,7 @@ class Param
 public:
     enum paramType {RANGE, RANGE_DBL, MODE};
     Param(const string&, void*, paramType);
-    string getName() const;
+    const char* getName() const;
     void* getValue() const;
     paramType getType() const;
 protected:
