@@ -4,7 +4,6 @@ using namespace cv;
 
 #include "model.h"
 #include "store.h"
-#include <QtDebug>
 
 Model::Model(int device) :
     store(Store()),
