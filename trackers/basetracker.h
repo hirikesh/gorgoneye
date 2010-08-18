@@ -13,15 +13,18 @@
 class BaseTracker
 {
 public:
-    BaseTracker(Store* st);
+    BaseTracker(Store* st, const string&);
 
     virtual void track();
     virtual void setDetector(int type) = 0;
     BaseDetector* getDetector();
     bool isEnabled();
     void setEnable(bool);
+    bool* getEnabled();
+    const string getName();
 protected:
     Store* store;
+    const string name;
     BaseDetector* detector;
     bool enabled;
 };

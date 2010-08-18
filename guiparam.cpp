@@ -1,5 +1,12 @@
 #include "guiparam.h"
 
+GUICheckBox::GUICheckBox(const string& title, bool* value) :
+        QCheckBox(title.c_str()),
+        pValue(value)
+{
+    connect(this, SIGNAL(stateChanged(int)), this, SLOT(emitWithPtr(int)));
+}
+
 GUICheckBox::GUICheckBox(ModeParam* mp) :
         QCheckBox(mp->getName()),
         pValue((bool*)mp->getValue())

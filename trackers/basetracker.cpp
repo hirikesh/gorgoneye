@@ -1,7 +1,8 @@
 #include "basetracker.h"
 
-BaseTracker::BaseTracker(Store* st) :
+BaseTracker::BaseTracker(Store* st, const string& s) :
     store(st),
+    name(s),
     detector(new BaseDetector(""))
 {
 }
@@ -29,4 +30,14 @@ void BaseTracker::setEnable(bool en)
 bool BaseTracker::isEnabled()
 {
     return enabled;
+}
+
+bool* BaseTracker::getEnabled()
+{
+    return &enabled;
+}
+
+const string BaseTracker::getName()
+{
+    return name;
 }

@@ -1,6 +1,6 @@
 #include "facetracker.h"
 
-FaceTracker::FaceTracker(Store* st) : BaseTracker(st)
+FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 {
     #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
     haarDetector = new HaarDetector(HAAR_CC_FACE_DEFAULT,

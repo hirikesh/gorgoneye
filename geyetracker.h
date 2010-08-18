@@ -11,6 +11,7 @@
 #include "geyedetector.h"
 #include <cv.h>
 #include <highgui.h>
+#include <QLayout>
 
 using namespace cv;
 
@@ -25,7 +26,8 @@ class GEyeTracker : public QWidget
 public:
     explicit GEyeTracker(QWidget *parent = 0);
     ~GEyeTracker();
-    void createDynamicGUI(BaseDetector*);
+    void createTrackerGUI(BaseTracker*);
+    void createDetectorGUI(BaseDetector*, QVBoxLayout*);
 
 public slots:
     void procFrame();  
