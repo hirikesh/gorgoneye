@@ -37,14 +37,14 @@ public slots:
     void setParam(bool* const, bool);
     void setParam(double* const, double);
 private:
-    Model* model;
     Ui::GEyeTracker *ui;
+    Model model;
     QImage qImage;
     QRect faceLoc;
     QTimer* timer;
-    VideoCapture capture;
+//    VideoCapture capture;
     Mat image;
-    GEyeDetector ged;
+//    GEyeDetector ged;
     void paintEvent(QPaintEvent* e);
 };
 
