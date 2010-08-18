@@ -35,7 +35,7 @@ void FaceTracker::setDetector(int type)
         detector = featureDetector;
         break;
     default:
-        detector = new BaseDetector();
+        detector = new BaseDetector("");
         break;
     }
 }

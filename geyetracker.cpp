@@ -4,6 +4,10 @@
 #include "parameter.h"
 #include "guiparam.h"
 #include "model.h"
+#include "trackers/basetracker.h"
+#include "trackers/facetracker.h"
+#include "detectors/basedetector.h"
+#include "detectors/haardetector.h"
 #include <QLabel>
 #include <QDebug>
 #include <QGroupBox>
@@ -17,7 +21,12 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
 
 
     Model* model = new Model(new Store);
-    createDynamicGUI(model->getTrackerParams());
+
+    vector<BaseDetector*> detectors = model->getTrackerParams();
+    for (unsigned i = 0; i < detectors.size(); i++)
+    {
+        createDynamicGUI(detectors[i]);
+    }
 
     capture = VideoCapture(0);
     capture >> image;
@@ -97,7 +106,7 @@ void GEyeTracker::setParam(double* const param, double value)
    qDebug() << value;
 }
 
-void GEyeTracker::createDynamicGUI(vector<Param*> params)
+void GEyeTracker::createDynamicGUI(BaseDetector* detector)
 {
     // Dynamic GUI Generator
     // Model Level
@@ -105,8 +114,10 @@ void GEyeTracker::createDynamicGUI(vector<Param*> params)
     // Tracker Level
     // -- Tracker Level GUI Code Here --
     // Detector Level
+    vector<Param*> params = detector->getParams();
     QVBoxLayout *paramLayout = new QVBoxLayout();
-    QGroupBox *groupBox = new QGroupBox("Algorithm 1 Parameters:");
+    string title = detector->getName() + " Algorithm Parameters:";
+    QGroupBox *groupBox = new QGroupBox(title.c_str());
     groupBox->setLayout(paramLayout);
     Vector<QWidget*> gparams(params.size());
     Vector<QGridLayout*> guiItems(params.size()); // item wrapper

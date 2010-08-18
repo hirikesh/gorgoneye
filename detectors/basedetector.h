@@ -14,12 +14,14 @@ using namespace cv;
 class BaseDetector
 {
 public:
-    BaseDetector();
+    BaseDetector(const string&);
 
     virtual bool locate(const Mat& srcImg, Rect& srcRoi);
     vector<Param*> getParams();
+    const string getName() const;
 
 protected:
+    const string name;
     vector<Param*> params;
 };
 

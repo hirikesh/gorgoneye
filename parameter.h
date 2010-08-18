@@ -40,7 +40,7 @@ private:
 class ModeParam : public Param
 {
 public:
-    ModeParam(const string&, bool*, bool);
+    ModeParam(const string&, int*, bool);
     bool isEnabled();
 private:
     bool enabled;
