@@ -18,14 +18,8 @@ Model::Model(int device) :
 
 void Model::update()
 {
-    if(capture.isOpened()) {
-        qDebug("camera appears to be fine");
-    } else {
-        qDebug("camera is broken");
-    }
-
     capture >> store.sceneImg;
-//    if(faceTracker.isEnabled()) faceTracker.track();
+    if(faceTracker.isEnabled()) faceTracker.track();
 }
 
 Store* Model::getStore()
