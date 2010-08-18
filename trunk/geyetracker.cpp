@@ -14,16 +14,14 @@
 #include <QComboBox>
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::GEyeTracker)
+    ui(new Ui::GEyeTracker),
+    model(Model(0))
 {
-    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\
-\haarcascade_frontalface_default.xml"
+//    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
 
     ui->setupUi(this);
 
-    model = new Model(0);
-
-    vector<BaseTracker*> trackers = model->getTrackers();
+    vector<BaseTracker*> trackers = model.getTrackers();
     for (unsigned int i = 0; i < trackers.size(); i++)
     {
         if(trackers[i]->isEnabled())
@@ -34,7 +32,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
 
 //    capture = VideoCapture(0);
     /***** TEST CODE START *****/
-    Store* store = model->getStore();
+    Store* store = model.getStore();
     image = store->sceneImg;
     /***** TEST CODE END *****/
 //    capture >> image;
@@ -71,8 +69,8 @@ void GEyeTracker::procFrame()
 //    Rect r = ged.detect();
 //    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
     /**** TEST CODE START ****/
-    model->update();
-    Rect r = model->getStore()->faceRoi;
+    model.update();
+    Rect r = model.getStore()->faceRoi;
     faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
     /**** TEST CODE ****/
     this->update();
