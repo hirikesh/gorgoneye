@@ -1,10 +1,36 @@
-#include "model.h"
+#include <cv.h>
+#include <highgui.h>
+using namespace cv;
 
-Model::Model(Store* st) :
-        faceTracker(FaceTracker(st))
+#include "model.h"
+#include "store.h"
+#include <QtDebug>
+
+Model::Model(int device) :
+    store(Store()),
+    capture(VideoCapture(device)),
+    faceTracker(FaceTracker(&store))
 {
+    capture >> store.sceneImg; // initialisation required
     faceTracker.setDetector(FaceTracker::HAAR);
     faceTracker.setEnable(true);
+}
+
+void Model::update()
+{
+    if(capture.isOpened()) {
+        qDebug("camera appears to be fine");
+    } else {
+        qDebug("camera is broken");
+    }
+
+    capture >> store.sceneImg;
+//    if(faceTracker.isEnabled()) faceTracker.track();
+}
+
+Store* Model::getStore()
+{
+    return &store;
 }
 
 vector<BaseDetector*> Model::getTrackerParams()

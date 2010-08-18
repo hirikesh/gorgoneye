@@ -20,7 +20,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     ui->setupUi(this);
 
 
-    Model* model = new Model(new Store);
+    Model* model = new Model(0);
 
     vector<BaseDetector*> detectors = model->getTrackerParams();
     for (unsigned i = 0; i < detectors.size(); i++)
@@ -28,16 +28,22 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
         createDynamicGUI(detectors[i]);
     }
 
-    capture = VideoCapture(0);
-    capture >> image;
 
-    ged = GEyeDetector(&image);
-    ged.setCC(new CascadeClassifier(HAAR_CC_FACE_DEFAULT));
+//    capture = VideoCapture(0);
+    /* TEST CODE */
+    Store* store = model->getStore();
+//    image = store->sceneImg;
+    /* TEST CODE */
+//    capture >> image;
 
-    qImage = QImage(image.data,
-                 image.size().width,
-                 image.size().height,
-                 QImage::Format_RGB888);
+
+//    ged = GEyeDetector(&image);
+//    ged.setCC(new CascadeClassifier(HAAR_CC_FACE_DEFAULT));
+
+//    qImage = QImage(image.data,
+//                 image.size().width,
+//                 image.size().height,
+//                 QImage::Format_RGB888);
 
     timer = new QTimer(this);
     timer->setInterval(40); // timer signals every N ms
@@ -58,9 +64,12 @@ GEyeTracker::~GEyeTracker()
 
 void GEyeTracker::procFrame()
 {
-    capture >> image;
-    Rect r = ged.detect();
-    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
+//    capture >> image;
+//    Rect r = ged.detect();
+//    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
+    /* TEST CODE */
+    model->update();
+    /* TEST CODE */
     this->update();
 }
 
@@ -69,15 +78,15 @@ void GEyeTracker::paintEvent(QPaintEvent* e)
     QPainter painter(this);
     painter.drawImage(QPoint(ui->trackView->x(),ui->trackView->y()), qImage);
 
-    if(faceLoc.x() > 0 && faceLoc.y() > 0)
-    {
-        painter.setBrush(Qt::NoBrush);
-        painter.setPen(QColor(255,0,0));
-        painter.drawRect(QRect(faceLoc.x()+ui->trackView->x(),
-                         faceLoc.y()+ui->trackView->y(),
-                         faceLoc.width(),
-                         faceLoc.height()));
-    }
+//    if(faceLoc.x() > 0 && faceLoc.y() > 0)
+//    {
+//        painter.setBrush(Qt::NoBrush);
+//        painter.setPen(QColor(255,0,0));
+//        painter.drawRect(QRect(faceLoc.x()+ui->trackView->x(),
+//                         faceLoc.y()+ui->trackView->y(),
+//                         faceLoc.width(),
+//                         faceLoc.height()));
+//    }
 }
 
 void GEyeTracker::disableParams()

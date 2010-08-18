@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QTimer>
 
+#include "model.h"
 #include "detectors/basedetector.h"
 #include "parameter.h"
 #include "geyedetector.h"
@@ -34,6 +35,7 @@ public slots:
     void setParam(bool* const, bool);
     void setParam(double* const, double);
 private:
+    Model* model;
     Ui::GEyeTracker *ui;
     QImage qImage;
     QRect faceLoc;
