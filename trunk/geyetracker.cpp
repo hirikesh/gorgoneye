@@ -11,23 +11,26 @@
 #include <QLabel>
 #include <QDebug>
 #include <QGroupBox>
+#include <QComboBox>
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker)
 {
-    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
+    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\
+\haarcascade_frontalface_default.xml"
 
     ui->setupUi(this);
 
-
     model = new Model(0);
 
-    vector<BaseDetector*> detectors = model->getTrackerParams();
-    for (unsigned i = 0; i < detectors.size(); i++)
+    vector<BaseTracker*> trackers = model->getTrackers();
+    for (unsigned int i = 0; i < trackers.size(); i++)
     {
-        createDynamicGUI(detectors[i]);
+        if(trackers[i]->isEnabled())
+        {
+           createTrackerGUI(trackers[i]);
+        }
     }
-
 
 //    capture = VideoCapture(0);
     /***** TEST CODE START *****/
@@ -102,28 +105,41 @@ void GEyeTracker::enableParams()
 void GEyeTracker::setParam(int* const param, int value)
 {
    *param = value;
-   qDebug() << value;
 }
 
 void GEyeTracker::setParam(bool* const param, bool value)
 {
    *param = value;
-   qDebug() << value;
 }
 
 void GEyeTracker::setParam(double* const param, double value)
 {
    *param = value;
-   qDebug() << value;
 }
 
-void GEyeTracker::createDynamicGUI(BaseDetector* detector)
+void GEyeTracker::createTrackerGUI(BaseTracker* tracker)
 {
-    // Dynamic GUI Generator
-    // Model Level
-    // -- Model Level GUI Code Here --
     // Tracker Level
-    // -- Tracker Level GUI Code Here --
+    QVBoxLayout* trackerLayout = new QVBoxLayout();
+    QGridLayout* trackerTitle = new QGridLayout();
+    ui->sideLayout->addLayout(trackerLayout);
+    ui->sideLayout->setAlignment(trackerLayout, Qt::AlignTop);
+    trackerLayout->addLayout(trackerTitle);
+
+    string title = "Enable " + tracker->getName() + " Tracking";
+    GUICheckBox *faceEnable = new GUICheckBox(title, tracker->getEnabled());
+    faceEnable->setChecked(tracker->isEnabled());
+    connect(faceEnable, SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool* const,
+bool)));
+
+    trackerTitle->addWidget(faceEnable, 0, 0);
+    trackerTitle->addWidget(new QComboBox(), 0, 1);
+
+    createDetectorGUI(tracker->getDetector(), trackerLayout);
+}
+
+void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
+{
     // Detector Level
     vector<Param*> params = detector->getParams();
     QVBoxLayout *paramLayout = new QVBoxLayout();
@@ -139,13 +155,14 @@ void GEyeTracker::createDynamicGUI(BaseDetector* detector)
         {
             gparams[i] = new GUICheckBox((ModeParam*)params[i]); // create widget
             guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
-            connect(gparams[i], SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool* const, bool)));
+            connect(gparams[i], SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool*
+const, bool)));
         }
         else if (params[i]->getType() == Param::RANGE)
         {
             gparams[i] = new GUISlider((RangeParam<int>*)params[i]); // create widget
-            // generate the other parts of the gui item
-            QSpinBox *spinbox = new QSpinBox(); // every time this loops we dont have a ref back to spinbox; can we still delete?
+
+            QSpinBox *spinbox = new QSpinBox(); // can we delete this?
             spinbox->setRange(((GUISlider*)gparams[i])->minimum(),((GUISlider*)gparams[i])->maximum());
             spinbox->setValue(((GUISlider*)gparams[i])->value());
             guiItems[i]->addWidget(new QLabel(params[i]->getName()), 0, 0);
@@ -153,20 +170,21 @@ void GEyeTracker::createDynamicGUI(BaseDetector* detector)
             guiItems[i]->addWidget(spinbox, 1, 1);
             connect(spinbox, SIGNAL(valueChanged(int)), gparams[i], SLOT(setValue(int)));
             connect(gparams[i], SIGNAL(valueChanged(int)), spinbox, SLOT(setValue(int)));
-            connect(gparams[i], SIGNAL(valueChanged(int* const, int)), this, SLOT(setParam(int* const, int)));
+            connect(gparams[i], SIGNAL(valueChanged(int* const, int)), this, SLOT(setParam(int* const,
+int)));
         }
         else if (params[i]->getType() == Param::RANGE_DBL)
         {
             gparams[i] = new GUIDSpinBox((RangeParam<double>*)params[i]); // create widget
             guiItems[i]->addWidget(new QLabel(params[i]->getName()), 0, 0);
-            guiItems[i]->addWidget(gparams[i], 0, 1);            
-            connect(gparams[i], SIGNAL(valueChanged(double* const, double)), this, SLOT(setParam(double* const, double)));
+            guiItems[i]->addWidget(gparams[i], 0, 1);
+            connect(gparams[i], SIGNAL(valueChanged(double* const, double)), this, SLOT(setParam
+(double* const, double)));
         }
         paramLayout->addLayout(guiItems[i]);
     }
-    ui->sideLayout->addWidget(groupBox);
+    layout->addWidget(groupBox);
     groupBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
-    ui->sideLayout->setAlignment(groupBox, Qt::AlignTop);
     //QSpacerItem* vertSpacer = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    //ui->sideLayout->addSpacerItem(verticalSpacer);
+    //ui->sideLayout->addSpacerItem(verticalSpacer);;
 }
