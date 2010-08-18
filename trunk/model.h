@@ -6,7 +6,7 @@ class Model
 {
 public:
     Model(Store*);
-    vector<Param*> getTrackerParams(); // needs to be an array of this in final
+    vector<BaseDetector*> getTrackerParams(); // needs to be an array of this in final
 private:
     FaceTracker faceTracker;
     // Eye eyeTracker, Nose noseTracker, etc.

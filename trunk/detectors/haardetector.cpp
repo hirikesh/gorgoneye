@@ -3,7 +3,8 @@
 
 using namespace cv;
 
-HaarDetector::HaarDetector(string td, double sf, int mn, bool fg, Size ms) : BaseDetector(),
+HaarDetector::HaarDetector(string td, double sf, int mn, bool fg, Size ms) :
+    BaseDetector("Haar"),
     trainingData(td),
     scaleFactor(sf),
     minNeighbours(mn),
@@ -17,7 +18,7 @@ HaarDetector::HaarDetector(string td, double sf, int mn, bool fg, Size ms) : Bas
     params.push_back(new RangeParam<int>("minNeighbours", Param::RANGE, &minNeighbours, 1, 5, 1));
     params.push_back(new RangeParam<int>("minWidth", Param::RANGE, &minSize.width, 20, 200, 20));
     params.push_back(new RangeParam<int>("minHeight", Param::RANGE, &minSize.height, 20, 200, 20));
-    params.push_back(new ModeParam("Canny Pruning",&fg, false));
+    params.push_back(new ModeParam("Canny Pruning", &flags, false));
 
 }
 

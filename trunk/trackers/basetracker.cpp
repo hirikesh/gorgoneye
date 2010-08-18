@@ -2,7 +2,7 @@
 
 BaseTracker::BaseTracker(Store* st) :
     store(st),
-    detector(new BaseDetector())
+    detector(new BaseDetector(""))
 {
 }
 
@@ -19,4 +19,14 @@ void BaseTracker::track()
 BaseDetector* BaseTracker::getDetector()
 {
     return detector;
+}
+
+void BaseTracker::setEnable(bool en)
+{
+    enabled = en;
+}
+
+bool BaseTracker::isEnabled()
+{
+    return enabled;
 }

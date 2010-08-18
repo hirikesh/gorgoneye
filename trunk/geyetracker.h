@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QTimer>
 
+#include "detectors/basedetector.h"
 #include "parameter.h"
 #include "geyedetector.h"
 #include <cv.h>
@@ -23,7 +24,7 @@ class GEyeTracker : public QWidget
 public:
     explicit GEyeTracker(QWidget *parent = 0);
     ~GEyeTracker();
-    void createDynamicGUI(vector<Param*>);
+    void createDynamicGUI(BaseDetector*);
 
 public slots:
     void procFrame();  

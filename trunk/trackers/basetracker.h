@@ -18,9 +18,12 @@ public:
     virtual void track();
     virtual void setDetector(int type) = 0;
     BaseDetector* getDetector();
+    bool isEnabled();
+    void setEnable(bool);
 protected:
     Store* store;
     BaseDetector* detector;
+    bool enabled;
 };
 
 #endif // TRACKER_H
