@@ -10,6 +10,7 @@ class GUICheckBox : public QCheckBox
 {
     Q_OBJECT
 public:
+    GUICheckBox(const string& title, bool* value);
     GUICheckBox(ModeParam* mp);
 signals:
     void valueChanged(bool* const, bool);

@@ -14,6 +14,7 @@ Model::Model(int device) :
     capture >> store.sceneImg; // initialisation required
     faceTracker.setDetector(FaceTracker::HAAR);
     faceTracker.setEnable(true);
+    trackers.push_back(&faceTracker);
 }
 
 void Model::update()
@@ -27,17 +28,7 @@ Store* Model::getStore()
     return &store;
 }
 
-vector<BaseDetector*> Model::getTrackerParams()
+vector<BaseTracker*> Model::getTrackers()
 {
-    // should run through an array or each tracker individually
-    // grabbing all the params for each tracker and then
-    // creating the tracker param to send to view (when it requests)
-    // however for now since we only have a single tracker, just return
-    // its information
-    vector<BaseDetector*> detectors;
-
-    if (faceTracker.isEnabled()) {
-        detectors.push_back(faceTracker.getDetector());
-    }
-    return detectors;
+    return trackers;
 }
