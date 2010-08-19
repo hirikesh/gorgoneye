@@ -132,13 +132,15 @@ void GEyeTracker::createTrackerGUI(BaseTracker* tracker)
     string title = "Enable " + tracker->getName() + " Tracking";
     GUICheckBox *faceEnable = new GUICheckBox(title, tracker->getEnabled());
     faceEnable->setChecked(tracker->isEnabled());
-    connect(faceEnable, SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool* const,
-bool)));
+    connect(faceEnable, SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool* const, bool)));
 
     trackerTitle->addWidget(faceEnable, 0, 0);
     trackerTitle->addWidget(new QComboBox(), 0, 1);
-
-    createDetectorGUI(tracker->getDetector(), trackerLayout);
+    vector<BaseDetector*> detectors = tracker->getDetectors();
+    for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+        createDetectorGUI(detectors[i], trackerLayout);
+    }
 }
 
 void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
@@ -158,8 +160,7 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
         {
             gparams[i] = new GUICheckBox((ModeParam*)params[i]); // create widget
             guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
-            connect(gparams[i], SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool*
-const, bool)));
+            connect(gparams[i], SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool* const, bool)));
         }
         else if (params[i]->getType() == Param::RANGE)
         {
@@ -173,16 +174,14 @@ const, bool)));
             guiItems[i]->addWidget(spinbox, 1, 1);
             connect(spinbox, SIGNAL(valueChanged(int)), gparams[i], SLOT(setValue(int)));
             connect(gparams[i], SIGNAL(valueChanged(int)), spinbox, SLOT(setValue(int)));
-            connect(gparams[i], SIGNAL(valueChanged(int* const, int)), this, SLOT(setParam(int* const,
-int)));
+            connect(gparams[i], SIGNAL(valueChanged(int* const, int)), this, SLOT(setParam(int* const, int)));
         }
         else if (params[i]->getType() == Param::RANGE_DBL)
         {
             gparams[i] = new GUIDSpinBox((RangeParam<double>*)params[i]); // create widget
             guiItems[i]->addWidget(new QLabel(params[i]->getName()), 0, 0);
             guiItems[i]->addWidget(gparams[i], 0, 1);
-            connect(gparams[i], SIGNAL(valueChanged(double* const, double)), this, SLOT(setParam
-(double* const, double)));
+            connect(gparams[i], SIGNAL(valueChanged(double* const, double)), this, SLOT(setParam(double* const, double)));
         }
         paramLayout->addLayout(guiItems[i]);
     }

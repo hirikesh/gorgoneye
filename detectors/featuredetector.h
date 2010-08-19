@@ -17,6 +17,10 @@ public:
 
 private:
     bool firstRun;
+    int minSaturation;
+    int maxSaturation;
+    int minValue;
+    int maxValue;
 
     // should only keep configuration vars and
     // detector flags, etc here. vars that need

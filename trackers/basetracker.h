@@ -17,7 +17,7 @@ public:
 
     virtual void track();
     virtual void setDetector(int type) = 0;
-    BaseDetector* getDetector();
+    vector<BaseDetector*> getDetectors();
     bool isEnabled();
     void setEnable(bool);
     bool* getEnabled();
@@ -27,7 +27,8 @@ protected:
     Store* store;
     const string name;
     bool enabled;
-    BaseDetector* detector;
+    vector<BaseDetector*> detectors;
+    BaseDetector* currDetector;
 
     static BaseDetector* nullDetector;
 };
