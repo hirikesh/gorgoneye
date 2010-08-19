@@ -16,7 +16,24 @@ public:
     bool locate(const Mat& srcImg, Rect& srcRoi);
 
 private:
-    // configuration parameters
+    bool firstRun;
+
+    // should only keep configuration vars and
+    // detector flags, etc here. vars that need
+    // to be exposed to external entities, in other
+    // words.
+    // persistent vars that are valid only for
+    // single function calls should be declared
+    // within the scope of the called function.
+    // declare them statically where possible.
+
+//    Mat cHSVImg;
+//    Mat hueImg;
+//    Mat satImg;
+//    Mat valImg;
+//    Mat maskImg;
+//    Mat backProjImg;
+//    MatND hist;
 };
 
 #endif // FEATURE_H

@@ -22,6 +22,7 @@ public:
 
     enum type { HAAR, FEAT };
     void setDetector(int type);
+
 private:
     BaseDetector* haarDetector;
     BaseDetector* featureDetector;

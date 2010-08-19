@@ -5,7 +5,7 @@
    user interfaces, and control of all tracker
    parameters to external entities (such as
    the UI). */
-
+/* NOT USING FOR NOW
 #include "store.h"
 #include "trackers/basetracker.h"
 
@@ -25,7 +25,7 @@ public:
     void start();
 
 private:
-    Store* store;
+    Store store;
 
     BaseTracker* faceTracker;
     BaseTracker* eyesTracker;
@@ -33,3 +33,4 @@ private:
 };
 
 #endif // CONTROL_H
+*/

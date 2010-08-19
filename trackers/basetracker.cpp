@@ -1,9 +1,12 @@
 #include "basetracker.h"
 
+BaseDetector* BaseTracker::nullDetector = new BaseDetector("Null Detector");
+
 BaseTracker::BaseTracker(Store* st, const string& s) :
     store(st),
     name(s),
-    detector(new BaseDetector(""))
+    enabled(false),
+    detector(nullDetector)
 {
 }
 
