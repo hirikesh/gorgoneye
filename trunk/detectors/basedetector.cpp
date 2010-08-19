@@ -1,3 +1,6 @@
+#include <cv.h>
+using namespace cv;
+
 #include "basedetector.h"
 
 BaseDetector::BaseDetector(const string& s) :
@@ -7,6 +10,7 @@ BaseDetector::BaseDetector(const string& s) :
 
 bool BaseDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
+    srcRoi = Rect(0, 0, srcImg.cols, srcImg.rows);
     return true;
 }
 
