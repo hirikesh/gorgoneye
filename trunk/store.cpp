@@ -1,5 +1,8 @@
 #include "store.h"
 
-Store::Store()
+Store::Store() :
+    faceLocated(false),
+    eyesLocated(false),
+    gazeLocated(false)
 {
 }

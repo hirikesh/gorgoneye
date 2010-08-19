@@ -70,8 +70,8 @@ void GEyeTracker::procFrame()
 //    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
     /**** TEST CODE START ****/
     model.update();
-    Rect r = model.getStore()->faceRoi;
-    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
+//    Rect r = model.getStore()->faceRoi;
+//    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
     /**** TEST CODE ****/
     this->update();
 }
@@ -81,14 +81,19 @@ void GEyeTracker::paintEvent(QPaintEvent* e)
     QPainter painter(this);
     painter.drawImage(QPoint(ui->trackView->x(),ui->trackView->y()), qImage);
 
-    if(faceLoc.x() > 0 && faceLoc.y() > 0)
+    Rect r = model.getStore()->faceRoi;
+    if(r.area())
     {
         painter.setBrush(Qt::NoBrush);
         painter.setPen(QColor(255,0,0));
-        painter.drawRect(QRect(faceLoc.x()+ui->trackView->x(),
-                         faceLoc.y()+ui->trackView->y(),
-                         faceLoc.width(),
-                         faceLoc.height()));
+//        painter.drawRect(QRect(faceLoc.x()+ui->trackView->x(),
+//                         faceLoc.y()+ui->trackView->y(),
+//                         faceLoc.width(),
+//                         faceLoc.height()));
+        painter.drawRect(QRect(r.x+ui->trackView->x(),
+                         r.y+ui->trackView->y(),
+                         r.width,
+                         r.height));
     }
 }
 

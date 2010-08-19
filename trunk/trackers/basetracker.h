@@ -22,11 +22,14 @@ public:
     void setEnable(bool);
     bool* getEnabled();
     const string getName();
+
 protected:
     Store* store;
     const string name;
-    BaseDetector* detector;
     bool enabled;
+    BaseDetector* detector;
+
+    static BaseDetector* nullDetector;
 };
 
 #endif // TRACKER_H
