@@ -47,7 +47,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
             Scalar(180, maxSaturation, maxValue),
             maskImg);
     //imshow("Masked Image", maskImg);
-    Mat hueImgROI(hueImg, srcRoi); // <<<=== SOMETHING WRONG HERE
+    Mat hueImgROI(hueImg, srcRoi);
     Mat maskROI(maskImg, srcRoi);
 
     // Histogram properties ------------------
