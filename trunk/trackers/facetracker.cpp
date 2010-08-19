@@ -6,13 +6,15 @@ FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
     haarDetector = new HaarDetector(HAAR_CC_FACE_DEFAULT,
                                     1.1, 3, NULL, Size(96,96));
     featureDetector = new FeatureDetector();
+    detectors.push_back(haarDetector);
+    detectors.push_back(featureDetector);
 }
 
 void FaceTracker::track()
 {
 //    detector->locate(store->sceneImg, store->faceRoi);
     // hybrid haar/camshift with automatic fallback to haar when camshift fails
-    if(detector->locate(store->sceneImg, store->faceRoi))
+    if(currDetector->locate(store->sceneImg, store->faceRoi))
         setDetector(FEAT);
     else
         setDetector(HAAR);
@@ -23,13 +25,13 @@ void FaceTracker::setDetector(int type)
     switch(type)
     {
     case HAAR:
-        detector = haarDetector;
+        currDetector = haarDetector;
         break;
     case FEAT:
-        detector = featureDetector;
+        currDetector = featureDetector;
         break;
     default:
-        detector = nullDetector;
+        currDetector = nullDetector;
         break;
     }
 }

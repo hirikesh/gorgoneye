@@ -6,8 +6,16 @@ using namespace cv;
 
 FeatureDetector::FeatureDetector() :
     BaseDetector("CAMShift"),
-    firstRun(true)
+    firstRun(true),
+    minSaturation(0),
+    maxSaturation(255),
+    minValue(0),
+    maxValue(255)
 {
+    params.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSaturation, 0, 255, 5));
+    params.push_back(new RangeParam<int>("Max. Saturation", Param::RANGE, &maxSaturation, 0, 255, 5));
+    params.push_back(new RangeParam<int>("Min. Value", Param::RANGE, &minValue, 0, 255, 5));
+    params.push_back(new RangeParam<int>("Max. Value", Param::RANGE, &maxValue, 0, 255, 5));
 }
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
@@ -35,10 +43,10 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 
     // set mask ROI
     inRange(cHSVImg,
-            Scalar(0, 45, 45),
-            Scalar(180, 256, 256),
+            Scalar(0, minSaturation, minValue),
+            Scalar(180, maxSaturation, maxValue),
             maskImg);
-
+    //imshow("Masked Image", maskImg);
     Mat hueImgROI(hueImg, srcRoi); // <<<=== SOMETHING WRONG HERE
     Mat maskROI(maskImg, srcRoi);
 
@@ -82,6 +90,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
                     true);                   // uniform histogram
 
     // show back projection for debugging / parameter tweaking
+    bitwise_and(backProjImg, maskImg, backProjImg, MatND());
     //imshow("Filtered Back Projected Image", backProjImg);
 
     // CAMShift Calculations ---------

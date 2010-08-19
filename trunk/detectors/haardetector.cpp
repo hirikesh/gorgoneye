@@ -12,11 +12,11 @@ HaarDetector::HaarDetector(string td, double sf, int mn, bool fg, Size ms) :
     minSize(ms)
 {
     // Create Parameters that will be used
-    params.push_back(new RangeParam<double>("scaleFactor", Param::RANGE_DBL, &scaleFactor, 1, 2, 0.05));
-    params.push_back(new RangeParam<int>("minNeighbours", Param::RANGE, &minNeighbours, 1, 5, 1));
-    params.push_back(new RangeParam<int>("minWidth", Param::RANGE, &minSize.width, 20, 200, 20));
-    params.push_back(new RangeParam<int>("minHeight", Param::RANGE, &minSize.height, 20, 200, 20));
-    params.push_back(new ModeParam("Canny Pruning", &flags, false));
+    params.push_back(new RangeParam<double>("Scale Factor", Param::RANGE_DBL, &scaleFactor, 1, 2, 0.05));
+    params.push_back(new RangeParam<int>("Min. Neighbours", Param::RANGE, &minNeighbours, 1, 5, 1));
+    params.push_back(new RangeParam<int>("Min. Search Width", Param::RANGE, &minSize.width, 20, 200, 20));
+    params.push_back(new RangeParam<int>("Min. Search Height", Param::RANGE, &minSize.height, 20, 200, 20));
+    params.push_back(new ModeParam("Enable Canny Pruning", &flags, false));
 }
 
 bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)

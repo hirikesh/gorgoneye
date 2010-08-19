@@ -6,13 +6,13 @@ BaseTracker::BaseTracker(Store* st, const string& s) :
     store(st),
     name(s),
     enabled(false),
-    detector(nullDetector)
+    currDetector(nullDetector)
 {
 }
 
 void BaseTracker::track()
 {
-    detector->locate(store->sceneImg, store->faceRoi);
+    currDetector->locate(store->sceneImg, store->faceRoi);
     // add other stuff here
     // to qualify this function
     // as "tracking". ie. state
@@ -20,9 +20,9 @@ void BaseTracker::track()
     // result of locate() etc.
 }
 
-BaseDetector* BaseTracker::getDetector()
+vector<BaseDetector*> BaseTracker::getDetectors()
 {
-    return detector;
+    return detectors;
 }
 
 void BaseTracker::setEnable(bool en)
