@@ -38,6 +38,7 @@ private:
 //    Mat maskImg;
       Mat backProjImg;
       Mat hueVisImg;
+      Mat backProjGrayImg;
 //    MatND hist;
 };
 

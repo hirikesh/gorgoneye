@@ -5,7 +5,7 @@
 #define STORE_H
 
 #include <cv.h>
-#include <highgui.h>
+//#include <highgui.h>
 using namespace cv;
 
 class Store

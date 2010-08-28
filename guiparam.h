@@ -3,6 +3,7 @@
 #include <QCheckBox>
 #include <QSlider>
 #include <QDoubleSpinBox>
+#include <QRadioButton>
 #include "parameter.h"
 using namespace std;
 
@@ -25,7 +26,6 @@ class GUISlider : public QSlider
     Q_OBJECT
 public:
     GUISlider(RangeParam<int>* rp);
-    int* getPtr();
 signals:
     void valueChanged(int* const, int);
 private slots:
@@ -39,13 +39,25 @@ class GUIDSpinBox : public QDoubleSpinBox
     Q_OBJECT
 public:
     GUIDSpinBox(RangeParam<double>* rp);
-    double* getPtr();
 signals:
     void valueChanged(double* const, double);
 private slots:
     void emitWithPtr(double);
 private:
     double* const pValue;
+};
+
+class GUIRadioButton : public QRadioButton
+{
+    Q_OBJECT
+public:
+    GUIRadioButton(ImageModeParam* imp);
+signals:
+    void valueChanged(Mat* const, bool);
+private slots:
+    void emitWithPtr(bool);
+private:
+    Mat* const pValue;
 };
 
 #endif // GUIPARAM_H

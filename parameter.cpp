@@ -31,3 +31,19 @@ bool ModeParam::isEnabled()
 {
     return enabled;
 }
+
+// ImageModeParam **************************************************
+ImageModeParam::ImageModeParam(const string &s, Mat* val) :
+        Param(s, val, Param::IMG_MODE),
+        enabled(false)
+{}
+
+void ImageModeParam::setEnable(bool b)
+{
+    enabled = b;
+}
+
+bool ImageModeParam::isEnabled()
+{
+    return enabled;
+}
