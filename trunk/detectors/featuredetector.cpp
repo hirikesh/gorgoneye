@@ -16,6 +16,8 @@ FeatureDetector::FeatureDetector() :
     params.push_back(new RangeParam<int>("Max. Saturation", Param::RANGE, &maxSaturation, 0, 255, 5));
     params.push_back(new RangeParam<int>("Min. Value", Param::RANGE, &minValue, 0, 255, 5));
     params.push_back(new RangeParam<int>("Max. Value", Param::RANGE, &maxValue, 0, 255, 5));
+    params.push_back(new ImageModeParam("Back Projected Image", &backProjGrayImg));
+    params.push_back(new ImageModeParam("Hue Visualisation Image", &hueVisImg));
 }
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
@@ -34,11 +36,11 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 
     // visualise Hue for debugging
     //Mat hueVisImg(srcImg.rows, srcImg.cols, CV_8UC3);
-//    satImg = Scalar(255);
-//    valImg = Scalar(255);
-//    Mat hueVis[] = {hueImg, satImg, valImg};
-//    merge(hueVis, 3, hueVisImg);
-//    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
+    satImg = Scalar(255);
+    valImg = Scalar(255);
+    Mat hueVis[] = {hueImg, satImg, valImg};
+    merge(hueVis, 3, hueVisImg);
+    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
  //   imshow("Hue Visualisation", hueVisImg);
 
     // set mask ROI
@@ -91,7 +93,9 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 
     // show back projection for debugging / parameter tweaking
     bitwise_and(backProjImg, maskImg, backProjImg, MatND());
-//    imshow("Filtered Back Projected Image", backProjImg);
+    // imshow("Filtered Back Projected Image", backProjImg);
+    Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
+    merge(backProjImg3, 3, backProjGrayImg);
     // CAMShift Calculations ---------
     // Search Window begins at region of interest determined using Haar
     // The algorithm will auto increase search window

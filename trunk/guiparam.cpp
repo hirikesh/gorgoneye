@@ -29,11 +29,6 @@ GUISlider::GUISlider(RangeParam<int>* rp) :
     connect(this, SIGNAL(valueChanged(int)), this, SLOT(emitWithPtr(int)));
 }
 
-int* GUISlider::getPtr()
-{
-    return pValue;
-}
-
 void GUISlider::emitWithPtr(int state)
 {
     emit valueChanged(pValue, state);
@@ -49,12 +44,19 @@ GUIDSpinBox::GUIDSpinBox(RangeParam<double>* rp) :
     connect(this, SIGNAL(valueChanged(double)), this, SLOT(emitWithPtr(double)));
 }
 
-double* GUIDSpinBox::getPtr()
+void GUIDSpinBox::emitWithPtr(double state)
 {
-    return pValue;
+    emit valueChanged(pValue, state);
 }
 
-void GUIDSpinBox::emitWithPtr(double state)
+GUIRadioButton::GUIRadioButton(ImageModeParam* imp) :
+        QRadioButton(imp->getName()),
+        pValue((Mat*)imp->getValue())
+{
+        connect(this, SIGNAL(toggled(bool)), this, SLOT(emitWithPtr(bool)));
+}
+
+void GUIRadioButton::emitWithPtr(bool state)
 {
     emit valueChanged(pValue, state);
 }

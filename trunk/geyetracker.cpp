@@ -126,6 +126,15 @@ void GEyeTracker::setParam(double* const param, double value)
    *param = value;
 }
 
+void GEyeTracker::setImage(Mat* const img, bool value)
+{
+    if (value)
+    {
+        model.getStore()->faceImg = img;
+    }
+    qDebug() << value;
+}
+
 void GEyeTracker::createTrackerGUI(BaseTracker* tracker)
 {
     // Tracker Level
@@ -188,6 +197,12 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
             guiItems[i]->addWidget(new QLabel(params[i]->getName()), 0, 0);
             guiItems[i]->addWidget(gparams[i], 0, 1);
             connect(gparams[i], SIGNAL(valueChanged(double* const, double)), this, SLOT(setParam(double* const, double)));
+        }
+        else if (params[i]->getType() == Param::IMG_MODE)
+        {
+            gparams[i] = new GUIRadioButton((ImageModeParam*)params[i]); // create widget
+            guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
+            connect(gparams[i], SIGNAL(valueChanged(Mat* const, bool)), this, SLOT(setImage(Mat* const, bool)));
         }
         paramLayout->addLayout(guiItems[i]);
     }

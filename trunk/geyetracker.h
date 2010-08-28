@@ -36,6 +36,7 @@ public slots:
     void setParam(int* const, int);
     void setParam(bool* const, bool);
     void setParam(double* const, double);
+    void setImage(Mat* const, bool);
 private:
     Ui::GEyeTracker *ui;
     Model model;

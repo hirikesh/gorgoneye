@@ -1,13 +1,15 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
 #include <string>
+#include <cv.h>
 
-using namespace std;
+using namespace cv;
+
 class Param
 {    
 
 public:
-    enum paramType {RANGE, RANGE_DBL, MODE};
+    enum paramType {RANGE, RANGE_DBL, MODE, IMG_MODE};
     Param(const string&, void*, paramType);
     const char* getName() const;
     void* getValue() const;
@@ -42,8 +44,19 @@ class ModeParam : public Param
 public:
     ModeParam(const string&, int*, bool);
     bool isEnabled();
+protected:
+    bool enabled;
+};
+
+class ImageModeParam : public Param
+{
+public:
+    ImageModeParam(const string&, Mat*);
+    bool isEnabled();
+    void setEnable(bool);
 private:
     bool enabled;
+    Mat* image;
 };
 
 #endif // PARAMETER_H
