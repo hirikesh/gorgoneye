@@ -15,7 +15,8 @@
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker),
-    model(Model(0))
+    model(Model(0)),
+    qFaceImg(new QImage())
 {
 //    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
 
@@ -34,17 +35,13 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     /***** TEST CODE START *****/
     Store* store = model.getStore();
     image = store->sceneImg;
+
     /***** TEST CODE END *****/
 //    capture >> image;
 
 
 //    ged = GEyeDetector(&image);
 //    ged.setCC(new CascadeClassifier(HAAR_CC_FACE_DEFAULT));
-
-    qImage = QImage(image.data,
-                 image.size().width,
-                 image.size().height,
-                 QImage::Format_RGB888);
 
     timer = new QTimer(this);
     timer->setInterval(40); // timer signals every N ms
@@ -70,6 +67,15 @@ void GEyeTracker::procFrame()
 //    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
     /**** TEST CODE START ****/
     model.update();
+    if (this->qFaceImg)
+    {
+        delete qFaceImg;
+    }
+    qFaceImg = new QImage(model.getFaceDispImg()->data,
+                 model.getFaceDispImg()->size().width,
+                 model.getFaceDispImg()->size().height,
+                 QImage::Format_RGB888);
+
 //    Rect r = model.getStore()->faceRoi;
 //    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
     /**** TEST CODE ****/
@@ -79,7 +85,7 @@ void GEyeTracker::procFrame()
 void GEyeTracker::paintEvent(QPaintEvent* e)
 {
     QPainter painter(this);
-    painter.drawImage(QPoint(ui->trackView->x(),ui->trackView->y()), qImage);
+    painter.drawImage(QPoint(ui->trackView->x(),ui->trackView->y()), *qFaceImg);
 
     Rect r = model.getStore()->faceRoi;
     if(r.area())

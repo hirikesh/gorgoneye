@@ -16,12 +16,13 @@ Model::Model(int device) :
     faceTracker.setDetector(FaceTracker::HAAR);
     faceTracker.setEnable(true);
     trackers.push_back(&faceTracker);
+    store.faceImg = &store.sceneImg; // current UI display
 }
 
 void Model::update()
 {
     capture >> store.sceneImg;
-    cvtColor(store.sceneImg, store.sceneImg, CV_BGR2RGB);
+    cvtColor(store.sceneImg, store.sceneImg, CV_BGR2RGB); // preprocessing
     if(faceTracker.isEnabled()) faceTracker.track();
 }
 
@@ -33,4 +34,9 @@ Store* Model::getStore()
 vector<BaseTracker*> Model::getTrackers()
 {
     return trackers;
+}
+
+Mat* Model::getFaceDispImg()
+{
+    return store.faceImg;
 }

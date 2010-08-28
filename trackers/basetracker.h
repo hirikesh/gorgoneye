@@ -15,7 +15,7 @@ class BaseTracker
 public:
     BaseTracker(Store* st, const string&);
 
-    virtual void track();
+    virtual void track() = 0;
     virtual void setDetector(int type) = 0;
     vector<BaseDetector*> getDetectors();
     bool isEnabled();

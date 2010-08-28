@@ -5,7 +5,7 @@
 
 #include <cv.h>
 #include "parameter.h"
-
+#include "store.h"
 using namespace cv;
 
 #ifndef DETECTOR_H
