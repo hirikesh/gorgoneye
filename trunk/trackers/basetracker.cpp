@@ -10,16 +10,6 @@ BaseTracker::BaseTracker(Store* st, const string& s) :
 {
 }
 
-void BaseTracker::track()
-{
-    currDetector->locate(store->sceneImg, store->faceRoi);
-    // add other stuff here
-    // to qualify this function
-    // as "tracking". ie. state
-    // variables showing the
-    // result of locate() etc.
-}
-
 vector<BaseDetector*> BaseTracker::getDetectors()
 {
     return detectors;

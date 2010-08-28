@@ -33,13 +33,13 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     split(cHSVImg, cHSVChannels);
 
     // visualise Hue for debugging
-//    Mat hueVisImg(srcImg.rows, srcImg.cols, CV_8UC3);
+    //Mat hueVisImg(srcImg.rows, srcImg.cols, CV_8UC3);
 //    satImg = Scalar(255);
 //    valImg = Scalar(255);
 //    Mat hueVis[] = {hueImg, satImg, valImg};
 //    merge(hueVis, 3, hueVisImg);
 //    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
-//    imshow("Hue Visualisation", hueVisImg);
+ //   imshow("Hue Visualisation", hueVisImg);
 
     // set mask ROI
     inRange(cHSVImg,
@@ -51,7 +51,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     Mat maskROI(maskImg, srcRoi);
 
     // Histogram properties ------------------
-    static Mat backProjImg;
+    //static Mat backProjImg;
     static MatND hist;
     int hBins = 30; // no. of hue bins
     int histSize[] = {hBins};
@@ -91,8 +91,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 
     // show back projection for debugging / parameter tweaking
     bitwise_and(backProjImg, maskImg, backProjImg, MatND());
-    //imshow("Filtered Back Projected Image", backProjImg);
-
+//    imshow("Filtered Back Projected Image", backProjImg);
     // CAMShift Calculations ---------
     // Search Window begins at region of interest determined using Haar
     // The algorithm will auto increase search window

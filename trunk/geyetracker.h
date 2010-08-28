@@ -39,7 +39,7 @@ public slots:
 private:
     Ui::GEyeTracker *ui;
     Model model;
-    QImage qImage;
+    QImage* qFaceImg;
     QRect faceLoc;
     QTimer* timer;
 //    VideoCapture capture;

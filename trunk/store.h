@@ -12,11 +12,10 @@ class Store
 {
 public:
     Store();
-
     // Images to process / already processed
     Mat sceneImg;
-    Mat faceImg;
-    Mat eyesImg;
+    Mat* faceImg;
+    Mat* eyesImg;
 
     // Tracked region of interests
     Rect faceRoi; // relative to sceneImg
