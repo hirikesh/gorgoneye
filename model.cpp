@@ -11,7 +11,7 @@ Model::Model(int device) :
     faceTracker(FaceTracker(&store))
 {
     capture >> store.sceneImg; // initialisation required
-    cvtColor(store.sceneImg, store.sceneImg, CV_BGR2RGB);
+    //cvtColor(store.sceneImg, store.sceneImg, CV_BGR2RGB);
 
     faceTracker.setDetector(FaceTracker::HAAR);
     faceTracker.setEnable(true);
