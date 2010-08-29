@@ -7,10 +7,10 @@ using namespace cv;
 FeatureDetector::FeatureDetector() :
     BaseDetector("CAMShift"),
     firstRun(true),
-    minSaturation(0),
-    maxSaturation(255),
-    minValue(0),
-    maxValue(255)
+    minSaturation(40), // default
+    maxSaturation(240), // default
+    minValue(50), // default
+    maxValue(255) // default
 {
     params.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSaturation, 0, 255, 5));
     params.push_back(new RangeParam<int>("Max. Saturation", Param::RANGE, &maxSaturation, 0, 255, 5));
@@ -35,13 +35,13 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     split(cHSVImg, cHSVChannels);
 
     // visualise Hue for debugging
-    //Mat hueVisImg(srcImg.rows, srcImg.cols, CV_8UC3);
+//    Mat hueVisImg(srcImg.rows, srcImg.cols, CV_8UC3);
     satImg = Scalar(255);
     valImg = Scalar(255);
     Mat hueVis[] = {hueImg, satImg, valImg};
     merge(hueVis, 3, hueVisImg);
     cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
- //   imshow("Hue Visualisation", hueVisImg);
+//    imshow("Hue Visualisation", hueVisImg);
 
     // set mask ROI
     inRange(cHSVImg,
@@ -103,7 +103,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     RotatedRect rotTemp;
     rotTemp = CamShift(backProjImg, // back projected image
                        srcRoi,     // initial search window
-                       TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 20, 1));
+                       TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 5, 10));
 
     srcRoi = rotTemp.boundingRect();
 

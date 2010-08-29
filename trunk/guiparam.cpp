@@ -9,7 +9,7 @@ GUICheckBox::GUICheckBox(const string& title, bool* value) :
 
 GUICheckBox::GUICheckBox(ModeParam* mp) :
         QCheckBox(mp->getName()),
-        pValue((bool*)mp->getValue())
+        pValue(static_cast<bool*>(mp->getValue()))
 {
     connect(this, SIGNAL(stateChanged(int)), this, SLOT(emitWithPtr(int)));
 }
@@ -21,7 +21,7 @@ void GUICheckBox::emitWithPtr(int state)
 
 GUISlider::GUISlider(RangeParam<int>* rp) :
         QSlider(Qt::Horizontal),
-        pValue((int*)rp->getValue())
+        pValue(static_cast<int*>(rp->getValue()))
 {
     setRange(rp->getMinimum(), rp->getMaximum());
     setSingleStep(rp->getStep());
@@ -36,7 +36,7 @@ void GUISlider::emitWithPtr(int state)
 
 GUIDSpinBox::GUIDSpinBox(RangeParam<double>* rp) :
         QDoubleSpinBox(),
-        pValue((double*)rp->getValue())
+        pValue(static_cast<double*>(rp->getValue()))
 {
     setRange(rp->getMinimum(), rp->getMaximum());
     setSingleStep(rp->getStep());
@@ -51,7 +51,7 @@ void GUIDSpinBox::emitWithPtr(double state)
 
 GUIRadioButton::GUIRadioButton(ImageModeParam* imp) :
         QRadioButton(imp->getName()),
-        pValue((Mat*)imp->getValue())
+        pValue(static_cast<Mat*>(imp->getValue()))
 {
         connect(this, SIGNAL(toggled(bool)), this, SLOT(emitWithPtr(bool)));
 }

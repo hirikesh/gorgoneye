@@ -12,7 +12,7 @@
 #include <cv.h>
 #include <highgui.h>
 #include <QLayout>
-
+#include "glview.h"
 using namespace cv;
 
 namespace Ui {
@@ -43,6 +43,7 @@ private:
     QImage* qFaceImg;
     QRect faceLoc;
     QTimer* timer;
+    GLView* opengl;
 //    VideoCapture capture;
     Mat image;
 //    GEyeDetector ged;

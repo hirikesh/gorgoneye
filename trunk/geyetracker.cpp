@@ -12,6 +12,8 @@
 #include <QDebug>
 #include <QGroupBox>
 #include <QComboBox>
+#include <cv.h>
+using namespace cv;
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker),
@@ -31,17 +33,11 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
         }
     }
 
-//    capture = VideoCapture(0);
-    /***** TEST CODE START *****/
+    opengl = new GLView(new QImage());
+    ui->trackView->addWidget(opengl);
+
     Store* store = model.getStore();
     image = store->sceneImg;
-
-    /***** TEST CODE END *****/
-//    capture >> image;
-
-
-//    ged = GEyeDetector(&image);
-//    ged.setCC(new CascadeClassifier(HAAR_CC_FACE_DEFAULT));
 
     timer = new QTimer(this);
     timer->setInterval(40); // timer signals every N ms
@@ -62,10 +58,6 @@ GEyeTracker::~GEyeTracker()
 
 void GEyeTracker::procFrame()
 {
-//    capture >> image;
-//    Rect r = ged.detect();
-//    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
-    /**** TEST CODE START ****/
     model.update();
     if (this->qFaceImg)
     {
@@ -76,31 +68,34 @@ void GEyeTracker::procFrame()
                  model.getFaceDispImg()->size().height,
                  QImage::Format_RGB888);
 
-//    Rect r = model.getStore()->faceRoi;
-//    faceLoc = QRect(QPoint(r.x,r.y), QSize(r.width,r.height));
-    /**** TEST CODE ****/
-    this->update();
+    //this->update();
+    opengl->loadGLTextures(*qFaceImg);
+    Rect r = model.getStore()->faceRoi;
+    if(r.area())
+    {
+        opengl->setCurrROI(new QRect(r.x, r.y, r.width, r.height));
+    }
+    opengl->updateGL();
 }
 
 void GEyeTracker::paintEvent(QPaintEvent* e)
 {
-    QPainter painter(this);
-    painter.drawImage(QPoint(ui->trackView->x(),ui->trackView->y()), *qFaceImg);
-
-    Rect r = model.getStore()->faceRoi;
-    if(r.area())
-    {
-        painter.setBrush(Qt::NoBrush);
-        painter.setPen(QColor(255,0,0));
-//        painter.drawRect(QRect(faceLoc.x()+ui->trackView->x(),
-//                         faceLoc.y()+ui->trackView->y(),
-//                         faceLoc.width(),
-//                         faceLoc.height()));
-        painter.drawRect(QRect(r.x+ui->trackView->x(),
-                         r.y+ui->trackView->y(),
-                         r.width,
-                         r.height));
-    }
+//    QPainter painter(this);
+//    painter.drawImage(QPoint(ui->trackView->x(),ui->trackView->y()), *qFaceImg);
+//    Rect r = model.getStore()->faceRoi;
+//    if(r.area())
+//    {
+//        painter.setBrush(Qt::NoBrush);
+//        painter.setPen(QColor(255,0,0));
+////        painter.drawRect(QRect(faceLoc.x()+ui->trackView->x(),
+////                         faceLoc.y()+ui->trackView->y(),
+////                         faceLoc.width(),
+////                         faceLoc.height()));
+//        painter.drawRect(QRect(r.x+ui->trackView->x(),
+//                         r.y+ui->trackView->y(),
+//                         r.width,
+//                         r.height));
+//    }
 }
 
 void GEyeTracker::disableParams()
@@ -132,7 +127,6 @@ void GEyeTracker::setImage(Mat* const img, bool value)
     {
         model.getStore()->faceImg = img;
     }
-    qDebug() << value;
 }
 
 void GEyeTracker::createTrackerGUI(BaseTracker* tracker)
@@ -173,17 +167,18 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
         guiItems[i] = new QGridLayout(); // create gui item
         if (params[i]->getType() == Param::MODE)
         {
-            gparams[i] = new GUICheckBox((ModeParam*)params[i]); // create widget
+            gparams[i] = new GUICheckBox(static_cast<ModeParam*>(params[i])); // create widget
             guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
             connect(gparams[i], SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool* const, bool)));
         }
         else if (params[i]->getType() == Param::RANGE)
         {
-            gparams[i] = new GUISlider((RangeParam<int>*)params[i]); // create widget
+            gparams[i] = new GUISlider(static_cast<RangeParam<int>*>(params[i])); // create widget
 
             QSpinBox *spinbox = new QSpinBox(); // can we delete this?
-            spinbox->setRange(((GUISlider*)gparams[i])->minimum(),((GUISlider*)gparams[i])->maximum());
-            spinbox->setValue(((GUISlider*)gparams[i])->value());
+            GUISlider* currSlider = static_cast<GUISlider*>(gparams[i]);
+            spinbox->setRange(currSlider->minimum(), currSlider->maximum());
+            spinbox->setValue(currSlider->value());
             guiItems[i]->addWidget(new QLabel(params[i]->getName()), 0, 0);
             guiItems[i]->addWidget(gparams[i], 1, 0);
             guiItems[i]->addWidget(spinbox, 1, 1);
@@ -193,14 +188,14 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
         }
         else if (params[i]->getType() == Param::RANGE_DBL)
         {
-            gparams[i] = new GUIDSpinBox((RangeParam<double>*)params[i]); // create widget
+            gparams[i] = new GUIDSpinBox(static_cast<RangeParam<double>*>(params[i])); // create widget
             guiItems[i]->addWidget(new QLabel(params[i]->getName()), 0, 0);
             guiItems[i]->addWidget(gparams[i], 0, 1);
             connect(gparams[i], SIGNAL(valueChanged(double* const, double)), this, SLOT(setParam(double* const, double)));
         }
         else if (params[i]->getType() == Param::IMG_MODE)
         {
-            gparams[i] = new GUIRadioButton((ImageModeParam*)params[i]); // create widget
+            gparams[i] = new GUIRadioButton(static_cast<ImageModeParam*>(params[i])); // create widget
             guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
             connect(gparams[i], SIGNAL(valueChanged(Mat* const, bool)), this, SLOT(setImage(Mat* const, bool)));
         }

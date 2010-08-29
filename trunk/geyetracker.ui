@@ -7,23 +7,23 @@
     <x>0</x>
     <y>0</y>
     <width>960</width>
-    <height>580</height>
+    <height>900</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>960</width>
-    <height>280</height>
+    <height>600</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>960</width>
-    <height>580</height>
+    <height>900</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>GorgonEye</string>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -45,26 +45,7 @@
      <number>5</number>
     </property>
     <item>
-     <widget class="QFrame" name="trackView">
-      <property name="minimumSize">
-       <size>
-        <width>640</width>
-        <height>480</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>640</width>
-        <height>480</height>
-       </size>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-     </widget>
+     <layout class="QVBoxLayout" name="trackView"/>
     </item>
     <item>
      <spacer name="vertSpacer">
@@ -135,6 +116,17 @@
     </rect>
    </property>
    <layout class="QVBoxLayout" name="sideLayout"/>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>580</y>
+     <width>160</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="glviewLayout"/>
   </widget>
  </widget>
  <resources/>
