@@ -19,8 +19,8 @@ using namespace cv;
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker),
-    model(Model(0)),
-    qFaceImg(new QImage())
+    model(Model(0))
+//    qFaceImg(new QImage())
 {
     ui->setupUi(this);
 
@@ -33,7 +33,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
         }
     }
 
-    opengl = new GLView(new QImage());
+    opengl = new GLView();
     ui->viewLayout->insertWidget(0, opengl);
 
     Store* store = model.getStore();
@@ -59,29 +59,19 @@ GEyeTracker::~GEyeTracker()
 void GEyeTracker::procFrame()
 {
     model.update();
-//    if (this->qFaceImg)
-//    {
-//        delete qFaceImg;
-//    }
-//    qFaceImg = new QImage(model.getFaceDispImg()->data,
-//                 model.getFaceDispImg()->size().width,
-//                 model.getFaceDispImg()->size().height,
-//                 QImage::Format_RGB888);
 
-    //this->update();
-//    opengl->loadGLTextures(*qFaceImg);
-    opengl->loadGLTextures(image);
-
-//    Rect r = model.getStore()->faceRoi;
-//    if(r.area())
-//    {
-//        opengl->setCurrROI(new QRect(r.x, r.y, r.width, r.height));
-//    }
+    opengl->loadGLTextures(*model.getFaceDispImg());
     opengl->updateGL();
+
+    Rect r = model.getStore()->faceRoi;
+    if(r.area())
+    {
+        opengl->setCurrROI(new QRect(r.x, r.y, r.width, r.height));
+    }
 }
 
-void GEyeTracker::paintEvent(QPaintEvent* e)
-{
+//void GEyeTracker::paintEvent(QPaintEvent* e)
+//{
 //    QPainter painter(this);
 //    painter.drawImage(QPoint(ui->viewLayout->x(),ui->viewLayout->y()), *qFaceImg);
 //    Rect r = model.getStore()->faceRoi;
@@ -98,7 +88,7 @@ void GEyeTracker::paintEvent(QPaintEvent* e)
 //                         r.width,
 //                         r.height));
 //    }
-}
+//}
 
 void GEyeTracker::disableParams()
 {

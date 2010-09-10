@@ -40,14 +40,14 @@ public slots:
 private:
     Ui::GEyeTracker *ui;
     Model model;
-    QImage* qFaceImg;
+//    QImage* qFaceImg;
     QRect faceLoc;
     QTimer* timer;
     GLView* opengl;
 //    VideoCapture capture;
     Mat image;
 //    GEyeDetector ged;
-    void paintEvent(QPaintEvent* e);
+//    void paintEvent(QPaintEvent* e);
 };
 
 #endif // GEYETRACKER_H
