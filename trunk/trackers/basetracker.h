@@ -4,32 +4,36 @@
    but all with the same functional structure.
    Follows the Strategy design pattern. */
 
-#include "store.h"
-#include "detectors/basedetector.h"
-
 #ifndef TRACKER_H
 #define TRACKER_H
+
+#include "detectors/basedetector.h"
+#include <vector>
+#include <string>
+
+class BaseDetector;
+class Store;
 
 class BaseTracker
 {
 public:
-    BaseTracker(Store* st, const string&);
+    BaseTracker(Store* st, const std::string&);
 
     virtual void track() = 0;
     virtual void setDetector(int type) = 0;
-    vector<BaseDetector*> getDetectors();
+    std::vector<BaseDetector*> getDetectors();
     bool isEnabled();
     void setEnable(bool);
     bool* getEnabled();
-    const string getName();
+    const std::string getName();
 
 protected:
     Store* store;
-    const string name;
+    const std::string name;
     bool enabled;
-    vector<BaseDetector*> detectors;
-    BaseDetector* currDetector;
 
+    std::vector<BaseDetector*> detectors;
+    BaseDetector* currDetector;
     static BaseDetector* nullDetector;
 };
 

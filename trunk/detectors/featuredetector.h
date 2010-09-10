@@ -2,18 +2,18 @@
    Concreate BaseDetector class using
    CAMshift tracking. */
 
-#include "store.h"
-#include "basedetector.h"
-
 #ifndef FEATURE_H
 #define FEATURE_H
+
+#include <cv.h>
+#include "basedetector.h"
 
 class FeatureDetector : public BaseDetector
 {
 public:
     FeatureDetector();
 
-    bool locate(const Mat& srcImg, Rect& srcRoi);
+    bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 
 private:
     bool histCalibrate;
@@ -37,9 +37,9 @@ private:
 //    Mat satImg;
 //    Mat valImg;
 //    Mat maskImg;
-      Mat backProjImg;
-      Mat hueVisImg;
-      Mat backProjGrayImg;
+    cv::Mat backProjImg;
+    cv::Mat hueVisImg;
+    cv::Mat backProjGrayImg;
 //    MatND hist;
 };
 

@@ -1,19 +1,14 @@
 #ifndef GEYETRACKER_H
 #define GEYETRACKER_H
 
-#include <QWidget>
-#include <QPainter>
-#include <QTimer>
-
-#include "model.h"
-#include "detectors/basedetector.h"
-#include "parameter.h"
-#include "geyedetector.h"
 #include <cv.h>
-#include <highgui.h>
-#include <QLayout>
-#include "glview.h"
-using namespace cv;
+#include <QWidget>
+#include <QRect>
+#include "model.h"
+
+class QVBoxLayout;
+class BaseDetector;
+class GLView;
 
 namespace Ui {
     class GEyeTracker;
@@ -36,7 +31,7 @@ public slots:
     void setParam(int* const, int);
     void setParam(bool* const, bool);
     void setParam(double* const, double);
-    void setImage(Mat* const, bool);
+    void setImage(cv::Mat* const, bool);
 private:
     Ui::GEyeTracker *ui;
     Model model;
@@ -44,9 +39,7 @@ private:
     QRect faceLoc;
     QTimer* timer;
     GLView* opengl;
-//    VideoCapture capture;
-    Mat image;
-//    GEyeDetector ged;
+    cv::Mat image;
 //    void paintEvent(QPaintEvent* e);
 };
 

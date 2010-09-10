@@ -1,20 +1,16 @@
+#include <cv.h>
+#include <QLabel>
+#include <QGroupBox>
+#include <QComboBox>
+#include <QTimer>
 #include "geyetracker.h"
 #include "ui_geyetracker.h"
-#include "geyedetector.h"
 #include "parameter.h"
 #include "guiparam.h"
 #include "model.h"
 #include "trackers/basetracker.h"
-#include "trackers/facetracker.h"
 #include "detectors/basedetector.h"
-#include "detectors/haardetector.h"
-#include <QLabel>
-#include <QDebug>
-#include <QGroupBox>
-#include <QComboBox>
-#include <cv.h>
-#include <highgui.h>
-using namespace cv;
+#include "glview.h"
 
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
@@ -63,7 +59,7 @@ void GEyeTracker::procFrame()
     opengl->loadGLTextures(*model.getFaceDispImg());
     opengl->updateGL();
 
-    Rect r = model.getStore()->faceRoi;
+    cv::Rect r = model.getStore()->faceRoi;
     if(r.area())
     {
         opengl->setCurrROI(new QRect(r.x, r.y, r.width, r.height));
@@ -189,7 +185,7 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
         {
             gparams[i] = new GUIRadioButton(static_cast<ImageModeParam*>(params[i])); // create widget
             guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
-            connect(gparams[i], SIGNAL(valueChanged(Mat* const, bool)), this, SLOT(setImage(Mat* const, bool)));
+            connect(gparams[i], SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
         }
         paramLayout->addLayout(guiItems[i]);
     }

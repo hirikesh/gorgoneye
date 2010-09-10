@@ -1,8 +1,8 @@
 #include <cv.h>
-using namespace cv;
-
 #include "store.h"
 #include "featuredetector.h"
+
+using namespace cv;
 
 FeatureDetector::FeatureDetector() :
     BaseDetector("CAMShift"),

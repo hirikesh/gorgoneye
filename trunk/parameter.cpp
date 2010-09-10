@@ -1,7 +1,10 @@
 #include "parameter.h"
 
+using std::string;
+using cv::Mat;
+
 // Param *******************************************************
-Param::Param(const string& s, void* val, paramType t) :
+    Param::Param(const string& s, void* val, paramType t) :
         name(s),
         value(val),
         type(t)

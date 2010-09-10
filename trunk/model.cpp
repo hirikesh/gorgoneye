@@ -1,13 +1,14 @@
 #include <cv.h>
 #include <highgui.h>
-using namespace cv;
 
 #include "model.h"
-#include "store.h"
+
+using namespace cv;
+using std::vector;
 
 Model::Model(int device) :
-    store(Store()),
     capture(VideoCapture(device)),
+    store(Store()),
     faceTracker(FaceTracker(&store))
 {
     capture >> store.sceneImg; // initialisation required
