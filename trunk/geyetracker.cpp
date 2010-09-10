@@ -13,7 +13,9 @@
 #include <QGroupBox>
 #include <QComboBox>
 #include <cv.h>
+#include <highgui.h>
 using namespace cv;
+
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker),
@@ -57,22 +59,24 @@ GEyeTracker::~GEyeTracker()
 void GEyeTracker::procFrame()
 {
     model.update();
-    if (this->qFaceImg)
-    {
-        delete qFaceImg;
-    }
-    qFaceImg = new QImage(model.getFaceDispImg()->data,
-                 model.getFaceDispImg()->size().width,
-                 model.getFaceDispImg()->size().height,
-                 QImage::Format_RGB888);
+//    if (this->qFaceImg)
+//    {
+//        delete qFaceImg;
+//    }
+//    qFaceImg = new QImage(model.getFaceDispImg()->data,
+//                 model.getFaceDispImg()->size().width,
+//                 model.getFaceDispImg()->size().height,
+//                 QImage::Format_RGB888);
 
     //this->update();
-    opengl->loadGLTextures(*qFaceImg);
-    Rect r = model.getStore()->faceRoi;
-    if(r.area())
-    {
-        opengl->setCurrROI(new QRect(r.x, r.y, r.width, r.height));
-    }
+//    opengl->loadGLTextures(*qFaceImg);
+    opengl->loadGLTextures(image);
+
+//    Rect r = model.getStore()->faceRoi;
+//    if(r.area())
+//    {
+//        opengl->setCurrROI(new QRect(r.x, r.y, r.width, r.height));
+//    }
     opengl->updateGL();
 }
 

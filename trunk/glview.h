@@ -2,6 +2,10 @@
 #define GLVIEW_H
 
 #include <qgl.h>
+#include <qglobal.h>
+
+#include <cv.h>
+using namespace cv;
 
 class GLView : public QGLWidget
 {
@@ -12,7 +16,8 @@ public:
 
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
-  void loadGLTextures(const QImage&);
+//  void loadGLTextures(const QImage&);
+  void loadGLTextures(const Mat&);
   //void drawROIs(QRect&);
   void setCurrROI(QRect *);
 protected:
