@@ -2,7 +2,7 @@
 
 BaseDetector* BaseTracker::nullDetector = new BaseDetector("Null Detector");
 
-BaseTracker::BaseTracker(Store* st, const string& s) :
+BaseTracker::BaseTracker(Store* st, const std::string& s) :
     store(st),
     name(s),
     enabled(false),
@@ -10,7 +10,7 @@ BaseTracker::BaseTracker(Store* st, const string& s) :
 {
 }
 
-vector<BaseDetector*> BaseTracker::getDetectors()
+std::vector<BaseDetector*> BaseTracker::getDetectors()
 {
     return detectors;
 }
@@ -30,7 +30,7 @@ bool* BaseTracker::getEnabled()
     return &enabled;
 }
 
-const string BaseTracker::getName()
+const std::string BaseTracker::getName()
 {
     return name;
 }

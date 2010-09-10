@@ -1,7 +1,10 @@
 #include <cv.h>
-using namespace cv;
-
 #include "basedetector.h"
+
+using std::string;
+using std::vector;
+using cv::Mat;
+using cv::Rect;
 
 BaseDetector::BaseDetector(const string& s) :
         name(s)

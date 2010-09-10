@@ -4,14 +4,10 @@
    face tracking algorithms according
    to the Strategy design pattern. */
 
-#include "store.h"
-#include "basetracker.h"
-#include "detectors/basedetector.h"
-#include "detectors/haardetector.h"
-#include "detectors/featuredetector.h"
-
 #ifndef FACE_H
 #define FACE_H
+
+#include "basetracker.h"
 
 class FaceTracker : public BaseTracker
 {

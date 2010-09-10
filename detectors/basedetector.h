@@ -3,26 +3,32 @@
    tracking algorithms under common interface.
    Follows the Strategy design pattern. */
 
-#include <cv.h>
-#include "parameter.h"
-#include "store.h"
-using namespace cv;
-
 #ifndef DETECTOR_H
 #define DETECTOR_H
+
+#include <vector>
+#include "parameter.h"
+
+namespace cv
+{
+    class Mat;
+    template <class T>
+    class Rect_;
+    typedef Rect_<int> Rect;
+}
 
 class BaseDetector
 {
 public:
-    BaseDetector(const string&);
+    BaseDetector(const std::string&);
 
-    virtual bool locate(const Mat& srcImg, Rect& srcRoi);
-    vector<Param*> getParams();
-    const string getName() const;
+    virtual bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
+    std::vector<Param*> getParams();
+    const std::string getName() const;
 
 protected:
-    const string name;
-    vector<Param*> params;
+    const std::string name;
+    std::vector<Param*> params;
 };
 
 #endif // DETECTOR_H

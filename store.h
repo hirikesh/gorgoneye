@@ -5,22 +5,20 @@
 #define STORE_H
 
 #include <cv.h>
-//#include <highgui.h>
-using namespace cv;
 
 class Store
 {
 public:
     Store();
     // Images to process / already processed
-    Mat sceneImg;
-    Mat* faceImg;
-    Mat* eyesImg;
+    cv::Mat sceneImg;
+    cv::Mat* faceImg;
+    cv::Mat* eyesImg;
 
     // Tracked region of interests
-    Rect faceRoi; // relative to sceneImg
-    Rect eyesRoi;  // relative to faceImg
-    Rect gazeRoi; // relative to screen
+    cv::Rect faceRoi; // relative to sceneImg
+    cv::Rect eyesRoi;  // relative to faceImg
+    cv::Rect gazeRoi; // relative to screen
 
     // Status flags
     bool faceLocated;

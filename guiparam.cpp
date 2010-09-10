@@ -1,6 +1,6 @@
 #include "guiparam.h"
 
-GUICheckBox::GUICheckBox(const string& title, bool* value) :
+GUICheckBox::GUICheckBox(const std::string& title, bool* value) :
         QCheckBox(title.c_str()),
         pValue(value)
 {
@@ -51,7 +51,7 @@ void GUIDSpinBox::emitWithPtr(double state)
 
 GUIRadioButton::GUIRadioButton(ImageModeParam* imp) :
         QRadioButton(imp->getName()),
-        pValue(static_cast<Mat*>(imp->getValue()))
+        pValue(static_cast<cv::Mat*>(imp->getValue()))
 {
         connect(this, SIGNAL(toggled(bool)), this, SLOT(emitWithPtr(bool)));
 }

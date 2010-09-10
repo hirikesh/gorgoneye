@@ -2,26 +2,27 @@
    Concreate BaseDetector class using
    HAAR classification. */
 
-#include <cv.h>
-#include "basedetector.h"
-#include "parameter.h"
-
 #ifndef HAAR_H
 #define HAAR_H
+
+#include <cv.h>
+#include "basedetector.h"
+
 
 class HaarDetector : public BaseDetector
 {
 public:
-    HaarDetector(string td, double sf, int mn, bool fg, Size ms);
+    HaarDetector(std::string td, double sf, int mn, bool fg, cv::Size ms);
 
-    bool locate(const Mat& srcImg, Rect& srcRoi);
+    bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 
 private:
-    string trainingData;
+    std::string trainingData;
     double scaleFactor;
     int minNeighbours;
     int flags;
-    Size minSize;
+
+    cv::Size minSize;
 };
 
 #endif // HAAR_H

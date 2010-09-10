@@ -1,7 +1,6 @@
+#include <QImage>
 #include "glview.h"
 #include <GL/glext.h>
-#include <QImage>
-
 
 GLView::GLView(QWidget *parent) :
     QGLWidget(parent),

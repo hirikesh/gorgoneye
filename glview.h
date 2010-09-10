@@ -1,8 +1,9 @@
 #ifndef GLVIEW_H
 #define GLVIEW_H
 
-#include <qgl.h>
 #include <cv.h>
+#include <qgl.h>
+
 using namespace cv;
 
 class GLView : public QGLWidget
