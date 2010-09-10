@@ -1,13 +1,10 @@
 #include "glview.h"
-
-#include <QDebug>
-#include <QImage>
 #include <GL/glext.h>
+#include <QImage>
 
 
-GLView::GLView(QImage* img, QWidget *parent) :
+GLView::GLView(QWidget *parent) :
     QGLWidget(parent),
-    renderImg(img),
     currROI(new QRect(-1,-1,0,0))
 {}
 
@@ -68,40 +65,22 @@ void GLView::paintGL()
     glEnable2D();
     glBindTexture(GL_TEXTURE_2D, texture[0]);
     glBegin(GL_QUADS);  // Draw A Quad
-    // old coords produced upside down image using Mat.data pointer
     glTexCoord2f(0.0f, 0.0f); glVertex2f(0, 480); // Top Left
     glTexCoord2f(0.0f, 1.0f); glVertex2f(0, 0); // Bottom Left
     glTexCoord2f(1.0f, 1.0f); glVertex2f(640, 0); // Bottom Right
     glTexCoord2f(1.0f, 0.0f); glVertex2f(640, 480); // Top Right
-//        glTexCoord2f(0.0f, 0.0f); glVertex2f(0, 0); // Bottom Left
-//        glTexCoord2f(0.0f, 1.0f); glVertex2f(0, 480); // Top Left
-//        glTexCoord2f(1.0f, 1.0f); glVertex2f(640, 480); // Top Right
-//        glTexCoord2f(1.0f, 0.0f); glVertex2f(640, 0); // Bottom Right
     glEnd();
     glDisable2D();
     update();
 }
 
-//void GLView::loadGLTextures(const QImage& b)
 void GLView::loadGLTextures(const Mat& image)
 {
-//    QImage t;
-//    t = QGLWidget::convertToGLFormat( b );
     glGenTextures( 1, &texture[0] );
     glBindTexture( GL_TEXTURE_2D, texture[0] );
-//    glTexImage2D( GL_TEXTURE_2D, 0, 3, t.width(), t.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, t.bits() );
-
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-
-//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.size().width, image.size().height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, image.data);
-}
-
-void GLView::paintEvent(QPaintEvent *event)
-{
-
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, image.data);
 }
 
 void GLView::glEnable2D()
