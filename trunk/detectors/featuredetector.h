@@ -16,7 +16,8 @@ public:
     bool locate(const Mat& srcImg, Rect& srcRoi);
 
 private:
-    bool firstRun;
+    bool histCalibrate;
+
     int minSaturation;
     int maxSaturation;
     int minValue;
