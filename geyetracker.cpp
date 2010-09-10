@@ -20,8 +20,6 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     model(Model(0)),
     qFaceImg(new QImage())
 {
-//    #define HAAR_CC_FACE_DEFAULT "c:\\opencv2.1\\data\\haarcascades\\haarcascade_frontalface_default.xml"
-
     ui->setupUi(this);
 
     vector<BaseTracker*> trackers = model.getTrackers();
@@ -34,7 +32,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     }
 
     opengl = new GLView(new QImage());
-    ui->trackView->addWidget(opengl);
+    ui->viewLayout->insertWidget(0, opengl);
 
     Store* store = model.getStore();
     image = store->sceneImg;
@@ -81,18 +79,18 @@ void GEyeTracker::procFrame()
 void GEyeTracker::paintEvent(QPaintEvent* e)
 {
 //    QPainter painter(this);
-//    painter.drawImage(QPoint(ui->trackView->x(),ui->trackView->y()), *qFaceImg);
+//    painter.drawImage(QPoint(ui->viewLayout->x(),ui->viewLayout->y()), *qFaceImg);
 //    Rect r = model.getStore()->faceRoi;
 //    if(r.area())
 //    {
 //        painter.setBrush(Qt::NoBrush);
 //        painter.setPen(QColor(255,0,0));
-////        painter.drawRect(QRect(faceLoc.x()+ui->trackView->x(),
-////                         faceLoc.y()+ui->trackView->y(),
+////        painter.drawRect(QRect(faceLoc.x()+ui->viewLayout->x(),
+////                         faceLoc.y()+ui->viewLayout->y(),
 ////                         faceLoc.width(),
 ////                         faceLoc.height()));
-//        painter.drawRect(QRect(r.x+ui->trackView->x(),
-//                         r.y+ui->trackView->y(),
+//        painter.drawRect(QRect(r.x+ui->viewLayout->x(),
+//                         r.y+ui->viewLayout->y(),
 //                         r.width,
 //                         r.height));
 //    }
@@ -134,7 +132,7 @@ void GEyeTracker::createTrackerGUI(BaseTracker* tracker)
     // Tracker Level
     QVBoxLayout* trackerLayout = new QVBoxLayout();
     QGridLayout* trackerTitle = new QGridLayout();
-    ui->sideLayout->addLayout(trackerLayout);
+    ui->sideLayout->insertLayout(0, trackerLayout);
     ui->sideLayout->setAlignment(trackerLayout, Qt::AlignTop);
     trackerLayout->addLayout(trackerTitle);
 
