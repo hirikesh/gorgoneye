@@ -23,7 +23,7 @@ FeatureDetector::FeatureDetector() :
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
     // Prepare CV Mats
-    static Mat cHSVImg(srcImg.rows, srcImg.cols, CV_8UC1);
+    static Mat cHSVImg(srcImg.rows, srcImg.cols, CV_8UC3);
     static Mat satImg(srcImg.rows, srcImg.cols, CV_8UC1);
     static Mat valImg(srcImg.rows, srcImg.cols, CV_8UC1);
     static Mat hueImg(srcImg.rows, srcImg.cols, CV_8UC1);
