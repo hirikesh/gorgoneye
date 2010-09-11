@@ -30,7 +30,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     static Mat maskImg(srcImg.rows, srcImg.cols, CV_8UC1);
 
     // Extract Hue Info
-    cvtColor(srcImg, cHSVImg, CV_RGB2HSV);
+    cvtColor(srcImg, cHSVImg, CV_BGR2HSV);
     Mat cHSVChannels[] = {hueImg, satImg, valImg};
     split(cHSVImg, cHSVChannels);
 
