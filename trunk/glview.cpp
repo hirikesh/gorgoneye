@@ -48,7 +48,7 @@ void GLView::paintGL()
     glClear(GL_COLOR_BUFFER_BIT); // clears window
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glBegin(GL_QUADS);  // Draw A Quad
     glTexCoord2d(0, 0); glVertex2d(0, 480); // Top Left
@@ -60,10 +60,10 @@ void GLView::paintGL()
     drawROIs();
 }
 
-void GLView::loadGLTextures(const Mat& image)
+void GLView::loadGLTextures(const cv::Mat& image)
 {
-    glGenTextures( 1, &texture[0] );
-    glBindTexture( GL_TEXTURE_2D, texture[0] );
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);

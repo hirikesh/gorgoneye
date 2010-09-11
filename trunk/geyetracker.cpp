@@ -13,6 +13,9 @@
 #include "detectors/basedetector.h"
 #include "glview.h"
 
+using cv::Mat;
+using namespace std;
+
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker),
@@ -55,13 +58,17 @@ void GEyeTracker::procFrame()
     model.update();
 
     opengl->loadGLTextures(*model.getFaceDispImg());
-    opengl->updateGL();
 
     cv::Rect r = model.getStore()->faceRoi;
     if(r.area())
     {
         opengl->setCurrROI(r.x, r.y, r.width, r.height);
     }
+    else
+    {
+        opengl->setCurrROI(-1, -1, 0, 0);
+    }
+    opengl->updateGL();
 }
 
 void GEyeTracker::setParam(int* const param, int value)
@@ -118,8 +125,8 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
     string title = detector->getName() + " Algorithm Parameters:";
     QGroupBox *groupBox = new QGroupBox(title.c_str());
     groupBox->setLayout(paramLayout);
-    Vector<QWidget*> gparams(params.size());
-    Vector<QGridLayout*> guiItems(params.size()); // item wrapper
+    vector<QWidget*> gparams(params.size());
+    vector<QGridLayout*> guiItems(params.size()); // item wrapper
     for (unsigned int i = 0; i < params.size(); i++)
     {
         guiItems[i] = new QGridLayout(); // create gui item

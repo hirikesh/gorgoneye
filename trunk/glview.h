@@ -4,8 +4,6 @@
 #include <cv.h>
 #include <qgl.h>
 
-using namespace cv;
-
 class GLView : public QGLWidget
 {
     Q_OBJECT
@@ -15,7 +13,7 @@ public:
 
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
-  void loadGLTextures(const Mat&);
+  void loadGLTextures(const cv::Mat&);
   void drawROIs();
   void setCurrROI(int x, int y, int w, int h);
 protected:
@@ -26,7 +24,7 @@ protected:
 private:
   void drawLine();
   QRect* currROI;
-  GLuint texture[1];
+  GLuint texture;
 
 };
 
