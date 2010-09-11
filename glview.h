@@ -23,14 +23,9 @@ protected:
   void paintGL();
   void resizeGL(int w, int h);
 
-signals:
-
-public slots:
 private:
-    void glEnable2D();
-    void glDisable2D();
-    QRect* currROI;
-    GLuint texture[1];
+  QRect* currROI;
+  GLuint texture[1];
 
 };
 
