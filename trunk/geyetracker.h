@@ -26,20 +26,18 @@ public:
 
 public slots:
     void procFrame();  
-    void disableParams();
-    void enableParams();
     void setParam(int* const, int);
     void setParam(bool* const, bool);
     void setParam(double* const, double);
     void setImage(cv::Mat* const, bool);
 private:
+    void initGUI();
     Ui::GEyeTracker *ui;
-    Model model;
 //    QImage* qFaceImg;
     QRect faceLoc;
     QTimer* timer;
+    Model model;
     GLView* opengl;
-    cv::Mat image;
 //    void paintEvent(QPaintEvent* e);
 };
 
