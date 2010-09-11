@@ -21,10 +21,12 @@ HaarDetector::HaarDetector(string td, double sf, int mn, bool fg, Size ms) :
 
 bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
+    static Mat haarImg(srcImg.rows, srcImg.cols, CV_8UC3);
+    cvtColor(srcImg, haarImg, CV_BGR2RGB);
     static CascadeClassifier cc(trainingData);
     static vector<Rect> rois;
 
-    cc.detectMultiScale(srcImg,
+    cc.detectMultiScale(haarImg,
                         rois,
                         scaleFactor,
                         minNeighbours,

@@ -16,14 +16,15 @@ public:
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
   void loadGLTextures(const Mat&);
-  //void drawROIs(QRect&);
-  void setCurrROI(QRect *);
+  void drawROIs();
+  void setCurrROI(int x, int y, int w, int h);
 protected:
   void initializeGL();
   void paintGL();
   void resizeGL(int w, int h);
 
 private:
+  void drawLine();
   QRect* currROI;
   GLuint texture[1];
 

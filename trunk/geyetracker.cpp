@@ -1,4 +1,5 @@
 #include <cv.h>
+#include <QDebug>
 #include <QLabel>
 #include <QGroupBox>
 #include <QComboBox>
@@ -15,11 +16,21 @@
 GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker),
-    model(Model(0))
-//    qFaceImg(new QImage())
+    timer(new QTimer(this)),
+    model(Model(0)),
+    opengl(new GLView())
+{
+    initGUI();
+}
+
+GEyeTracker::~GEyeTracker()
+{
+    delete ui;
+}
+
+void GEyeTracker::initGUI()
 {
     ui->setupUi(this);
-
     vector<BaseTracker*> trackers = model.getTrackers();
     for (unsigned int i = 0; i < trackers.size(); i++)
     {
@@ -29,25 +40,12 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
         }
     }
 
-    opengl = new GLView();
     ui->viewLayout->insertWidget(0, opengl);
-
-    Store* store = model.getStore();
-    image = store->sceneImg;
-
-    timer = new QTimer(this);
-    timer->setInterval(40); // timer signals every N ms
+    timer->setInterval(40); // timer expires every N ms
     connect(timer, SIGNAL(timeout()), this, SLOT(procFrame()));
 
     connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
-    connect(ui->startBtn, SIGNAL(clicked()), this, SLOT(disableParams()));
     connect(ui->stopBtn, SIGNAL(clicked()), timer, SLOT(stop()));
-    connect(ui->stopBtn, SIGNAL(clicked()), this, SLOT(enableParams()));
-}
-
-GEyeTracker::~GEyeTracker()
-{
-    delete ui;
 }
 
 // Event Handlers
@@ -62,36 +60,8 @@ void GEyeTracker::procFrame()
     cv::Rect r = model.getStore()->faceRoi;
     if(r.area())
     {
-        opengl->setCurrROI(new QRect(r.x, r.y, r.width, r.height));
+        opengl->setCurrROI(r.x, r.y, r.width, r.height);
     }
-}
-
-//void GEyeTracker::paintEvent(QPaintEvent* e)
-//{
-//    QPainter painter(this);
-//    painter.drawImage(QPoint(ui->viewLayout->x(),ui->viewLayout->y()), *qFaceImg);
-//    Rect r = model.getStore()->faceRoi;
-//    if(r.area())
-//    {
-//        painter.setBrush(Qt::NoBrush);
-//        painter.setPen(QColor(255,0,0));
-////        painter.drawRect(QRect(faceLoc.x()+ui->viewLayout->x(),
-////                         faceLoc.y()+ui->viewLayout->y(),
-////                         faceLoc.width(),
-////                         faceLoc.height()));
-//        painter.drawRect(QRect(r.x+ui->viewLayout->x(),
-//                         r.y+ui->viewLayout->y(),
-//                         r.width,
-//                         r.height));
-//    }
-//}
-
-void GEyeTracker::disableParams()
-{
-}
-
-void GEyeTracker::enableParams()
-{
 }
 
 void GEyeTracker::setParam(int* const param, int value)
