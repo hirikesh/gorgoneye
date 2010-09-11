@@ -30,7 +30,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     static Mat maskImg(srcImg.rows, srcImg.cols, CV_8UC1);
 
     // Extract Hue Info
-    cvtColor(srcImg, cHSVImg, CV_BGR2HSV);
+    cvtColor(srcImg, cHSVImg, CV_RGB2HSV);
     Mat cHSVChannels[] = {hueImg, satImg, valImg};
     split(cHSVImg, cHSVChannels);
 
@@ -40,7 +40,8 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     valImg = Scalar(255);
     Mat hueVis[] = {hueImg, satImg, valImg};
     merge(hueVis, 3, hueVisImg);
-    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
+    // This colour conversion is extremely laggy.
+//   cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
 //    imshow("Hue Visualisation", hueVisImg);
 
     // set mask ROI
