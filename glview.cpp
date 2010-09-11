@@ -7,7 +7,6 @@ GLView::GLView(QWidget *parent) :
     QGLWidget(parent),
     currROI(new QRect(-1, -1, 0, 0))
 {
-    qDebug() << "Inside Constructor";
 }
 
 GLView::~GLView()
