@@ -96,13 +96,13 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     // imshow("Filtered Back Projected Image", backProjImg);
     Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
     merge(backProjImg3, 3, backProjGrayImg);
+
     // CAMShift Calculations ---------
     // Search Window begins at region of interest determined using Haar
     // The algorithm will auto increase search window
-
     RotatedRect rotTemp;
     rotTemp = CamShift(backProjImg, // back projected image
-                       srcRoi,     // initial search window
+                       srcRoi,      // initial search window
                        TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 5, 10));
 
     // Simple but less robust method for bounds. FIXME soon.
