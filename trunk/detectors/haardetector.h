@@ -1,5 +1,5 @@
 /* HaarDetector:
-   Concreate BaseDetector class using
+   Concrete BaseDetector class using
    HAAR classification. */
 
 #ifndef HAAR_H
@@ -7,7 +7,6 @@
 
 #include <cv.h>
 #include "basedetector.h"
-
 
 class HaarDetector : public BaseDetector
 {

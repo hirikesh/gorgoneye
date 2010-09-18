@@ -12,16 +12,20 @@ Model::Model(int device) :
     faceTracker(FaceTracker(&store))
 {
     capture >> store.sceneImg; // initialisation required
+
     faceTracker.setDetector(FaceTracker::HAAR);
-    faceTracker.setEnable(true);
+    faceTracker.enable();
     trackers.push_back(&faceTracker);
+
     store.faceImg = &store.sceneImg; // current UI display
 }
 
 void Model::update()
 {
     capture >> store.sceneImg;
-    if(faceTracker.isEnabled()) faceTracker.track();
+    faceTracker.track();
+    //eyesTracker.track();
+    //gazeTracker.track();
 }
 
 Store* Model::getStore()

@@ -1,16 +1,15 @@
 #include <cv.h>
-#include "store.h"
 #include "featuredetector.h"
 
 using namespace cv;
 
-FeatureDetector::FeatureDetector() :
+FeatureDetector::FeatureDetector(int mins, int maxs, int minv, int maxv) :
     BaseDetector("CAMShift"),
     histCalibrate(true),
-    minSaturation(40), // default
-    maxSaturation(240), // default
-    minValue(50), // default
-    maxValue(255) // default
+    minSaturation(mins), // default
+    maxSaturation(maxs), // default
+    minValue(minv), // default
+    maxValue(maxv) // default
 {
     params.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSaturation, 0, 255, 5));
     params.push_back(new RangeParam<int>("Max. Saturation", Param::RANGE, &maxSaturation, 0, 255, 5));
@@ -109,37 +108,37 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     srcRoi = rotTemp.boundingRect();
 
     // Simple but less robust method for bounds. FIXME soon.
-    static Rect boundRoi(0, 0, srcImg.cols, srcImg.rows);
-    histCalibrate = !(srcRoi.tl().inside(boundRoi) && srcRoi.br().inside(boundRoi));
-    return !histCalibrate;
+//    static Rect boundRoi(0, 0, srcImg.cols, srcImg.rows);
+//    histCalibrate = !(srcRoi.tl().inside(boundRoi) && srcRoi.br().inside(boundRoi));
+//    return !histCalibrate;
 
     // Modify bounds on camshift rectangle
     // TODO: A more elegant range check function
-//    if (srcRoi.x <= 0)
-//    {srcRoi.x = 0;}
-//    if (srcRoi.width <= 0)
-//    {srcRoi.width = 0;}
-//    if (srcRoi.y <= 0)
-//    {srcRoi.y = 0;}
-//    if (srcRoi.height <= 0)
-//    {srcRoi.height = 0;}
-//    if (srcRoi.width >= srcImg.cols)
-//    {srcRoi.width = srcImg.cols;}
-//    if (srcRoi.x >= srcImg.cols)
-//    {srcRoi.x = srcImg.cols;}
-//    if (srcRoi.y >= srcImg.rows)
-//    {srcRoi.y = srcImg.rows;}
-//    if (srcRoi.height >= srcImg.rows)
-//    {srcRoi.height = srcImg.rows;}
-//    if (srcRoi.x + srcRoi.width >= srcImg.cols)
-//    {srcRoi.width = srcImg.cols - srcRoi.x;}
-//    if (srcRoi.y + srcRoi.height >= srcImg.rows)
-//    {srcRoi.height = srcImg.rows - srcRoi.y;}
+    if (srcRoi.x <= 0)
+    {srcRoi.x = 0;}
+    if (srcRoi.width <= 0)
+    {srcRoi.width = 0;}
+    if (srcRoi.y <= 0)
+    {srcRoi.y = 0;}
+    if (srcRoi.height <= 0)
+    {srcRoi.height = 0;}
+    if (srcRoi.width >= srcImg.cols)
+    {srcRoi.width = srcImg.cols;}
+    if (srcRoi.x >= srcImg.cols)
+    {srcRoi.x = srcImg.cols;}
+    if (srcRoi.y >= srcImg.rows)
+    {srcRoi.y = srcImg.rows;}
+    if (srcRoi.height >= srcImg.rows)
+    {srcRoi.height = srcImg.rows;}
+    if (srcRoi.x + srcRoi.width >= srcImg.cols)
+    {srcRoi.width = srcImg.cols - srcRoi.x;}
+    if (srcRoi.y + srcRoi.height >= srcImg.rows)
+    {srcRoi.height = srcImg.rows - srcRoi.y;}
 
-//    if (srcRoi.area()>0 && srcRoi.area()<srcImg.size().area()) {
-//        return true;
-//    } else {
-//        histCalibrate = true; // since we failed this time, next locate() should be a "first run" to recalibrate
-//        return false;
-//    }
+    if (srcRoi.area()>0 && srcRoi.area()<srcImg.size().area()) {
+        return true;
+    } else {
+        histCalibrate = true; // since we failed this time, next locate() should be a "first run" to recalibrate
+        return false;
+    }
 }

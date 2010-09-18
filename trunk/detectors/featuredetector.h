@@ -1,5 +1,5 @@
 /* FeatureDetector:
-   Concreate BaseDetector class using
+   Concrete BaseDetector class using
    CAMshift tracking. */
 
 #ifndef FEATURE_H
@@ -11,7 +11,7 @@
 class FeatureDetector : public BaseDetector
 {
 public:
-    FeatureDetector();
+    FeatureDetector(int mins, int maxs, int minv, int maxv);
 
     bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 

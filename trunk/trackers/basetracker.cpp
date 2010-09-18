@@ -15,9 +15,14 @@ std::vector<BaseDetector*> BaseTracker::getDetectors()
     return detectors;
 }
 
-void BaseTracker::setEnable(bool en)
+void BaseTracker::enable()
 {
-    enabled = en;
+    enabled = true;
+}
+
+void BaseTracker::disable()
+{
+    enabled = false;
 }
 
 bool BaseTracker::isEnabled()
