@@ -11,9 +11,10 @@ HybridDetector::HybridDetector(BaseDetector* slowdet, BaseDetector* fastdet) :
 
 bool HybridDetector::locate(const cv::Mat &srcImg, cv::Rect &srcRoi)
 {
-    if(useFastDetector)
-        useFastDetector = slowDetector->locate(srcImg, srcRoi);
-    else
+    if(useFastDetector) {
         useFastDetector = fastDetector->locate(srcImg, srcRoi);
+    } else {
+        useFastDetector = slowDetector->locate(srcImg, srcRoi);
+    }
     return useFastDetector;
 }
