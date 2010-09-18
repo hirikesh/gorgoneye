@@ -104,16 +104,18 @@ void GEyeTracker::createTrackerGUI(BaseTracker* tracker)
     trackerLayout->addLayout(trackerTitle);
 
     string title = "Enable " + tracker->getName() + " Tracking";
-    GUICheckBox *faceEnable = new GUICheckBox(title, tracker->getEnabled());
-    faceEnable->setChecked(tracker->isEnabled());
-    connect(faceEnable, SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool* const, bool)));
+    GUICheckBox *trackerEnable = new GUICheckBox(title, tracker->getEnabled());
+    trackerEnable->setChecked(tracker->isEnabled());
+    connect(trackerEnable, SIGNAL(valueChanged(bool* const, bool)), this, SLOT(setParam(bool* const, bool)));
 
-    trackerTitle->addWidget(faceEnable, 0, 0);
-    trackerTitle->addWidget(new QComboBox(), 0, 1);
+    trackerTitle->addWidget(trackerEnable, 0, 0);
+    QComboBox* detectorSelection = new GUITrackerComboBox(tracker);
+    trackerTitle->addWidget(detectorSelection, 0, 1);
     vector<BaseDetector*> detectors = tracker->getDetectors();
     for (unsigned int i = 0; i < detectors.size(); i++)
     {
-        createDetectorGUI(detectors[i], trackerLayout);
+        detectorSelection->addItem(detectors[i]->getName().c_str());
+        if (detectors[i]->hasParams()) createDetectorGUI(detectors[i], trackerLayout);
     }
 }
 

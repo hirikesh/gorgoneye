@@ -26,3 +26,8 @@ vector<Param*> BaseDetector::getParams()
 {
     return params;
 }
+
+bool BaseDetector::hasParams()
+{
+    return (params.size()>0);
+}

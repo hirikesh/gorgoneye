@@ -60,3 +60,15 @@ void GUIRadioButton::emitWithPtr(bool state)
 {
     emit valueChanged(pValue, state);
 }
+
+GUITrackerComboBox::GUITrackerComboBox(BaseTracker* trkr) :
+        QComboBox(),
+        tracker(trkr)
+{
+    connect(this, SIGNAL(activated(int)), this, SLOT(setDetector(int)));
+}
+
+void GUITrackerComboBox::setDetector(int type)
+{
+    tracker->setDetector(type);
+}

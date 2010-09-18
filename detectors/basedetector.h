@@ -23,8 +23,9 @@ public:
     BaseDetector(const std::string&);
 
     virtual bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
-    std::vector<Param*> getParams();
     const std::string getName() const;
+    std::vector<Param*> getParams();
+    bool hasParams();
 
 protected:
     const std::string name;
