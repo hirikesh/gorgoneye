@@ -16,6 +16,7 @@ public:
   void loadGLTextures(const cv::Mat&);
   void drawROIs();
   void setCurrROI(int x, int y, int w, int h);
+
 protected:
   void initializeGL();
   void paintGL();

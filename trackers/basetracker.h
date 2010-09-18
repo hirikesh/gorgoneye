@@ -22,8 +22,9 @@ public:
     virtual void track() = 0;
     virtual void setDetector(int type) = 0;
     std::vector<BaseDetector*> getDetectors();
+    void enable();
+    void disable();
     bool isEnabled();
-    void setEnable(bool);
     bool* getEnabled();
     const std::string getName();
 

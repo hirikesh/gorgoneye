@@ -31,7 +31,8 @@ SOURCES += main.cpp \
     parameter.cpp \
     guiparam.cpp \
     model.cpp \
-    glview.cpp
+    glview.cpp \
+    detectors/hybriddetector.cpp
 HEADERS += geyetracker.h \
     #geyedetector.h \
     control.h \
@@ -44,5 +45,6 @@ HEADERS += geyetracker.h \
     parameter.h \
     guiparam.h \
     model.h \
-    glview.h
+    glview.h \
+    detectors/hybriddetector.h
 FORMS += geyetracker.ui

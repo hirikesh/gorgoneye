@@ -33,12 +33,9 @@ public slots:
 private:
     void initGUI();
     Ui::GEyeTracker *ui;
-//    QImage* qFaceImg;
-    QRect faceLoc;
     QTimer* timer;
     Model model;
     GLView* opengl;
-//    void paintEvent(QPaintEvent* e);
 };
 
 #endif // GEYETRACKER_H
