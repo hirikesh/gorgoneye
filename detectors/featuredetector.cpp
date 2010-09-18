@@ -105,40 +105,41 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
                        srcRoi,     // initial search window
                        TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 5, 10));
 
-    srcRoi = rotTemp.boundingRect();
-
     // Simple but less robust method for bounds. FIXME soon.
-//    static Rect boundRoi(0, 0, srcImg.cols, srcImg.rows);
-//    histCalibrate = !(srcRoi.tl().inside(boundRoi) && srcRoi.br().inside(boundRoi));
-//    return !histCalibrate;
+    static Rect boundRoi(0, 0, srcImg.cols, srcImg.rows);
+    static Rect tmpSrcRoi;
+    tmpSrcRoi = rotTemp.boundingRect();
+    // Check on bounds. If ROI is invalid, don't update srcRoi.
+    if (tmpSrcRoi.tl().inside(boundRoi) && tmpSrcRoi.br().inside(boundRoi)) {
+        srcRoi = tmpSrcRoi;
+        return true;
+    } else {
+        histCalibrate = true;
+        return false;
+    }
 
     // Modify bounds on camshift rectangle
     // TODO: A more elegant range check function
-    if (srcRoi.x <= 0)
-    {srcRoi.x = 0;}
-    if (srcRoi.width <= 0)
-    {srcRoi.width = 0;}
-    if (srcRoi.y <= 0)
-    {srcRoi.y = 0;}
-    if (srcRoi.height <= 0)
-    {srcRoi.height = 0;}
-    if (srcRoi.width >= srcImg.cols)
-    {srcRoi.width = srcImg.cols;}
-    if (srcRoi.x >= srcImg.cols)
-    {srcRoi.x = srcImg.cols;}
-    if (srcRoi.y >= srcImg.rows)
-    {srcRoi.y = srcImg.rows;}
-    if (srcRoi.height >= srcImg.rows)
-    {srcRoi.height = srcImg.rows;}
-    if (srcRoi.x + srcRoi.width >= srcImg.cols)
-    {srcRoi.width = srcImg.cols - srcRoi.x;}
-    if (srcRoi.y + srcRoi.height >= srcImg.rows)
-    {srcRoi.height = srcImg.rows - srcRoi.y;}
+//    if (srcRoi.x <= 0)
+//    {srcRoi.x = 0;}
+//    if (srcRoi.width <= 0)
+//    {srcRoi.width = 0;}
+//    if (srcRoi.y <= 0)
+//    {srcRoi.y = 0;}
+//    if (srcRoi.height <= 0)
+//    {srcRoi.height = 0;}
+//    if (srcRoi.width >= srcImg.cols)
+//    {srcRoi.width = srcImg.cols;}
+//    if (srcRoi.x >= srcImg.cols)
+//    {srcRoi.x = srcImg.cols;}
+//    if (srcRoi.y >= srcImg.rows)
+//    {srcRoi.y = srcImg.rows;}
+//    if (srcRoi.height >= srcImg.rows)
+//    {srcRoi.height = srcImg.rows;}
+//    if (srcRoi.x + srcRoi.width >= srcImg.cols)
+//    {srcRoi.width = srcImg.cols - srcRoi.x;}
+//    if (srcRoi.y + srcRoi.height >= srcImg.rows)
+//    {srcRoi.height = srcImg.rows - srcRoi.y;}
 
-    if (srcRoi.area()>0 && srcRoi.area()<srcImg.size().area()) {
-        return true;
-    } else {
-        histCalibrate = true; // since we failed this time, next locate() should be a "first run" to recalibrate
-        return false;
-    }
+//    return true;
 }
