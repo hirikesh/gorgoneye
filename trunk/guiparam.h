@@ -5,7 +5,9 @@
 #include <QSlider>
 #include <QDoubleSpinBox>
 #include <QRadioButton>
+#include <QComboBox>
 #include "parameter.h"
+#include "trackers/basetracker.h"
 
 class ModeParam;
 class ImageModeParam;
@@ -65,6 +67,19 @@ private slots:
     void emitWithPtr(bool);
 private:
     cv::Mat* const pValue;
+};
+
+class GUITrackerComboBox : public QComboBox
+{
+    Q_OBJECT
+public:
+    explicit GUITrackerComboBox(BaseTracker* trkr);
+signals:
+    void itemSelected(int);
+private slots:
+    void setDetector(int);
+private:
+    BaseTracker* tracker;
 };
 
 #endif // GUIPARAM_H
