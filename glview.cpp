@@ -52,9 +52,11 @@ void GLView::paintGL()
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glBegin(GL_QUADS);  // Draw A Quad
     glTexCoord2d(0, 0); glVertex2d(0, 480); // Top Left
-    glTexCoord2d(0, 1); glVertex2d(0, 0); // Bottom Left
-    glTexCoord2d(1, 1); glVertex2d(640, 0); // Bottom Right
     glTexCoord2d(1, 0); glVertex2d(640, 480); // Top Right
+    glTexCoord2d(1, 1); glVertex2d(640, 0); // Bottom Right
+    glTexCoord2d(0, 1); glVertex2d(0, 0); // Bottom Left
+
+
     glEnd();
     glDisable(GL_TEXTURE_2D);
     drawROIs();
@@ -81,10 +83,20 @@ void GLView::drawROIs()
 {
     glBegin(GL_LINE_LOOP);
     glColor3f(0.0f, 1.0f, 0.5f);
-    glVertex2d(currROI->x(), currROI->y());
-    glVertex2d(currROI->right(), currROI->y());
-    glVertex2d(currROI->right(), currROI->bottom());
-    glVertex2d(currROI->x(), currROI->bottom());
+//    glVertex2d(currROI->left(), currROI->top());
+//    glVertex2d(currROI->right(), currROI->top());
+//    glVertex2d(currROI->right(), currROI->bottom());
+//    glVertex2d(currROI->left(), currROI->bottom());
+//    qDebug() << "top:" << (currROI->top()) << "bot:" << (currROI->bottom());
+//    qDebug() << "x:" << (currROI->x()) << "y:" << (currROI->y());
+    glVertex2d(currROI->x(), 480-currROI->y());
+    glVertex2d(currROI->x()+currROI->width(), 480-currROI->y());
+    glVertex2d(currROI->x()+currROI->width(), 480-(currROI->bottom()));
+    glVertex2d(currROI->x(), 480-(currROI->bottom()));
+//    glVertex2d(100, 200);
+//    glVertex2d(200, 200);
+//    glVertex2d(200, 100);
+//    glVertex2d(100, 100);
     glEnd();
     glColor3f(0.0f, 0.0f, 0.0f);
 }

@@ -8,7 +8,6 @@
 #include "ui_geyetracker.h"
 #include "parameter.h"
 #include "guiparam.h"
-#include "model.h"
 #include "trackers/basetracker.h"
 #include "detectors/basedetector.h"
 #include "glview.h"
@@ -44,13 +43,11 @@ void GEyeTracker::initGUI()
     }
 
     ui->viewLayout->insertWidget(0, opengl);
-    timer->setInterval(40); // timer expires every N ms
+    timer->setInterval(25); // timer expires every N ms
     connect(timer, SIGNAL(timeout()), this, SLOT(procFrame()));
-
     connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
     connect(ui->stopBtn, SIGNAL(clicked()), timer, SLOT(stop()));
 }
-
 // Event Handlers
 
 void GEyeTracker::procFrame()
@@ -168,6 +165,11 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
         }
         paramLayout->addLayout(guiItems[i]);
     }
+    // Here we statically create the webcam capture mode
+    QWidget* normImgMode = new GUIRadioButton(new ImageModeParam("Webcam Capture", &(model.getStore()->sceneImg)));
+    connect(normImgMode, SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
+    static_cast<GUIRadioButton*>(normImgMode)->setChecked(true);
+    paramLayout->addWidget(normImgMode);
     layout->addWidget(groupBox);
     groupBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
     //QSpacerItem* vertSpacer = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
