@@ -35,10 +35,10 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 
     // visualise Hue for debugging
 //    Mat hueVisImg(srcImg.rows, srcImg.cols, CV_8UC3);
-    satImg = Scalar(255);
-    valImg = Scalar(255);
-    Mat hueVis[] = {hueImg, satImg, valImg};
-    merge(hueVis, 3, hueVisImg);
+//    satImg = Scalar(255);
+//    valImg = Scalar(255);
+//    Mat hueVis[] = {hueImg, satImg, valImg};
+//    merge(hueVis, 3, hueVisImg);
     // This colour conversion is extremely laggy.
 //   cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
 //    imshow("Hue Visualisation", hueVisImg);
