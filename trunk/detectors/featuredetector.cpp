@@ -3,8 +3,8 @@
 
 using namespace cv;
 
-FeatureDetector::FeatureDetector(int mins, int maxs, int minv, int maxv) :
-    BaseDetector("CAMShift"),
+FeatureDetector::FeatureDetector(const int type, int mins, int maxs, int minv, int maxv) :
+    BaseDetector(type, "CAMShift"),
     histCalibrate(true),
     minSaturation(mins), // default
     maxSaturation(maxs), // default

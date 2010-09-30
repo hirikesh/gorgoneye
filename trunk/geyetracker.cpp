@@ -20,7 +20,8 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     ui(new Ui::GEyeTracker),
     timer(new QTimer(this)),
     model(new Model(0)),
-    opengl(new GLView())
+    opengl(new GLView()),
+    imgModeGroup(new QButtonGroup())
 {
     initGUI();
 }
@@ -35,12 +36,8 @@ void GEyeTracker::initGUI()
 {
     ui->setupUi(this);
     vector<BaseTracker*> trackers = model->getTrackers();
-    for (unsigned int i = 0; i < trackers.size(); i++)
-    {
-        if(trackers[i]->isEnabled())
-        {
-           createTrackerGUI(trackers[i]);
-        }
+    for (unsigned int i = 0; i < trackers.size(); i++) {
+        createTrackerGUI(trackers[i]);
     }
 
     ui->viewLayout->insertWidget(0, opengl);
@@ -97,9 +94,16 @@ void GEyeTracker::createTrackerGUI(BaseTracker* tracker)
     // Tracker Level
     QVBoxLayout* trackerLayout = new QVBoxLayout();
     QGridLayout* trackerTitle = new QGridLayout();
-    ui->sideLayout->insertLayout(0, trackerLayout);
-    ui->sideLayout->setAlignment(trackerLayout, Qt::AlignTop);
+    ui->paramsLayout->insertLayout(0, trackerLayout);
+    ui->paramsLayout->setAlignment(trackerLayout, Qt::AlignTop);
     trackerLayout->addLayout(trackerTitle);
+
+    QWidget* normImgMode = new GUIRadioButton(new ImageModeParam("Tracking Environment", tracker->getDispImg()));
+    connect(normImgMode, SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
+    static_cast<GUIRadioButton*>(normImgMode)->setChecked(true);
+    trackerTitle->addWidget(normImgMode, 1, 0, 1, 2);
+    QAbstractButton* normImgButton = qobject_cast<QAbstractButton*>(normImgMode);
+    imgModeGroup->addButton(normImgButton); // add to global radio button group
 
     string title = "Enable " + tracker->getName() + " Tracking";
     GUICheckBox *trackerEnable = new GUICheckBox(title, tracker->getEnabled());
@@ -115,6 +119,7 @@ void GEyeTracker::createTrackerGUI(BaseTracker* tracker)
         detectorSelection->addItem(detectors[i]->getName().c_str());
         if (detectors[i]->hasParams()) createDetectorGUI(detectors[i], trackerLayout);
     }
+    detectorSelection->setCurrentIndex(tracker->getCurrDetectorType());
 }
 
 void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
@@ -163,14 +168,16 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
             gparams[i] = new GUIRadioButton(static_cast<ImageModeParam*>(params[i])); // create widget
             guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
             connect(gparams[i], SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
+            QAbstractButton* imgModeButton = qobject_cast<QAbstractButton*>(gparams[i]);
+            imgModeGroup->addButton(imgModeButton); // add to global radio button group
         }
         paramLayout->addLayout(guiItems[i]);
     }
     // Here we statically create the webcam capture mode
-    QWidget* normImgMode = new GUIRadioButton(new ImageModeParam("Webcam Capture", &(model->getStore()->sceneImg)));
-    connect(normImgMode, SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
-    static_cast<GUIRadioButton*>(normImgMode)->setChecked(true);
-    paramLayout->addWidget(normImgMode);
+//    QWidget* normImgMode = new GUIRadioButton(new ImageModeParam("Webcam Capture", &(model->getStore()->sceneImg)));
+//    connect(normImgMode, SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
+//    static_cast<GUIRadioButton*>(normImgMode)->setChecked(true);
+//    paramLayout->addWidget(normImgMode);
     layout->addWidget(groupBox);
     groupBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
     //QSpacerItem* vertSpacer = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);

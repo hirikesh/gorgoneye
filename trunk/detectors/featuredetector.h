@@ -11,7 +11,7 @@
 class FeatureDetector : public BaseDetector
 {
 public:
-    FeatureDetector(int mins, int maxs, int minv, int maxv);
+    FeatureDetector(const int type, int mins, int maxs, int minv, int maxv);
 
     bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 

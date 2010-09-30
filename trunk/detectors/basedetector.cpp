@@ -6,7 +6,8 @@ using std::vector;
 using cv::Mat;
 using cv::Rect;
 
-BaseDetector::BaseDetector(const string& s) :
+BaseDetector::BaseDetector(const int& id, const string& s) :
+        type(id),
         name(s)
 {
 }
@@ -15,6 +16,11 @@ bool BaseDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
     srcRoi = Rect(0, 0, srcImg.cols, srcImg.rows);
     return true;
+}
+
+const int BaseDetector::getType() const
+{
+    return type;
 }
 
 const string BaseDetector::getName() const

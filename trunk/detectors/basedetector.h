@@ -20,14 +20,16 @@ namespace cv
 class BaseDetector
 {
 public:
-    BaseDetector(const std::string&);
+    BaseDetector(const int&, const std::string&);
 
     virtual bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
+    const int getType() const;
     const std::string getName() const;
     std::vector<Param*> getParams();
     bool hasParams();
 
 protected:
+    const int type;
     const std::string name;
     std::vector<Param*> params;
 };
