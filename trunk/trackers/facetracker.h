@@ -19,7 +19,6 @@ public:
     enum type { HAAR, FEAT, HYBR };
     void setDetector(int type);
 
-    void disable();
     cv::Mat* getDispImg();
 
 private:
