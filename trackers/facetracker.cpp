@@ -7,9 +7,9 @@
 
 FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 {
-    haarDetector = new HaarDetector(HAAR_CC_FACE_DEFAULT, 1.1, 3, NULL, cv::Size(96,96));
-    featureDetector = new FeatureDetector(40, 240, 50, 255);
-    hybridDetector = new HybridDetector(haarDetector, featureDetector);
+    haarDetector = new HaarDetector(HAAR, HAAR_CC_FACE, 1.2, 2, NULL, cv::Size(64,72));
+    featureDetector = new FeatureDetector(FEAT, 96, 180, 0, 96);
+    hybridDetector = new HybridDetector(HYBR, haarDetector, featureDetector);
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
     detectors.push_back(hybridDetector);
@@ -17,7 +17,11 @@ FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 
 void FaceTracker::track()
 {
-    if(enabled) currDetector->locate(store->sceneImg, store->faceRoi);
+    if(enabled) {
+        if(currDetector->locate(store->sceneImg, store->faceRoi)) {
+            store->faceImg = store->sceneImg(store->faceRoi);
+        }
+    }
 }
 
 void FaceTracker::setDetector(int type)
@@ -37,4 +41,9 @@ void FaceTracker::setDetector(int type)
         currDetector = nullDetector;
         break;
     }
+}
+
+cv::Mat* FaceTracker::getDispImg()
+{
+    return &store->sceneImg;
 }

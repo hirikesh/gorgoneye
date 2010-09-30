@@ -20,31 +20,29 @@ release:LIBS += -L"C:\OpenCV2.1\lib\release" \
     -lml210
 SOURCES += main.cpp \
     geyetracker.cpp \
-    #geyedetector.cpp \
-    control.cpp \
     store.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
     detectors/featuredetector.cpp \
-    trackers/facetracker.cpp \
+    detectors/hybriddetector.cpp \
     trackers/basetracker.cpp \
+    trackers/facetracker.cpp \
+    trackers/eyestracker.cpp \
     parameter.cpp \
     guiparam.cpp \
     model.cpp \
-    glview.cpp \
-    detectors/hybriddetector.cpp
+    glview.cpp
 HEADERS += geyetracker.h \
-    #geyedetector.h \
-    control.h \
     store.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
     detectors/featuredetector.h \
-    trackers/facetracker.h \
+    detectors/hybriddetector.h \
     trackers/basetracker.h \
+    trackers/facetracker.h \
+    trackers/eyestracker.h \
     parameter.h \
     guiparam.h \
     model.h \
-    glview.h \
-    detectors/hybriddetector.h
+    glview.h
 FORMS += geyetracker.ui

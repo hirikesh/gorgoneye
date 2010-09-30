@@ -5,6 +5,7 @@
 #include <highgui.h>
 #include <vector>
 #include "trackers/facetracker.h"
+#include "trackers/eyestracker.h"
 #include "store.h"
 
 class BaseTracker;
@@ -21,6 +22,7 @@ private:
     cv::VideoCapture capture;
     Store store;
     FaceTracker faceTracker;
+    EyesTracker eyesTracker;
     std::vector<BaseTracker*> trackers;
     // Eye eyeTracker, Nose noseTracker, etc.
     // or possibly an array of pointers to Trackers?

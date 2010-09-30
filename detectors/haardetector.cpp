@@ -3,8 +3,8 @@
 
 using namespace cv;
 
-HaarDetector::HaarDetector(string td, double sf, int mn, bool fg, Size ms) :
-    BaseDetector("Haar"),
+HaarDetector::HaarDetector(const int type, string td, double sf, int mn, bool fg, Size ms) :
+    BaseDetector(type, "Haar"),
     trainingData(td),
     scaleFactor(sf),
     minNeighbours(mn),
@@ -26,6 +26,8 @@ bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)
     static CascadeClassifier cc(trainingData);
     static vector<Rect> rois;
 
+//    pyrDown(srcImg, haarImg);
+//    pyrDown(haarImg, haarImg);
     cc.detectMultiScale(srcImg,
                         rois,
                         scaleFactor,
@@ -36,6 +38,8 @@ bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)
     if(rois.size())
     {
         srcRoi = rois[0];
+//        srcRoi = (rois[0] + rois[0].size()) + rois[0].tl();
+//        srcRoi = Rect(rois[0].x*2, rois[0].y*2, rois[0].width*2, rois[0].height*2);
         return true;
     }
     else

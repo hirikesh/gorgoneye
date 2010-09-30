@@ -3,7 +3,7 @@
 
 #include <cv.h>
 #include <QWidget>
-#include <QRect>
+#include <QButtonGroup>
 #include "model.h"
 
 class QVBoxLayout;
@@ -36,6 +36,7 @@ private:
     QTimer* timer;
     Model* model;
     GLView* opengl;
+    QButtonGroup* imgModeGroup;
 };
 
 #endif // GEYETRACKER_H

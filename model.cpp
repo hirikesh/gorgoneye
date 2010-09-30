@@ -8,13 +8,18 @@ using std::vector;
 Model::Model(int device) :
     capture(VideoCapture(device)),
     store(Store()),
-    faceTracker(FaceTracker(&store))
+    faceTracker(FaceTracker(&store)),
+    eyesTracker(EyesTracker(&store))
 {
     // initialisation no longer required
     // but leave here anyway, doesn't hurt.
     capture >> store.sceneImg;
 
-    faceTracker.setDetector(FaceTracker::HAAR);
+    eyesTracker.setDetector(EyesTracker::HAAR);
+    eyesTracker.disable();
+    trackers.push_back(&eyesTracker);
+
+    faceTracker.setDetector(FaceTracker::HYBR);
     faceTracker.enable();
     trackers.push_back(&faceTracker);
 
@@ -26,7 +31,7 @@ void Model::update()
 {
     capture >> store.sceneImg;
     faceTracker.track();
-    //eyesTracker.track();
+    eyesTracker.track();
     //gazeTracker.track();
 }
 

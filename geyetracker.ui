@@ -80,6 +80,13 @@
       <number>2</number>
      </property>
      <item>
+      <layout class="QHBoxLayout" name="paramsLayout">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+      </layout>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="buttonLayout">
        <property name="spacing">
         <number>2</number>

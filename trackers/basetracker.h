@@ -21,12 +21,14 @@ public:
 
     virtual void track() = 0;
     virtual void setDetector(int type) = 0;
+    int getCurrDetectorType();
     std::vector<BaseDetector*> getDetectors();
     void enable();
     void disable();
     bool isEnabled();
     bool* getEnabled();
     const std::string getName();
+    virtual cv::Mat* getDispImg() = 0;
 
 protected:
     Store* store;
