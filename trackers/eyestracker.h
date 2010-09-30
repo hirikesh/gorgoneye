@@ -9,10 +9,11 @@ public:
     EyesTracker(Store* st);
 
     void track();
-    cv::Mat* getDispImg();
 
     enum type { HAAR };
     void setDetector(int type);
+
+    cv::Mat* getDispImg();
 
 private:
     BaseDetector* haarDetector;

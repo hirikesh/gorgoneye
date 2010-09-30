@@ -15,10 +15,12 @@ public:
     FaceTracker(Store* st);
 
     void track();
-    cv::Mat* getDispImg();
 
     enum type { HAAR, FEAT, HYBR };
     void setDetector(int type);
+
+    void disable();
+    cv::Mat* getDispImg();
 
 private:
     BaseDetector* haarDetector;
