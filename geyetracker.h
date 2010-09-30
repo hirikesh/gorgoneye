@@ -34,7 +34,7 @@ private:
     void initGUI();
     Ui::GEyeTracker *ui;
     QTimer* timer;
-    Model model;
+    Model* model;
     GLView* opengl;
 };
 

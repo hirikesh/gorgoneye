@@ -1,5 +1,4 @@
 #include <QImage>
-#include <QDebug>
 #include "glview.h"
 #include <GL/glext.h>
 

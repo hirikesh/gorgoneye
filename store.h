@@ -12,8 +12,11 @@ public:
     Store();
     // Images to process / already processed
     cv::Mat sceneImg;
-    cv::Mat* faceImg;
-    cv::Mat* eyesImg;
+    cv::Mat faceImg;
+    cv::Mat eyesImg;
+
+    // Image to display
+    cv::Mat* dispImg;
 
     // Tracked region of interests
     cv::Rect faceRoi; // relative to sceneImg

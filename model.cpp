@@ -1,6 +1,5 @@
 #include <cv.h>
 #include <highgui.h>
-#include <QDebug>
 #include "model.h"
 
 using namespace cv;
@@ -11,13 +10,16 @@ Model::Model(int device) :
     store(Store()),
     faceTracker(FaceTracker(&store))
 {
-    capture >> store.sceneImg; // initialisation required
+    // initialisation no longer required
+    // but leave here anyway, doesn't hurt.
+    capture >> store.sceneImg;
 
     faceTracker.setDetector(FaceTracker::HAAR);
     faceTracker.enable();
     trackers.push_back(&faceTracker);
 
-    store.faceImg = &store.sceneImg; // current UI display
+    // current UI display
+    store.dispImg = &store.sceneImg;
 }
 
 void Model::update()
@@ -38,7 +40,7 @@ vector<BaseTracker*> Model::getTrackers()
     return trackers;
 }
 
-Mat* Model::getFaceDispImg()
+Mat* Model::getDispImg()
 {
-    return store.faceImg;
+    return store.dispImg;
 }

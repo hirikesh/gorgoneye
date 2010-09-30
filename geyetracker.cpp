@@ -19,7 +19,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker),
     timer(new QTimer(this)),
-    model(Model(0)),
+    model(new Model(0)),
     opengl(new GLView())
 {
     initGUI();
@@ -27,13 +27,14 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
 
 GEyeTracker::~GEyeTracker()
 {
+    delete model;
     delete ui;
 }
 
 void GEyeTracker::initGUI()
 {
     ui->setupUi(this);
-    vector<BaseTracker*> trackers = model.getTrackers();
+    vector<BaseTracker*> trackers = model->getTrackers();
     for (unsigned int i = 0; i < trackers.size(); i++)
     {
         if(trackers[i]->isEnabled())
@@ -43,7 +44,7 @@ void GEyeTracker::initGUI()
     }
 
     ui->viewLayout->insertWidget(0, opengl);
-    timer->setInterval(25); // timer expires every N ms
+    timer->setInterval(40); // timer expires every N ms
     connect(timer, SIGNAL(timeout()), this, SLOT(procFrame()));
     connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
     connect(ui->stopBtn, SIGNAL(clicked()), timer, SLOT(stop()));
@@ -52,19 +53,19 @@ void GEyeTracker::initGUI()
 
 void GEyeTracker::procFrame()
 {
-    model.update();
+    model->update();
 
-    opengl->loadGLTextures(*model.getFaceDispImg());
+    opengl->loadGLTextures(*model->getDispImg());
 
-    cv::Rect r = model.getStore()->faceRoi;
-    if(r.area())
-    {
+    cv::Rect r = model->getStore()->faceRoi;
+//    if(r.area())
+//    {
         opengl->setCurrROI(r.x, r.y, r.width, r.height);
-    }
-    else
-    {
-        opengl->setCurrROI(-1, -1, 0, 0);
-    }
+//    }
+//    else
+//    {
+//        opengl->setCurrROI(-1, -1, 0, 0);
+//    }
     opengl->updateGL();
 }
 
@@ -87,7 +88,7 @@ void GEyeTracker::setImage(Mat* const img, bool value)
 {
     if (value)
     {
-        model.getStore()->faceImg = img;
+        model->getStore()->dispImg = img;
     }
 }
 
@@ -166,7 +167,7 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
         paramLayout->addLayout(guiItems[i]);
     }
     // Here we statically create the webcam capture mode
-    QWidget* normImgMode = new GUIRadioButton(new ImageModeParam("Webcam Capture", &(model.getStore()->sceneImg)));
+    QWidget* normImgMode = new GUIRadioButton(new ImageModeParam("Webcam Capture", &(model->getStore()->sceneImg)));
     connect(normImgMode, SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
     static_cast<GUIRadioButton*>(normImgMode)->setChecked(true);
     paramLayout->addWidget(normImgMode);
