@@ -14,8 +14,9 @@ public:
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
   void loadGLTextures(const cv::Mat&);
-  void drawROIs();
-  void setCurrROI(int x, int y, int w, int h);
+  void drawROIs(QRect* ROI);
+  void setFaceROI(int x, int y, int w, int h);
+  void setEyesROI(int x, int y, int w, int h);
 
 protected:
   void initializeGL();
@@ -25,7 +26,8 @@ protected:
 
 private:
   void drawLine();
-  QRect* currROI;
+  QRect* faceROI;
+  QRect* eyesROI;
   GLuint texture;
 
 };

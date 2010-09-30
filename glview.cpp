@@ -4,7 +4,8 @@
 
 GLView::GLView(QWidget *parent) :
     QGLWidget(parent),
-    currROI(new QRect(-1, -1, 0, 0))
+    faceROI(new QRect(-1, -1, 0, 0)),
+    eyesROI(new QRect(-1, -1, 0, 0))
 {
 }
 
@@ -55,7 +56,8 @@ void GLView::paintGL()
     glTexCoord2d(0, 1); glVertex2d(0, 0); // Bottom Left
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    drawROIs();
+    drawROIs(faceROI);
+    drawROIs(eyesROI);
 }
 
 void GLView::loadGLTextures(const cv::Mat& image)
@@ -70,22 +72,30 @@ void GLView::loadGLTextures(const cv::Mat& image)
 //    CheckGLError("no here");
 }
 
-void GLView::setCurrROI(int x, int y, int w, int h)
+void GLView::setFaceROI(int x, int y, int w, int h)
 {
-    currROI->setX(x);
-    currROI->setY(480-y-h);
-    currROI->setWidth(w);
-    currROI->setHeight(h);
+    faceROI->setX(x);
+    faceROI->setY(480-y-h);
+    faceROI->setWidth(w);
+    faceROI->setHeight(h);
 }
 
-void GLView::drawROIs()
+void GLView::setEyesROI(int x, int y, int w, int h)
+{
+    eyesROI->setX(x);
+    eyesROI->setY(480-y-h);
+    eyesROI->setWidth(w);
+    eyesROI->setHeight(h);
+}
+
+void GLView::drawROIs(QRect* ROI)
 {
     glBegin(GL_LINE_LOOP);
     glColor3f(0.0f, 1.0f, 0.5f);
-    glVertex2d(currROI->left(), currROI->top());
-    glVertex2d(currROI->right(), currROI->top());
-    glVertex2d(currROI->right(), currROI->bottom());
-    glVertex2d(currROI->left(), currROI->bottom());
+    glVertex2d(ROI->left(), ROI->top());
+    glVertex2d(ROI->right(), ROI->top());
+    glVertex2d(ROI->right(), ROI->bottom());
+    glVertex2d(ROI->left(), ROI->bottom());
     glEnd();
     glColor3f(0.0f, 0.0f, 0.0f);
 }

@@ -1,5 +1,4 @@
 #include <cv.h>
-#include <QDebug>
 #include <QLabel>
 #include <QGroupBox>
 #include <QComboBox>
@@ -41,7 +40,7 @@ void GEyeTracker::initGUI()
     }
 
     ui->viewLayout->insertWidget(0, opengl);
-    timer->setInterval(40); // timer expires every N ms
+    timer->setInterval(30); // timer expires every N ms
     connect(timer, SIGNAL(timeout()), this, SLOT(procFrame()));
     connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
     connect(ui->stopBtn, SIGNAL(clicked()), timer, SLOT(stop()));
@@ -54,10 +53,13 @@ void GEyeTracker::procFrame()
 
     opengl->loadGLTextures(*model->getDispImg());
 
-    cv::Rect r = model->getStore()->faceRoi;
+    cv::Rect f = model->getStore()->faceRoi;
+    cv::Rect e = model->getStore()->eyesRoi + f.tl();
+    opengl->setFaceROI(f.x, f.y, f.width, f.height);
+    opengl->setEyesROI(e.x, e.y, e.width, e.height);
 //    if(r.area())
 //    {
-        opengl->setCurrROI(r.x, r.y, r.width, r.height);
+//        opengl->setCurrROI(r.x, r.y, r.width, r.height);
 //    }
 //    else
 //    {
