@@ -82,7 +82,7 @@
      <item>
       <layout class="QHBoxLayout" name="paramsLayout">
        <property name="spacing">
-        <number>2</number>
+        <number>4</number>
        </property>
       </layout>
      </item>
