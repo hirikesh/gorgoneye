@@ -1,6 +1,6 @@
-#include <QImage>
 #include "glview.h"
 #include <GL/glext.h>
+#include <QDebug>
 
 GLView::GLView(QWidget *parent) :
     QGLWidget(parent),
@@ -47,7 +47,6 @@ void GLView::paintGL()
     glClear(GL_COLOR_BUFFER_BIT); // clears window
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glBegin(GL_QUADS);  // Draw A Quad
     glTexCoord2d(0, 0); glVertex2d(0, 480); // Top Left
@@ -61,11 +60,14 @@ void GLView::paintGL()
 
 void GLView::loadGLTextures(const cv::Mat& image)
 {
+    glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
+//    CheckGLError("this place");
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+//    CheckGLError("no here");
 }
 
 void GLView::setCurrROI(int x, int y, int w, int h)
@@ -86,4 +88,10 @@ void GLView::drawROIs()
     glVertex2d(currROI->left(), currROI->bottom());
     glEnd();
     glColor3f(0.0f, 0.0f, 0.0f);
+}
+
+void GLView::CheckGLError(const char* msg) {
+        GLuint err = glGetError();
+        if (err != GL_NO_ERROR)
+                qDebug() << err << msg;
 }

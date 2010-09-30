@@ -21,6 +21,7 @@ protected:
   void initializeGL();
   void paintGL();
   void resizeGL(int w, int h);
+  void CheckGLError(const char*);
 
 private:
   void drawLine();
