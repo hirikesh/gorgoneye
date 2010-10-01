@@ -21,58 +21,47 @@ FeatureDetector::FeatureDetector(const int type, int mins, int maxs, int minv, i
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
-    // smooths using gaussian pyramid kernel and downsamples
-//    static Mat tmpImg;
-//    pyrDown(srcImg, tmpImg);
-    // reduce Rect displacement and dimensions by half for processing
-//    static Rect tmpSrcRoi;
-//    tmpSrcRoi = Rect(srcRoi.x/2, srcRoi.y/2, srcRoi.width/2, srcRoi.height/2);
-
     // Prepare CV Mats
-    static Mat cHSVImg(srcImg.rows, srcImg.cols, CV_8UC3);
-    static Mat satImg(srcImg.rows, srcImg.cols, CV_8UC1);
-    static Mat valImg(srcImg.rows, srcImg.cols, CV_8UC1);
-    static Mat hueImg(srcImg.rows, srcImg.cols, CV_8UC1);
-    static Mat maskImg(srcImg.rows, srcImg.cols, CV_8UC1);
+    static Mat cHSVImg(srcImg.size(), CV_8UC3);
+    static Mat hueImg(srcImg.size(), CV_8UC1);
+    static Mat satImg(srcImg.size(), CV_8UC1);
+    static Mat valImg(srcImg.size(), CV_8UC1);
+    static Mat cHSVChannels[] = {hueImg, satImg, valImg};
 
     // Extract Hue Info
     cvtColor(srcImg, cHSVImg, CV_BGR2HSV);
-    Mat cHSVChannels[] = {hueImg, satImg, valImg};
     split(cHSVImg, cHSVChannels);
 
     // visualise Hue for debugging
-//    Mat hueVisImg(srcImg.rows, srcImg.cols, CV_8UC3);
-//    satImg = Scalar(255);
-//    valImg = Scalar(255);
-//    Mat hueVis[] = {hueImg, satImg, valImg};
-//    merge(hueVis, 3, hueVisImg);
+    static Mat emptyImg(srcImg.size(), CV_8UC1, Scalar(255));
+    static Mat hueVis[] = {hueImg, emptyImg, emptyImg};
+    merge(hueVis, 3, hueVisImg);
     // This colour conversion is extremely laggy.
-//   cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
-//    imshow("Hue Visualisation", hueVisImg);
+    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
 
     // set mask ROI
+    static Mat maskImg(srcImg.size(), CV_8UC1);
     inRange(cHSVImg,
             Scalar(0, minSaturation, minValue),
             Scalar(180, maxSaturation, maxValue),
             maskImg);
-    //imshow("Masked Image", maskImg);
-    Mat hueImgROI(hueImg, srcRoi);
-    Mat maskROI(maskImg, srcRoi);
+    static Mat hueImgROI, maskROI;
+    hueImgROI = hueImg(srcRoi);
+    maskROI = maskImg(srcRoi);
 
     // Histogram properties ------------------
-    //static Mat backProjImg;
     static MatND hist;
-    int hBins = 30; // no. of hue bins
-    int histSize[] = {hBins};
-    float hRanges[] = {0, 180}; // OpenCV implements hue values from 0 to 180
+    const int hBins = 30; // no. of hue bins
+    const int histSize[] = {hBins};
+    const float hRanges[] = {0, 180}; // OpenCV implements hue values from 0 to 180
     const float* histRanges[] = {hRanges};
-    int channels[] = {0};
+    const int channels[] = {0};
 
     if (histCalibrate)
     {
         histCalibrate = false;
         // Calculate Histogram ------------------
-        calcHist(&hueImgROI,  // array of source images
+        calcHist(&hueImgROI,// array of source images
                  1,         // number of source images
                  channels,  // list of channels
                  maskROI,   // image mask
@@ -85,7 +74,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     }
 
     // Calculate Back Projection ------------------
-    double maxVal = 0;
+    static double maxVal = 0;
     minMaxLoc(hist, 0, &maxVal, 0, 0);
     double scaleHist = maxVal? 255.0/maxVal : 0;
 
@@ -100,14 +89,13 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 
     // show back projection for debugging / parameter tweaking
     bitwise_and(backProjImg, maskImg, backProjImg, MatND());
-    // imshow("Filtered Back Projected Image", backProjImg);
-    Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
+    static Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
     merge(backProjImg3, 3, backProjGrayImg);
 
     // CAMShift Calculations ---------
     // Search Window begins at region of interest determined using Haar
     // The algorithm will auto increase search window
-    RotatedRect rotTemp;
+    static RotatedRect rotTemp;
     rotTemp = CamShift(backProjImg, // back projected image
                        srcRoi,      // initial search window
                        TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 5, 10));
@@ -119,7 +107,6 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     // Check on bounds. If ROI is invalid, don't update srcRoi.
     if (tmpRoi.tl().inside(boundRoi) && tmpRoi.br().inside(boundRoi)) {
         srcRoi = tmpRoi;
-//        srcRoi = Rect(tmpRoi.x*2, tmpRoi.y*2, tmpRoi.width*2, tmpRoi.height*2);
         return true;
     } else {
         histCalibrate = true;

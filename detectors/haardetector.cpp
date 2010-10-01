@@ -21,11 +21,9 @@ HaarDetector::HaarDetector(const int type, string td, double sf, int mn, bool fg
 
 bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
-//    static Mat haarImg(srcImg.rows, srcImg.cols, CV_8UC3);
     static CascadeClassifier cc(trainingData);
     static vector<Rect> rois;
 
-//    pyrDown(srcImg, haarImg);
     cc.detectMultiScale(srcImg,
                         rois,
                         scaleFactor,
@@ -36,8 +34,6 @@ bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)
     if(rois.size())
     {
         srcRoi = rois[0];
-//        srcRoi = (rois[0] + rois[0].size()) + rois[0].tl();
-//        srcRoi = Rect(rois[0].x*2, rois[0].y*2, rois[0].width*2, rois[0].height*2);
         return true;
     }
     else
