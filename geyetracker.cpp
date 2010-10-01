@@ -1,4 +1,5 @@
 #include <cv.h>
+#include <highgui.h>
 #include <QLabel>
 #include <QGroupBox>
 #include <QComboBox>
@@ -10,6 +11,8 @@
 #include "trackers/basetracker.h"
 #include "detectors/basedetector.h"
 #include "glview.h"
+
+#define USE_OPENGL 1
 
 using cv::Mat;
 using namespace std;
@@ -39,7 +42,13 @@ void GEyeTracker::initGUI()
         createTrackerGUI(trackers[i]);
     }
 
+#if(USE_OPENGL)
     ui->viewLayout->insertWidget(0, opengl);
+#else
+    ui->viewFrame->hide();
+    ui->mainLayout->deleteLater();
+#endif
+
     timer->setInterval(30); // timer expires every N ms
     connect(timer, SIGNAL(timeout()), this, SLOT(procFrame()));
     connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
@@ -51,21 +60,19 @@ void GEyeTracker::procFrame()
 {
     model->update();
 
-    opengl->loadGLTextures(*model->getDispImg());
-
     cv::Rect f = model->getStore()->faceRoi;
     cv::Rect e = model->getStore()->eyesRoi + f.tl();
+
+#if(USE_OPENGL)
     opengl->setFaceROI(f.x, f.y, f.width, f.height);
     opengl->setEyesROI(e.x, e.y, e.width, e.height);
-//    if(r.area())
-//    {
-//        opengl->setCurrROI(r.x, r.y, r.width, r.height);
-//    }
-//    else
-//    {
-//        opengl->setCurrROI(-1, -1, 0, 0);
-//    }
+    opengl->loadGLTextures(*model->getDispImg());
     opengl->updateGL();
+#else
+    cv::rectangle(model->getStore()->sceneImg, f, cv::Scalar(0,200,0), 3);
+    cv::rectangle(model->getStore()->faceImg, e, cv::Scalar(200,0,0), 3);
+    imshow("Display", *model->getDispImg());
+#endif
 }
 
 void GEyeTracker::setParam(int* const param, int value)
