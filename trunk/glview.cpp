@@ -50,10 +50,10 @@ void GLView::paintGL()
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glBegin(GL_QUADS);  // Draw A Quad
-    glTexCoord2d(0, 0); glVertex2d(0, 480); // Top Left
-    glTexCoord2d(1, 0); glVertex2d(640, 480); // Top Right
-    glTexCoord2d(1, 1); glVertex2d(640, 0); // Bottom Right
-    glTexCoord2d(0, 1); glVertex2d(0, 0); // Bottom Left
+    glTexCoord2i(0, 0); glVertex2d(0, 480); // Top Left
+    glTexCoord2i(1, 0); glVertex2d(640, 480); // Top Right
+    glTexCoord2i(1, 1); glVertex2d(640, 0); // Bottom Right
+    glTexCoord2i(0, 1); glVertex2d(0, 0); // Bottom Left
     glEnd();
     glDisable(GL_TEXTURE_2D);
     drawROIs(faceROI);
@@ -65,7 +65,6 @@ void GLView::loadGLTextures(const cv::Mat& image)
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
-//    CheckGLError("this place");
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
@@ -90,12 +89,13 @@ void GLView::setEyesROI(int x, int y, int w, int h)
 
 void GLView::drawROIs(QRect* ROI)
 {
+    glLineWidth(3.0);
     glBegin(GL_LINE_LOOP);
     glColor3f(0.0f, 1.0f, 0.5f);
-    glVertex2d(ROI->left(), ROI->top());
-    glVertex2d(ROI->right(), ROI->top());
-    glVertex2d(ROI->right(), ROI->bottom());
-    glVertex2d(ROI->left(), ROI->bottom());
+    glVertex2i(ROI->left(), ROI->top());
+    glVertex2i(ROI->right(), ROI->top());
+    glVertex2i(ROI->right(), ROI->bottom());
+    glVertex2i(ROI->left(), ROI->bottom());
     glEnd();
     glColor3f(0.0f, 0.0f, 0.0f);
 }
