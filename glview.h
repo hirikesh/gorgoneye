@@ -23,12 +23,14 @@ protected:
   void paintGL();
   void resizeGL(int w, int h);
   void CheckGLError(const char*);
+  int isExtensionSupported(const char *extension);
 
 private:
   void drawLine();
   QRect* faceROI;
   QRect* eyesROI;
   GLuint texture;
+  int npotCapable;
 
 };
 
