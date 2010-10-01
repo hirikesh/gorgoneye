@@ -22,26 +22,26 @@ FeatureDetector::FeatureDetector(const int type, int mins, int maxs, int minv, i
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
     // smooths using gaussian pyramid kernel and downsamples
-    static Mat tmpImg;
-    pyrDown(srcImg, tmpImg);
+//    static Mat tmpImg;
+//    pyrDown(srcImg, tmpImg);
     // reduce Rect displacement and dimensions by half for processing
-    static Rect tmpSrcRoi;
-    tmpSrcRoi = Rect(srcRoi.x/2, srcRoi.y/2, srcRoi.width/2, srcRoi.height/2);
+//    static Rect tmpSrcRoi;
+//    tmpSrcRoi = Rect(srcRoi.x/2, srcRoi.y/2, srcRoi.width/2, srcRoi.height/2);
 
     // Prepare CV Mats
-    static Mat cHSVImg(tmpImg.rows, tmpImg.cols, CV_8UC3);
-    static Mat satImg(tmpImg.rows, tmpImg.cols, CV_8UC1);
-    static Mat valImg(tmpImg.rows, tmpImg.cols, CV_8UC1);
-    static Mat hueImg(tmpImg.rows, tmpImg.cols, CV_8UC1);
-    static Mat maskImg(tmpImg.rows, tmpImg.cols, CV_8UC1);
+    static Mat cHSVImg(srcImg.rows, srcImg.cols, CV_8UC3);
+    static Mat satImg(srcImg.rows, srcImg.cols, CV_8UC1);
+    static Mat valImg(srcImg.rows, srcImg.cols, CV_8UC1);
+    static Mat hueImg(srcImg.rows, srcImg.cols, CV_8UC1);
+    static Mat maskImg(srcImg.rows, srcImg.cols, CV_8UC1);
 
     // Extract Hue Info
-    cvtColor(tmpImg, cHSVImg, CV_BGR2HSV);
+    cvtColor(srcImg, cHSVImg, CV_BGR2HSV);
     Mat cHSVChannels[] = {hueImg, satImg, valImg};
     split(cHSVImg, cHSVChannels);
 
     // visualise Hue for debugging
-//    Mat hueVisImg(tmpImg.rows, tmpImg.cols, CV_8UC3);
+//    Mat hueVisImg(srcImg.rows, srcImg.cols, CV_8UC3);
 //    satImg = Scalar(255);
 //    valImg = Scalar(255);
 //    Mat hueVis[] = {hueImg, satImg, valImg};
@@ -56,8 +56,8 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
             Scalar(180, maxSaturation, maxValue),
             maskImg);
     //imshow("Masked Image", maskImg);
-    Mat hueImgROI(hueImg, tmpSrcRoi);
-    Mat maskROI(maskImg, tmpSrcRoi);
+    Mat hueImgROI(hueImg, srcRoi);
+    Mat maskROI(maskImg, srcRoi);
 
     // Histogram properties ------------------
     //static Mat backProjImg;
@@ -109,17 +109,17 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     // The algorithm will auto increase search window
     RotatedRect rotTemp;
     rotTemp = CamShift(backProjImg, // back projected image
-                       tmpSrcRoi,      // initial search window
+                       srcRoi,      // initial search window
                        TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 5, 10));
 
     // Simple but less robust method for bounds. FIXME soon.
-    static Rect boundRoi(0, 0, tmpImg.cols, tmpImg.rows);
+    static Rect boundRoi(0, 0, srcImg.cols, srcImg.rows);
     static Rect tmpRoi;
     tmpRoi = rotTemp.boundingRect();
     // Check on bounds. If ROI is invalid, don't update srcRoi.
     if (tmpRoi.tl().inside(boundRoi) && tmpRoi.br().inside(boundRoi)) {
-//        srcRoi = tmpRoi;
-        srcRoi = Rect(tmpRoi.x*2, tmpRoi.y*2, tmpRoi.width*2, tmpRoi.height*2);
+        srcRoi = tmpRoi;
+//        srcRoi = Rect(tmpRoi.x*2, tmpRoi.y*2, tmpRoi.width*2, tmpRoi.height*2);
         return true;
     } else {
         histCalibrate = true;
