@@ -8,7 +8,7 @@
 FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 {
     haarDetector = new HaarDetector(HAAR, HAAR_CC_FACE, 1.2, 2, NULL, cv::Size(64,72));
-    featureDetector = new FeatureDetector(FEAT, 96, 180, 0, 96);
+    featureDetector = new FeatureDetector(FEAT, 96, 172, 24, 196);
     hybridDetector = new HybridDetector(HYBR, haarDetector, featureDetector);
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
@@ -18,7 +18,23 @@ FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 void FaceTracker::track()
 {
     if(enabled) {
-        if(currDetector->locate(store->sceneImg, store->faceRoi)) {
+        // Preprocessing
+        // Smooth and downsample sceneImg
+        static cv::Mat tmpSceneImg;
+        cv::pyrDown(store->sceneImg, tmpSceneImg);
+        static cv::Rect tmpFaceRoi;
+        tmpFaceRoi = cv::Rect(store->faceRoi.x / 2,
+                              store->faceRoi.y / 2,
+                              store->faceRoi.width / 2,
+                              store->faceRoi.height / 2);
+
+        if(currDetector->locate(tmpSceneImg, tmpFaceRoi)) {
+            // Postprocessing
+            // Upsample tracked ROI
+            store->faceRoi = cv::Rect(tmpFaceRoi.x * 2,
+                                      tmpFaceRoi.y * 2,
+                                      tmpFaceRoi.width * 2,
+                                      tmpFaceRoi.height * 2);
             store->faceImg = store->sceneImg(store->faceRoi);
         }
     }
