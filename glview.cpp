@@ -89,7 +89,7 @@ void GLView::setEyesROI(int x, int y, int w, int h)
 
 void GLView::drawROIs(QRect* ROI)
 {
-    glLineWidth(3.0);
+    glLineWidth(2.0);
     glBegin(GL_LINE_LOOP);
     glColor3f(0.0f, 1.0f, 0.5f);
     glVertex2i(ROI->left(), ROI->top());

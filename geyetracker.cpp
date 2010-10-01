@@ -69,8 +69,8 @@ void GEyeTracker::procFrame()
     opengl->loadGLTextures(*model->getDispImg());
     opengl->updateGL();
 #else
-    cv::rectangle(model->getStore()->sceneImg, f, cv::Scalar(0,200,0), 3);
-    cv::rectangle(model->getStore()->faceImg, e, cv::Scalar(200,0,0), 3);
+    cv::rectangle(model->getStore()->sceneImg, f, cv::Scalar(0,200,0), 2);
+    cv::rectangle(model->getStore()->faceImg, e, cv::Scalar(200,0,0), 2);
     imshow("Display", *model->getDispImg());
 #endif
 }
