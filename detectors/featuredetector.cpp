@@ -53,19 +53,23 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     merge(hueVis, 3, hueVisImg);
 
     // This colour conversion is extremely laggy.
-    //cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
+    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
 
     static Mat neutralImg(srcImgSize, CV_8UC1, Scalar(128));
     static Mat cYCbCrImg(srcImgSize, CV_8UC3);
     static Mat lumaImg(srcImgSize, CV_8UC1);
-    static Mat chromaBlueImg(srcImgSize, CV_8UC1);
     static Mat chromaRedImg(srcImgSize, CV_8UC1);
-    static Mat cYCbCrChannels[] = {lumaImg, chromaBlueImg, chromaRedImg};
+    static Mat chromaBlueImg(srcImgSize, CV_8UC1);
+    static Mat cYCbCrChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
 
     static Mat chromaBlueVis[] = {neutralImg, chromaBlueImg, neutralImg};
     merge(chromaBlueVis, 3, chromaBlueVisImg);
+
     static Mat chromaRedVis[] = {neutralImg, neutralImg, chromaRedImg};
     merge(chromaRedVis, 3, chromaRedVisImg);
+
+    cvtColor(chromaBlueVisImg, chromaBlueVisImg, CV_YCrCb2RGB);
+    cvtColor(chromaRedVisImg, chromaRedVisImg, CV_YCrCb2RGB);
 
     cvtColor(srcImg, cYCbCrImg, CV_BGR2YCrCb);
     split(cYCbCrImg, cYCbCrChannels);
