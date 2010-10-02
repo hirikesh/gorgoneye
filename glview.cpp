@@ -28,6 +28,8 @@ void GLView::initializeGL()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // set the window clear color to black
     glShadeModel(GL_FLAT);
+    glGenTextures(1, &texture);
+
     npotCapable = isExtensionSupported("GL_ARB_texture_non_power_of_two");
     qDebug() << npotCapable;
 }
@@ -73,9 +75,9 @@ void GLView::paintGL()
 void GLView::loadGLTextures(const cv::Mat& image)
 {
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, 0 );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     if(npotCapable) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
     } else {
