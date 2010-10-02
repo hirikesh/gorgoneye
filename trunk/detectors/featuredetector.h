@@ -11,7 +11,8 @@
 class FeatureDetector : public BaseDetector
 {
 public:
-    FeatureDetector(const int type, int mins, int maxs, int minv, int maxv);
+    FeatureDetector(const int type, int mins, int maxs, int minv, int maxv,
+                                    int mincb, int maxcb, int mincr, int maxcr);
 
     bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 
@@ -22,6 +23,11 @@ private:
     int maxSaturation;
     int minValue;
     int maxValue;
+
+    int minChromaBlue;
+    int maxChromaBlue;
+    int minChromaRed;
+    int maxChromaRed;
 
     // should only keep configuration vars and
     // detector flags, etc here. vars that need
@@ -38,6 +44,7 @@ private:
 //    Mat valImg;
 //    Mat maskImg;
     cv::Mat backProjImg;
+    cv::Mat backProjImg2;
     cv::Mat hueVisImg;
     cv::Mat backProjGrayImg;
 //    MatND hist;
