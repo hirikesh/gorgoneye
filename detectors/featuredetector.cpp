@@ -22,10 +22,11 @@ FeatureDetector::FeatureDetector(const int type, int mins, int maxs, int minv, i
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
     // Prepare CV Mats
-    static Mat cHSVImg(srcImg.size(), CV_8UC3);
-    static Mat hueImg(srcImg.size(), CV_8UC1);
-    static Mat satImg(srcImg.size(), CV_8UC1);
-    static Mat valImg(srcImg.size(), CV_8UC1);
+    static Size srcImgSize = srcImg.size();
+    static Mat cHSVImg(srcImgSize, CV_8UC3);
+    static Mat hueImg(srcImgSize, CV_8UC1);
+    static Mat satImg(srcImgSize, CV_8UC1);
+    static Mat valImg(srcImgSize, CV_8UC1);
     static Mat cHSVChannels[] = {hueImg, satImg, valImg};
 
     // Extract Hue Info
@@ -33,14 +34,14 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     split(cHSVImg, cHSVChannels);
 
     // visualise Hue for debugging
-    static Mat emptyImg(srcImg.size(), CV_8UC1, Scalar(255));
+    static Mat emptyImg(srcImgSize, CV_8UC1, Scalar(255));
     static Mat hueVis[] = {hueImg, emptyImg, emptyImg};
     merge(hueVis, 3, hueVisImg);
     // This colour conversion is extremely laggy.
     cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
 
     // set mask ROI
-    static Mat maskImg(srcImg.size(), CV_8UC1);
+    static Mat maskImg(srcImgSize, CV_8UC1);
     inRange(cHSVImg,
             Scalar(0, minSaturation, minValue),
             Scalar(180, maxSaturation, maxValue),
@@ -88,8 +89,8 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
                     true);                   // uniform histogram
 
     // show back projection for debugging / parameter tweaking
-    bitwise_and(backProjImg, maskImg, backProjImg, MatND());
     static Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
+    bitwise_and(backProjImg, maskImg, backProjImg, MatND());
     merge(backProjImg3, 3, backProjGrayImg);
 
     // CAMShift Calculations ---------
@@ -101,40 +102,23 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
                        TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 5, 10));
 
     // Simple but less robust method for bounds. FIXME soon.
-    static Rect boundRoi(0, 0, srcImg.cols, srcImg.rows);
     static Rect tmpRoi;
     tmpRoi = rotTemp.boundingRect();
     // Check on bounds. If ROI is invalid, don't update srcRoi.
-    if (tmpRoi.tl().inside(boundRoi) && tmpRoi.br().inside(boundRoi)) {
-        srcRoi = tmpRoi;
+//    static Rect boundRoi(0, 0, srcImg.cols, srcImg.rows);
+//    if (tmpRoi.tl().inside(boundRoi) && tmpRoi.br().inside(boundRoi)) {
+    // camshift reports success as long as ROI is at most half the size
+    // of the input image, and at least 1 20th the size of the input image.
+    if (tmpRoi.area() >= srcImgSize.area()/400 && tmpRoi.area() <= srcImgSize.area()/2) {
+        int newTLx = tmpRoi.x < 0 ? 0 : tmpRoi.x;
+        int newTLy = tmpRoi.y < 0 ? 0 : tmpRoi.y;
+        int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols : tmpRoi.br().x;
+        int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows : tmpRoi.br().y;
+        srcRoi = Rect(Point(newTLx, newTLy), Point(newBRx, newBRy));
+//        srcRoi = tmpRoi;
         return true;
     } else {
         histCalibrate = true;
         return false;
     }
-
-    // Modify bounds on camshift rectangle
-    // TODO: A more elegant range check function
-//    if (srcRoi.x <= 0)
-//    {srcRoi.x = 0;}
-//    if (srcRoi.width <= 0)
-//    {srcRoi.width = 0;}
-//    if (srcRoi.y <= 0)
-//    {srcRoi.y = 0;}
-//    if (srcRoi.height <= 0)
-//    {srcRoi.height = 0;}
-//    if (srcRoi.width >= srcImg.cols)
-//    {srcRoi.width = srcImg.cols;}
-//    if (srcRoi.x >= srcImg.cols)
-//    {srcRoi.x = srcImg.cols;}
-//    if (srcRoi.y >= srcImg.rows)
-//    {srcRoi.y = srcImg.rows;}
-//    if (srcRoi.height >= srcImg.rows)
-//    {srcRoi.height = srcImg.rows;}
-//    if (srcRoi.x + srcRoi.width >= srcImg.cols)
-//    {srcRoi.width = srcImg.cols - srcRoi.x;}
-//    if (srcRoi.y + srcRoi.height >= srcImg.rows)
-//    {srcRoi.height = srcImg.rows - srcRoi.y;}
-
-//    return true;
 }
