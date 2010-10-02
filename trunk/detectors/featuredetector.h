@@ -46,6 +46,8 @@ private:
     cv::Mat backProjImg;
     cv::Mat backProjImg2;
     cv::Mat hueVisImg;
+    cv::Mat chromaBlueVisImg;
+    cv::Mat chromaRedVisImg;
     cv::Mat backProjGrayImg;
 //    MatND hist;
 };
