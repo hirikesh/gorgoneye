@@ -73,8 +73,7 @@ void GLView::paintGL()
 void GLView::loadGLTextures(const cv::Mat& image)
 {
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &texture );
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glBindTexture( GL_TEXTURE_2D, 0 );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     if(npotCapable) {
@@ -114,60 +113,45 @@ void GLView::drawROIs(QRect* ROI)
     glColor3f(0.0f, 0.0f, 0.0f);
 }
 
-void GLView::CheckGLError(const char* msg) {
-        GLuint err = glGetError();
-        if (err != GL_NO_ERROR)
-                qDebug() << err << msg;
+void GLView::CheckGLError(const char* msg)
+{
+    GLuint err = glGetError();
+    if (err != GL_NO_ERROR)
+        qDebug() << err << msg;
 }
 
 
 int GLView::isExtensionSupported(const char *extension)
-
 {
+    const GLubyte *extensions = NULL;
+    const GLubyte *start;
 
-  const GLubyte *extensions = NULL;
+    GLubyte *where, *terminator;
+    /* Extension names should not have spaces. */
 
-  const GLubyte *start;
+    where = (GLubyte *) strchr(extension, ' ');
 
-  GLubyte *where, *terminator;
-  /* Extension names should not have spaces. */
+    if (where || *extension == '\0')
+        return 0;
 
-  where = (GLubyte *) strchr(extension, ' ');
+    extensions = glGetString(GL_EXTENSIONS);
 
-  if (where || *extension == '\0')
+    /* It takes a bit of care to be fool-proof about parsing the
+     OpenGL extensions string. Don't be fooled by sub-strings,
+     etc. */
+    start = extensions;
+
+    while(1) {
+        where = (GLubyte *) strstr((const char *) start, extension);
+        if (!where)
+            break;
+        terminator = where + strlen(extension);
+        if (where == start || *(where - 1) == ' ')
+            if (*terminator == ' ' || *terminator == '\0')
+                return 1;
+
+        start = terminator;
+    }
 
     return 0;
-
-  extensions = glGetString(GL_EXTENSIONS);
-
-  /* It takes a bit of care to be fool-proof about parsing the
-
-     OpenGL extensions string. Don't be fooled by sub-strings,
-
-     etc. */
-
-  start = extensions;
-
-  for (;;) {
-
-    where = (GLubyte *) strstr((const char *) start, extension);
-
-    if (!where)
-
-      break;
-
-    terminator = where + strlen(extension);
-
-    if (where == start || *(where - 1) == ' ')
-
-      if (*terminator == ' ' || *terminator == '\0')
-
-        return 1;
-
-    start = terminator;
-
-  }
-
-  return 0;
-
 }
