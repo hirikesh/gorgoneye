@@ -1,4 +1,5 @@
 #include <cv.h>
+#include <QDebug>
 #include "facetracker.h"
 #include "detectors/haardetector.h"
 #include "detectors/featuredetector.h"
@@ -8,7 +9,7 @@
 FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 {
     haarDetector = new HaarDetector(HAAR, HAAR_CC_FACE, 1.2, 2, NULL, cv::Size(64,72));
-    featureDetector = new FeatureDetector(FEAT, 0, 80, 30, 255, 20, 240, 77, 127, 133, 173);
+    featureDetector = new FeatureDetector(FEAT, 0, 26, 0, 255, 88, 255, 77, 127, 133, 173);
     hybridDetector = new HybridDetector(HYBR, haarDetector, featureDetector);
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
@@ -28,7 +29,11 @@ void FaceTracker::track()
                               store->faceRoi.width / 2,
                               store->faceRoi.height / 2);
 
+        double t = (double)cv::getTickCount();
         store->faceLocated = currDetector->locate(tmpSceneImg, tmpFaceRoi);
+        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+        qDebug() << currDetector->getName().c_str() << "speed:" << 1000*t << "ms";
+
         if(store->faceLocated) {
             // Postprocessing
             // Upsample tracked ROI

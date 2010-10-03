@@ -20,6 +20,9 @@ public:
 
     bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 
+protected:
+
+
 private:
     bool histCalibrate;
     int minHue;
@@ -34,6 +37,7 @@ private:
     int minChromaRed;
     int maxChromaRed;
 
+    cv::MatND hist;
     cv::Mat backProjImg;
 
     cv::Mat backProjGrayImg;
