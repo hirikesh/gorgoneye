@@ -28,7 +28,8 @@ void FaceTracker::track()
                               store->faceRoi.width / 2,
                               store->faceRoi.height / 2);
 
-        if(currDetector->locate(tmpSceneImg, tmpFaceRoi)) {
+        store->faceLocated = currDetector->locate(tmpSceneImg, tmpFaceRoi);
+        if(store->faceLocated) {
             // Postprocessing
             // Upsample tracked ROI
             store->faceRoi = cv::Rect(tmpFaceRoi.x * 2,
