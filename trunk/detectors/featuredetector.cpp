@@ -56,11 +56,14 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
 
     static Mat neutralImg(srcImgSize, CV_8UC1, Scalar(128));
-    static Mat cYCbCrImg(srcImgSize, CV_8UC3);
+    static Mat cYCrCbImg(srcImgSize, CV_8UC3);
     static Mat lumaImg(srcImgSize, CV_8UC1);
     static Mat chromaRedImg(srcImgSize, CV_8UC1);
     static Mat chromaBlueImg(srcImgSize, CV_8UC1);
-    static Mat cYCbCrChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
+    static Mat cYCrCbChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
+
+    cvtColor(srcImg, cYCrCbImg, CV_BGR2YCrCb);
+    split(cYCrCbImg, cYCrCbChannels);
 
     static Mat chromaBlueVis[] = {neutralImg, chromaBlueImg, neutralImg};
     merge(chromaBlueVis, 3, chromaBlueVisImg);
@@ -71,16 +74,23 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     cvtColor(chromaBlueVisImg, chromaBlueVisImg, CV_YCrCb2RGB);
     cvtColor(chromaRedVisImg, chromaRedVisImg, CV_YCrCb2RGB);
 
-    cvtColor(srcImg, cYCbCrImg, CV_BGR2YCrCb);
-    split(cYCbCrImg, cYCbCrChannels);
-
     // set Mask ROI (YCbCr)
     static Mat maskChromaImg(srcImgSize, CV_8UC1);
 
-    inRange(cYCbCrImg,
-            Scalar(0, minChromaBlue, minChromaRed),
-            Scalar(255, maxChromaBlue, maxChromaRed),
-            maskChromaImg);
+    inRange(cYCrCbImg,
+            Scalar(0, minChromaRed, minChromaBlue),
+            Scalar(255, maxChromaRed, maxChromaBlue),
+            maskChromaImg);    
+    imshow("CbCr Mask", maskChromaImg);
+
+    //erode(maskChromaImg, maskChromaImg, Mat(), Point(-1, -1), 2);
+    //dilate(maskChromaImg, maskChromaImg, Mat(), Point(-1, -1), 2);
+
+    morphologyEx(maskChromaImg, maskChromaImg, MORPH_CLOSE, Mat());
+    morphologyEx(maskChromaImg, maskChromaImg, MORPH_OPEN, Mat());
+
+
+    imshow("Dilated CbCr Mask", maskChromaImg);
 
     // set mask ROI (HSV)
     static Mat maskImg(srcImgSize, CV_8UC1);
