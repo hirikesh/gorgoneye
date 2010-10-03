@@ -5,7 +5,7 @@
 
 EyesTracker::EyesTracker(Store* st) : BaseTracker(st, "Eyes")
 {
-    haarDetector = new HaarDetector(HAAR, HAAR_CC_EYES, 1.1, 3, NULL, cv::Size(16,8));
+    haarDetector = new HaarDetector(HAAR, HAAR_CC_EYES, 1.1, 3, NULL, cv::Size(24,16));
     detectors.push_back(haarDetector);
 }
 
@@ -13,20 +13,26 @@ void EyesTracker::track()
 {
     if(enabled) {
         // Preprocessing
+        // Smooth and downsample sceneImg
+        static cv::Mat tmpFaceImg;
+        cv::pyrDown(store->faceImg, tmpFaceImg);
         // reduce faceImg to top left/right quadrants
         static cv::Rect quadFaceRoi;
-        quadFaceRoi = cv::Rect(store->faceRoi.x + store->faceRoi.width / 2,
-                               store->faceRoi.y,
-                               store->faceRoi.width / 2,
-                               store->faceRoi.height / 2);
+        quadFaceRoi = cv::Rect(0, 0,
+                               store->faceRoi.width / 4,
+                               store->faceRoi.height / 4);
         static cv::Rect tmpEyesRoi;
 
-        if(currDetector->locate(store->sceneImg(quadFaceRoi), tmpEyesRoi)) {
+        store->eyesLocated = currDetector->locate(tmpFaceImg(quadFaceRoi), tmpEyesRoi);
+        if(store->eyesLocated) {
 //        if(currDetector->locate(store->faceImg, store->eyesRoi)) {
             // Post processing
             // Shift eyes ROI by quadROI
-            store->eyesRoi = tmpEyesRoi + quadFaceRoi.tl();
-            store->eyesImg = store->faceImg(store->eyesRoi);
+            store->eyesRoi = cv::Rect(tmpEyesRoi.x * 2,
+                                      tmpEyesRoi.y * 2,
+                                      tmpEyesRoi.width * 2,
+                                      tmpEyesRoi.height * 2);
+//            store->eyesImg = store->faceImg(store->eyesRoi);
         }
 //        store->eyesRoi = quadFaceRoi - store->faceRoi.tl();
     }

@@ -1,5 +1,4 @@
 #include <cv.h>
-#include <highgui.h>
 #include "featuredetector.h"
 
 using namespace cv;
@@ -33,76 +32,63 @@ FeatureDetector::FeatureDetector(const int type, int mins, int maxs, int minv, i
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
-    // Prepare CV Mats
     static Size srcImgSize = srcImg.size();
+
+    // Extract Hue Info
     static Mat cHSVImg(srcImgSize, CV_8UC3);
     static Mat hueImg(srcImgSize, CV_8UC1);
     static Mat satImg(srcImgSize, CV_8UC1);
     static Mat valImg(srcImgSize, CV_8UC1);
     static Mat cHSVChannels[] = {hueImg, satImg, valImg};
-
-    // Extract Hue Info
     cvtColor(srcImg, cHSVImg, CV_BGR2HSV);
     split(cHSVImg, cHSVChannels);
 
-    // visualise Hue for debugging
-    static Mat emptyImg(srcImgSize, CV_8UC1, Scalar(255));
-    //static Mat emptyImg(srcImg.size(), CV_8UC1, Scalar(255));
-
-    static Mat hueVis[] = {hueImg, emptyImg, emptyImg};
-    merge(hueVis, 3, hueVisImg);
-
-    // This colour conversion is extremely laggy.
-    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
-
-    static Mat neutralImg(srcImgSize, CV_8UC1, Scalar(128));
+    // Extract Chrominance info
     static Mat cYCrCbImg(srcImgSize, CV_8UC3);
     static Mat lumaImg(srcImgSize, CV_8UC1);
     static Mat chromaRedImg(srcImgSize, CV_8UC1);
     static Mat chromaBlueImg(srcImgSize, CV_8UC1);
     static Mat cYCrCbChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
-
     cvtColor(srcImg, cYCrCbImg, CV_BGR2YCrCb);
     split(cYCrCbImg, cYCrCbChannels);
 
-    static Mat chromaBlueVis[] = {neutralImg, chromaBlueImg, neutralImg};
+    // visualise Hue for debugging
+    static Mat emptyImg(srcImgSize, CV_8UC1, Scalar(255));
+    static Mat hueVis[] = {hueImg, emptyImg, emptyImg};
+    merge(hueVis, 3, hueVisImg);
+    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
+
+    // visualise chrominance for debugging
+    static Mat neutralImg(srcImgSize, CV_8UC1, Scalar(128));
+    static Mat chromaRedVis[] = {neutralImg, chromaRedImg, neutralImg};
+    static Mat chromaBlueVis[] = {neutralImg, neutralImg, chromaBlueImg};
+
+    cvtColor(chromaRedVisImg, chromaRedVisImg, CV_YCrCb2RGB);
+    merge(chromaRedVis, 3, chromaRedVisImg);
+    cvtColor(chromaBlueVisImg, chromaBlueVisImg, CV_YCrCb2RGB);
     merge(chromaBlueVis, 3, chromaBlueVisImg);
 
-    static Mat chromaRedVis[] = {neutralImg, neutralImg, chromaRedImg};
-    merge(chromaRedVis, 3, chromaRedVisImg);
-
-    cvtColor(chromaBlueVisImg, chromaBlueVisImg, CV_YCrCb2RGB);
-    cvtColor(chromaRedVisImg, chromaRedVisImg, CV_YCrCb2RGB);
+    // set mask ROI (HSV)
+    static Mat maskImg(srcImgSize, CV_8UC1);
+    inRange(cHSVImg,
+            Scalar(0, minSaturation, minValue),
+            Scalar(180, maxSaturation, maxValue),
+            maskImg);
 
     // set Mask ROI (YCbCr)
     static Mat maskChromaImg(srcImgSize, CV_8UC1);
-
     inRange(cYCrCbImg,
             Scalar(0, minChromaRed, minChromaBlue),
             Scalar(255, maxChromaRed, maxChromaBlue),
-            maskChromaImg);    
-    imshow("CbCr Mask", maskChromaImg);
-
+            maskChromaImg);
     //erode(maskChromaImg, maskChromaImg, Mat(), Point(-1, -1), 2);
     //dilate(maskChromaImg, maskChromaImg, Mat(), Point(-1, -1), 2);
 
     morphologyEx(maskChromaImg, maskChromaImg, MORPH_CLOSE, Mat());
     morphologyEx(maskChromaImg, maskChromaImg, MORPH_OPEN, Mat());
 
-
-    imshow("Dilated CbCr Mask", maskChromaImg);
-
-    // set mask ROI (HSV)
-    static Mat maskImg(srcImgSize, CV_8UC1);
-
-    inRange(cHSVImg,
-            Scalar(0, minSaturation, minValue),
-            Scalar(180, maxSaturation, maxValue),
-            maskImg);
+    // merge mask images and prepare histogram
     bitwise_and(maskImg, maskChromaImg, maskImg, MatND());
-    static Mat hueImgROI, maskROI;
-    hueImgROI = hueImg(srcRoi);
-    maskROI = maskImg(srcRoi);
 
     // Histogram properties ------------------
     static MatND hist;
@@ -112,14 +98,16 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     const float* histRanges[] = {hRanges};
     const int channels[] = {0};
 
+    // Calculate histogram if last camshift failed
     if (histCalibrate)
     {
         histCalibrate = false;
         // Calculate Histogram ------------------
-        calcHist(&hueImgROI,// array of source images
+        calcHist(&hueImg(srcRoi),// array of source images
+//        calcHist(&lumaImgROI,
                  1,         // number of source images
                  channels,  // list of channels
-                 maskROI,   // image mask
+                 maskImg(srcRoi),   // image mask
                  hist,      // output histogram
                  1,         // histogram dimensionality - just hue
                  histSize,  // array containing hist sizes
@@ -131,9 +119,10 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     // Calculate Back Projection ------------------
     static double maxVal = 0;
     minMaxLoc(hist, 0, &maxVal, 0, 0);
-    double scaleHist = maxVal? 255.0/maxVal : 0;
+    double scaleHist = maxVal ? 255.0/maxVal : 0;
 
     calcBackProject(&hueImg,                 // array of source images
+//    calcBackProject(&lumaImg,                 // array of source images
                     1,                       // no. of source images
                     channels,                // list of channels
                     hist,                    // destination backproject array
@@ -142,10 +131,12 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
                     scaleHist,               // scale factor to improve contrast
                     true);                   // uniform histogram
 
-    // show back projection for debugging / parameter tweaking
-    static Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
     bitwise_and(backProjImg, maskImg, backProjImg, MatND());
-    //bitwise_and(backProjImg, maskChromaImg, backProjImg, MatND());
+
+    // show back projection for debugging / parameter tweaking
+//    static Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
+//    merge(backProjImg3, 3, backProjGrayImg);
+    static Mat backProjImg3[] = {maskImg, maskImg, maskImg};
     merge(backProjImg3, 3, backProjGrayImg);
 
     // CAMShift Calculations ---------
@@ -164,7 +155,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 //    if (tmpRoi.tl().inside(boundRoi) && tmpRoi.br().inside(boundRoi)) {
     // camshift reports success as long as ROI is at most half the size
     // of the input image, and at least 1 20th the size of the input image.
-    if (tmpRoi.area() >= srcImgSize.area()/1200 && tmpRoi.area() <= srcImgSize.area()/2) {
+    if (tmpRoi.area() >= srcImgSize.area()/768 && tmpRoi.area() <= srcImgSize.area()/2) {
         int newTLx = tmpRoi.x < 0 ? 0 : tmpRoi.x;
         int newTLy = tmpRoi.y < 0 ? 0 : tmpRoi.y;
         int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols : tmpRoi.br().x;
