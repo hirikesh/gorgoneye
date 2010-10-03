@@ -3,7 +3,7 @@
 
 using namespace cv;
 
-TestDetector::TestDetector() :
+TestDetector::TestDetector(const int type) :
     BaseDetector(type, "Test")
 {
     params.push_back(new ImageModeParam("Test image mode", &testImg));
