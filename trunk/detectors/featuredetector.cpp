@@ -1,4 +1,6 @@
 #include <cv.h>
+#include <highgui.h>
+#include <QDebug>
 #include "featuredetector.h"
 
 using namespace cv;
@@ -94,10 +96,42 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     //dilate(maskChromaImg, maskChromaImg, Mat(), Point(-1, -1), 2);
 
     morphologyEx(maskChromaImg, maskChromaImg, MORPH_CLOSE, Mat());
+    morphologyEx(maskChromaImg, maskChromaImg, MORPH_CLOSE, Mat());
+    morphologyEx(maskChromaImg, maskChromaImg, MORPH_OPEN, Mat());
     morphologyEx(maskChromaImg, maskChromaImg, MORPH_OPEN, Mat());
 
     // merge mask images and prepare histogram
     bitwise_and(maskImg, maskChromaImg, maskImg, MatND());
+    imshow( "Mask", maskImg);
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    findContours( maskImg, contours, hierarchy,
+         CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+
+    Mat ellipsedImg = Mat::zeros(maskImg.rows, maskImg.cols, CV_8UC3);
+    Mat* contourPath;
+    for(unsigned int i = 0; i < contours.size(); i++)
+    {
+        if (contours[i].size() > 10)
+        {
+            contourPath = new Mat(contours[i]);
+            RotatedRect ellipsed = fitEllipse(*contourPath);
+            ellipse(ellipsedImg, ellipsed, Scalar(128,0,0));
+            delete contourPath;
+        }
+    }
+    imshow("Ellipse", ellipsedImg);
+    // Mat dst = Mat::zeros(maskImg.rows, maskImg.cols, CV_8UC3);
+    // iterate through all the top-level contours,
+    // draw each connected component with its own random color
+    //int idx = 0;
+//    for( ; idx >= 0; idx = hierarchy[idx][0] )
+//    {
+
+//        //Scalar color( rand()&255, rand()&255, rand()&255 );
+//        //drawContours( dst, contours, idx, color, 1, 8, hierarchy );
+//    }
+    //( "Components", dst );
 
     // Histogram properties ------------------
     static MatND hist;
