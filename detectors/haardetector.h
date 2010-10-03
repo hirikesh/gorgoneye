@@ -8,9 +8,17 @@
 #include <cv.h>
 #include "basedetector.h"
 
+#ifdef _WIN32
 #define HAAR_CC_DIR "c:\\opencv2.1\\data\\haarcascades"
 #define HAAR_CC_FACE HAAR_CC_DIR"\\haarcascade_frontalface_default.xml"
 #define HAAR_CC_EYES HAAR_CC_DIR"\\haarcascade_mcs_lefteye.xml"
+#else
+#define HAAR_CC_DIR "/usr/local/share/opencv/haarcascades"
+#define HAAR_CC_FACE HAAR_CC_DIR"/haarcascade_frontalface_default.xml"
+#define HAAR_CC_EYES HAAR_CC_DIR"/haarcascade_mcs_lefteye.xml"
+#endif
+
+
 
 
 class HaarDetector : public BaseDetector
