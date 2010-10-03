@@ -31,7 +31,7 @@ bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)
                                  flags,
                                  minSize);
     t = ((double)getTickCount() - t)/getTickFrequency();
-    qDebug() << t;
+    qDebug() << "Haar Detection Speed:" << 1000*t << "ms";
     if(rois.size()) {
         srcRoi = rois[0];
         return true;
