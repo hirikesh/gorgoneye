@@ -3,7 +3,6 @@
 #include <QDebug>
 #include "model.h"
 
-
 using namespace cv;
 using std::vector;
 
@@ -13,9 +12,19 @@ Model::Model(int device) :
     faceTracker(FaceTracker(&store)),
     eyesTracker(EyesTracker(&store))
 {
+    static char* props[] = {"Millisecond", "Frames", "Ratio", "Width", "Height",
+                            "FPS", "FOURCC Codec", "Frame Count", "Format",
+                            "Mode", "Brightness", "Contrast", "Saturation",
+                            "Hue", "Gain", "Exposure", "RGB colour", "White Balancing",
+                            "Rectification"};
+    for(int i=0; i<19; i++) {
+        double prop = capture.get(i);
+        if(prop > 0)
+            qDebug() << "Property supported:" << props[i] << '=' << prop;
+    }
+
     // initialisation no longer required
     // but leave here anyway, doesn't hurt.
-
     capture >> store.sceneImg;
 
     eyesTracker.setDetector(EyesTracker::HAAR);
