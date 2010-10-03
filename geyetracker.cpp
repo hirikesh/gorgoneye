@@ -126,12 +126,12 @@ void GEyeTracker::createTrackerGUI(BaseTracker* tracker)
     for (unsigned int i = 0; i < detectors.size(); i++)
     {
         detectorSelection->addItem(detectors[i]->getName().c_str());
-        if (detectors[i]->hasParams()) createDetectorGUI(detectors[i], trackerLayout);
+        if (detectors[i]->hasParams()) createDetectorGUI(detectors[i], trackerLayout, trackerTitle);
     }
     detectorSelection->setCurrentIndex(tracker->getCurrDetectorType());
 }
 
-void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
+void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout, QGridLayout* mode)
 {
     // Detector Level
     vector<Param*> params = detector->getParams();
@@ -175,7 +175,8 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout)
         else if (params[i]->getType() == Param::IMG_MODE)
         {
             gparams[i] = new GUIRadioButton(static_cast<ImageModeParam*>(params[i])); // create widget
-            guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
+//            guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
+            mode->addWidget(gparams[i], mode->rowCount()+2, 0, 1, 2);
             connect(gparams[i], SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
             QAbstractButton* imgModeButton = qobject_cast<QAbstractButton*>(gparams[i]);
             imgModeGroup->addButton(imgModeButton); // add to global radio button group

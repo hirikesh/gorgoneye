@@ -102,13 +102,15 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 
     // merge mask images and prepare histogram
     bitwise_and(maskImg, maskChromaImg, maskImg, MatND());
-    imshow( "Mask", maskImg);
+
+    static Mat testImg;
+    testImg = maskImg.clone();
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
-    findContours( maskImg, contours, hierarchy,
+    findContours( testImg, contours, hierarchy,
          CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
 
-    Mat ellipsedImg = Mat::zeros(maskImg.rows, maskImg.cols, CV_8UC3);
+    Mat ellipsedImg = Mat::zeros(testImg.rows, testImg.cols, CV_8UC3);
     Mat* contourPath;
     for(unsigned int i = 0; i < contours.size(); i++)
     {
@@ -141,13 +143,12 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     const float* histRanges[] = {hRanges};
     const int channels[] = {0};
 
-    // Calculate histogram if last camshift failed
-    static Mat hueImgRoi, maskImgRoi;
-    hueImgRoi = hueImg(srcRoi);
-    maskImgRoi = maskImg(srcRoi);
-
     if (histCalibrate) {
-        histCalibrate = false;
+        // Calculate histogram if last camshift failed
+        static Mat hueImgRoi, maskImgRoi;
+        hueImgRoi = hueImg(srcRoi);
+        maskImgRoi = maskImg(srcRoi);
+
         // Calculate Histogram ------------------
         calcHist(&hueImgRoi,// array of source images
                  1,         // number of source images
@@ -159,6 +160,8 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
                  histRanges,// arrays containing bin boundaries
                  true,      // uniform histogram
                  false);    // clear histogram from beginning
+
+        histCalibrate = false;
     }
 
     // Calculate Back Projection ------------------

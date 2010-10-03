@@ -7,6 +7,7 @@
 #include "model.h"
 
 class QVBoxLayout;
+class QGridLayout;
 class BaseDetector;
 class GLView;
 
@@ -22,10 +23,10 @@ public:
     explicit GEyeTracker(QWidget *parent = 0);
     ~GEyeTracker();
     void createTrackerGUI(BaseTracker*);
-    void createDetectorGUI(BaseDetector*, QVBoxLayout*);
+    void createDetectorGUI(BaseDetector*, QVBoxLayout*, QGridLayout*);
 
 public slots:
-    void procFrame();  
+    void procFrame();
     void setParam(int* const, int);
     void setParam(bool* const, bool);
     void setParam(double* const, double);
