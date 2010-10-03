@@ -15,7 +15,7 @@
 #endif
 
 #define HAAR_CC_FACE HAAR_CC_DIR"haarcascade_frontalface_default.xml"
-#define HAAR_CC_EYES HAAR_CC_DIR"haarcascade_msc_lefteye.xml"
+#define HAAR_CC_EYES HAAR_CC_DIR"haarcascade_mcs_lefteye.xml"
 
 
 class HaarDetector : public BaseDetector
@@ -27,14 +27,10 @@ public:
 
 private:
     cv::CascadeClassifier cClassifier;
-//    std::string trainingData;
     double scaleFactor;
     int minNeighbours;
     int flags;
     cv::Size minSize;
-
-    // Temporary vars
-    std::vector<cv::Rect> rois;
 };
 
 #endif // HAAR_H

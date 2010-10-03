@@ -1,6 +1,5 @@
 #include <cv.h>
 #include <highgui.h>
-#include <QDebug>
 #include "featuredetector.h"
 
 using namespace cv;
@@ -42,37 +41,41 @@ FeatureDetector::FeatureDetector(const int type,
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
-    static Size srcImgSize = srcImg.size();
+
+
+    Size srcImgSize = srcImg.size();
 
     // Extract Hue Info
-    static Mat cHSVImg(srcImgSize, CV_8UC3);
-    static Mat hueImg(srcImgSize, CV_8UC1);
-    static Mat satImg(srcImgSize, CV_8UC1);
-    static Mat valImg(srcImgSize, CV_8UC1);
-    static Mat cHSVChannels[] = {hueImg, satImg, valImg};
+    Mat cHSVImg(srcImgSize, CV_8UC3);
+    Mat hueImg(srcImgSize, CV_8UC1);
+    Mat satImg(srcImgSize, CV_8UC1);
+    Mat valImg(srcImgSize, CV_8UC1);
+    Mat cHSVChannels[] = {hueImg, satImg, valImg};
+
     cvtColor(srcImg, cHSVImg, CV_BGR2HSV);
     split(cHSVImg, cHSVChannels);
 
     // Extract Chrominance info
-    static Mat cYCrCbImg(srcImgSize, CV_8UC3);
-    static Mat lumaImg(srcImgSize, CV_8UC1);
-    static Mat chromaRedImg(srcImgSize, CV_8UC1);
-    static Mat chromaBlueImg(srcImgSize, CV_8UC1);
-    static Mat cYCrCbChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
+    Mat cYCrCbImg(srcImgSize, CV_8UC3);
+    Mat lumaImg(srcImgSize, CV_8UC1);
+    Mat chromaRedImg(srcImgSize, CV_8UC1);
+    Mat chromaBlueImg(srcImgSize, CV_8UC1);
+    Mat cYCrCbChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
+
     cvtColor(srcImg, cYCrCbImg, CV_BGR2YCrCb);
     split(cYCrCbImg, cYCrCbChannels);
 
     // visualise Hue for debugging
     static Mat emptyImg(srcImgSize, CV_8UC1, Scalar(255));
-    static Mat hueVis[] = {hueImg, emptyImg, emptyImg};
+    Mat hueVis[] = {hueImg, emptyImg, emptyImg};
 
     merge(hueVis, 3, hueVisImg);
     cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
 
     // visualise chrominance for debugging
     static Mat neutralImg(srcImgSize, CV_8UC1, Scalar(128));
-    static Mat chromaRedVis[] = {neutralImg, chromaRedImg, neutralImg};
-    static Mat chromaBlueVis[] = {neutralImg, neutralImg, chromaBlueImg};
+    Mat chromaRedVis[] = {neutralImg, chromaRedImg, neutralImg};
+    Mat chromaBlueVis[] = {neutralImg, neutralImg, chromaBlueImg};
 
     merge(chromaRedVis, 3, chromaRedVisImg);
     cvtColor(chromaRedVisImg, chromaRedVisImg, CV_YCrCb2BGR);
@@ -80,14 +83,14 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     cvtColor(chromaBlueVisImg, chromaBlueVisImg, CV_YCrCb2BGR);
 
     // set mask ROI (HSV)
-    static Mat maskImg(srcImgSize, CV_8UC1);
+    Mat maskImg(srcImgSize, CV_8UC1);
     inRange(cHSVImg,
             Scalar(minHue, minSaturation, minValue),
             Scalar(maxHue, maxSaturation, maxValue),
             maskImg);
 
     // set Mask ROI (YCbCr)
-    static Mat maskChromaImg(srcImgSize, CV_8UC1);
+    Mat maskChromaImg(srcImgSize, CV_8UC1);
     inRange(cYCrCbImg,
             Scalar(0, minChromaRed, minChromaBlue),
             Scalar(255, maxChromaRed, maxChromaBlue),
@@ -103,8 +106,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     // merge mask images and prepare histogram
     bitwise_and(maskImg, maskChromaImg, maskImg, MatND());
 
-    static Mat testImg;
-    testImg = maskImg.clone();
+    Mat testImg = maskImg.clone();
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     findContours( testImg, contours, hierarchy,
@@ -122,7 +124,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
             delete contourPath;
         }
     }
-    imshow("Ellipse", ellipsedImg);
+//    imshow("Ellipse", ellipsedImg);
     // Mat dst = Mat::zeros(maskImg.rows, maskImg.cols, CV_8UC3);
     // iterate through all the top-level contours,
     // draw each connected component with its own random color
@@ -136,7 +138,6 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     //( "Components", dst );
 
     // Histogram properties ------------------
-    static MatND hist;
     const int hBins = 30; // no. of hue bins
     const int histSize[] = {hBins};
     const float hRanges[] = {0, 180}; // OpenCV implements hue values from 0 to 180
@@ -145,9 +146,8 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 
     if (histCalibrate) {
         // Calculate histogram if last camshift failed
-        static Mat hueImgRoi, maskImgRoi;
-        hueImgRoi = hueImg(srcRoi);
-        maskImgRoi = maskImg(srcRoi);
+        Mat hueImgRoi = hueImg(srcRoi);
+        Mat maskImgRoi = maskImg(srcRoi);
 
         // Calculate Histogram ------------------
         calcHist(&hueImgRoi,// array of source images
@@ -165,7 +165,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     }
 
     // Calculate Back Projection ------------------
-    static double maxVal = 0;
+    double maxVal = 0;
     minMaxLoc(hist, 0, &maxVal, 0, 0);
     double scaleHist = maxVal ? 255.0/maxVal : 0;
 
@@ -181,22 +181,21 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     bitwise_and(backProjImg, maskImg, backProjImg, MatND());
 
     // show back projection for debugging / parameter tweaking
-//    static Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
+//    Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
 //    merge(backProjImg3, 3, backProjGrayImg);
-    static Mat backProjImg3[] = {maskImg, maskImg, maskImg};
+    Mat backProjImg3[] = {maskImg, maskImg, maskImg};
     merge(backProjImg3, 3, backProjGrayImg);
 
     // CAMShift Calculations ---------
     // Search Window begins at region of interest determined using Haar
     // The algorithm will auto increase search window
-    static RotatedRect rotTemp;
+    RotatedRect rotTemp;
     rotTemp = CamShift(backProjImg, // back projected image
                        srcRoi,      // initial search window
                        TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 5, 10));
 
-    // Simple but less robust method for bounds. FIXME soon.
-    static Rect tmpRoi;
-    tmpRoi = rotTemp.boundingRect();
+    // Simple but less robust method for bounds.
+    Rect tmpRoi = rotTemp.boundingRect();
     // Check on bounds. If ROI is invalid, don't update srcRoi.
     // camshift reports success as long as ROI is at most half the size
     // of the input image, and at least 1 20th the size of the input image.

@@ -1,11 +1,9 @@
 #include <cv.h>
 #include "haardetector.h"
-#include <QDebug>
 using namespace cv;
 
 HaarDetector::HaarDetector(const int type, string td, double sf, int mn, bool fg, Size ms) :
     BaseDetector(type, "Haar"),
-//    trainingData(td),
     cClassifier(td),
     scaleFactor(sf),
     minNeighbours(mn),
@@ -22,16 +20,14 @@ HaarDetector::HaarDetector(const int type, string td, double sf, int mn, bool fg
 
 bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
-    static vector<Rect> rois;
-    double t = (double)getTickCount();
+    vector<Rect> rois;
     cClassifier.detectMultiScale(srcImg,
                                  rois,
                                  scaleFactor,
                                  minNeighbours,
                                  flags,
                                  minSize);
-    t = ((double)getTickCount() - t)/getTickFrequency();
-    qDebug() << "Haar Detection Speed:" << 1000*t << "ms";
+
     if(rois.size()) {
         srcRoi = rois[0];
         return true;
