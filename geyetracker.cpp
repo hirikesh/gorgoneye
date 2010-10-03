@@ -22,9 +22,13 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     ui(new Ui::GEyeTracker),
     timer(new QTimer(this)),
     model(new Model(0)),
-    opengl(new GLView()),
     imgModeGroup(new QButtonGroup())
 {
+    static vector<bool*> is_valid_roi;
+    is_valid_roi.push_back(&model->getStore()->faceLocated);
+    is_valid_roi.push_back(&model->getStore()->eyesLocated);
+    opengl = new GLView(is_valid_roi);
+
     initGUI();
 }
 

@@ -3,11 +3,12 @@
 #include <GL/glext.h>
 #include <QDebug>
 
-GLView::GLView(QWidget *parent) :
+GLView::GLView(std::vector<bool*> ivr, QWidget *parent) :
     QGLWidget(parent),
     faceROI(new QRect(-1, -1, 0, 0)),
     eyesROI(new QRect(-1, -1, 0, 0))
 {
+    isValidRoi = ivr;
 }
 
 GLView::~GLView()
@@ -67,8 +68,8 @@ void GLView::paintGL()
     }
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    drawROIs(faceROI);
-    drawROIs(eyesROI);
+    if(*isValidRoi[0]) drawROIs(faceROI);
+    if(*isValidRoi[1]) drawROIs(eyesROI);
 }
 
 void GLView::loadGLTextures(const cv::Mat& image)
