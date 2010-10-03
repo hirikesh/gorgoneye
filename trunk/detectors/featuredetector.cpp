@@ -1,5 +1,6 @@
 #include <cv.h>
 #include "featuredetector.h"
+#include <QDebug>
 
 using namespace cv;
 
@@ -55,6 +56,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     // visualise Hue for debugging
     static Mat emptyImg(srcImgSize, CV_8UC1, Scalar(255));
     static Mat hueVis[] = {hueImg, emptyImg, emptyImg};
+
     merge(hueVis, 3, hueVisImg);
     cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
 
@@ -63,10 +65,10 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     static Mat chromaRedVis[] = {neutralImg, chromaRedImg, neutralImg};
     static Mat chromaBlueVis[] = {neutralImg, neutralImg, chromaBlueImg};
 
-    cvtColor(chromaRedVisImg, chromaRedVisImg, CV_YCrCb2RGB);
     merge(chromaRedVis, 3, chromaRedVisImg);
-    cvtColor(chromaBlueVisImg, chromaBlueVisImg, CV_YCrCb2RGB);
+    cvtColor(chromaRedVisImg, chromaRedVisImg, CV_YCrCb2BGR);
     merge(chromaBlueVis, 3, chromaBlueVisImg);
+    cvtColor(chromaBlueVisImg, chromaBlueVisImg, CV_YCrCb2BGR);
 
     // set mask ROI (HSV)
     static Mat maskImg(srcImgSize, CV_8UC1);
@@ -99,21 +101,26 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     const int channels[] = {0};
 
     // Calculate histogram if last camshift failed
-    if (histCalibrate)
-    {
+    qDebug() << "got here";
+    static Mat hueImgRoi, maskImgRoi;
+    hueImgRoi = hueImg(srcRoi);
+    maskImgRoi = maskImg(srcRoi);
+    qDebug() << "woohoo";
+    if (histCalibrate) {
         histCalibrate = false;
         // Calculate Histogram ------------------
-        calcHist(&hueImg(srcRoi),// array of source images
-//        calcHist(&lumaImgROI,
+        qDebug() << "about to calc hist";
+        calcHist(&hueImgRoi,// array of source images
                  1,         // number of source images
                  channels,  // list of channels
-                 maskImg(srcRoi),   // image mask
+                 maskImgRoi,// image mask
                  hist,      // output histogram
                  1,         // histogram dimensionality - just hue
                  histSize,  // array containing hist sizes
                  histRanges,// arrays containing bin boundaries
                  true,      // uniform histogram
                  false);    // clear histogram from beginning
+        qDebug() << "it was him!";
     }
 
     // Calculate Back Projection ------------------
@@ -122,7 +129,6 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     double scaleHist = maxVal ? 255.0/maxVal : 0;
 
     calcBackProject(&hueImg,                 // array of source images
-//    calcBackProject(&lumaImg,                 // array of source images
                     1,                       // no. of source images
                     channels,                // list of channels
                     hist,                    // destination backproject array
@@ -151,8 +157,6 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     static Rect tmpRoi;
     tmpRoi = rotTemp.boundingRect();
     // Check on bounds. If ROI is invalid, don't update srcRoi.
-//    static Rect boundRoi(0, 0, srcImg.cols, srcImg.rows);
-//    if (tmpRoi.tl().inside(boundRoi) && tmpRoi.br().inside(boundRoi)) {
     // camshift reports success as long as ROI is at most half the size
     // of the input image, and at least 1 20th the size of the input image.
     if (tmpRoi.area() >= srcImgSize.area()/768 && tmpRoi.area() <= srcImgSize.area()/2) {
@@ -161,7 +165,6 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
         int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols : tmpRoi.br().x;
         int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows : tmpRoi.br().y;
         srcRoi = Rect(Point(newTLx, newTLy), Point(newBRx, newBRy));
-//        srcRoi = tmpRoi;
         return true;
     } else {
         histCalibrate = true;
