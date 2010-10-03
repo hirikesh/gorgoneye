@@ -6,8 +6,8 @@ QT += opengl \
 TARGET = gorgoneye
 TEMPLATE = app
 unix {
-INCLUDEPATH += "/usr/include/opencv"
-LIBS += -L"/usr/lib" \
+INCLUDEPATH += "/usr/local/include/opencv"
+LIBS += -L"/usr/local/lib" \
     -lcv \
     -lhighgui \
     -lcxcore \
