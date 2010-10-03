@@ -1,6 +1,5 @@
 #include <cv.h>
 #include "featuredetector.h"
-#include <QDebug>
 
 using namespace cv;
 
@@ -101,15 +100,13 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     const int channels[] = {0};
 
     // Calculate histogram if last camshift failed
-    qDebug() << "got here";
     static Mat hueImgRoi, maskImgRoi;
     hueImgRoi = hueImg(srcRoi);
     maskImgRoi = maskImg(srcRoi);
-    qDebug() << "woohoo";
+
     if (histCalibrate) {
         histCalibrate = false;
         // Calculate Histogram ------------------
-        qDebug() << "about to calc hist";
         calcHist(&hueImgRoi,// array of source images
                  1,         // number of source images
                  channels,  // list of channels
@@ -120,7 +117,6 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
                  histRanges,// arrays containing bin boundaries
                  true,      // uniform histogram
                  false);    // clear histogram from beginning
-        qDebug() << "it was him!";
     }
 
     // Calculate Back Projection ------------------
