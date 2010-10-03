@@ -1,12 +1,15 @@
 #include <cv.h>
 #include "eyestracker.h"
 #include "detectors/haardetector.h"
+#include "detectors/testdetector.h"
 #include "store.h"
 
 EyesTracker::EyesTracker(Store* st) : BaseTracker(st, "Eyes")
 {
     haarDetector = new HaarDetector(HAAR, HAAR_CC_EYES, 1.1, 3, NULL, cv::Size(24,16));
+    testDetector = new TestDetector(TEST);
     detectors.push_back(haarDetector);
+    detectors.push_back(testDetector);
 }
 
 void EyesTracker::track()
@@ -35,7 +38,7 @@ void EyesTracker::track()
             store->eyesImg = store->faceImg(store->eyesRoi);
 
             // TEST CODE FOR EDGE DETECTION
-
+            testDetector->locate(store->eyesImg, store->eyesRoi);
 
 
             // END TEST CODE FOR
@@ -51,6 +54,9 @@ void EyesTracker::setDetector(int type)
     {
     case HAAR:
         currDetector = haarDetector;
+        break;
+    case TEST:
+        currDetector = testDetector;
         break;
     default:
         currDetector = nullDetector;
