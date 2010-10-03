@@ -19,8 +19,8 @@ void EyesTracker::track()
         // reduce faceImg to top left/right quadrants
         static cv::Rect quadFaceRoi;
         quadFaceRoi = cv::Rect(0, 0,
-                               store->faceRoi.width / 4,
-                               store->faceRoi.height / 4);
+                               store->faceRoi.width / 4, // div by 4 because pyrDown
+                               store->faceRoi.height / 4); // downsampled by 2
         static cv::Rect tmpEyesRoi;
 
         store->eyesLocated = currDetector->locate(tmpFaceImg(quadFaceRoi), tmpEyesRoi);
@@ -32,7 +32,14 @@ void EyesTracker::track()
                                       tmpEyesRoi.y * 2,
                                       tmpEyesRoi.width * 2,
                                       tmpEyesRoi.height * 2);
-//            store->eyesImg = store->faceImg(store->eyesRoi);
+            store->eyesImg = store->faceImg(store->eyesRoi);
+
+            // TEST CODE FOR EDGE DETECTION
+
+
+
+            // END TEST CODE FOR
+
         }
 //        store->eyesRoi = quadFaceRoi - store->faceRoi.tl();
     }

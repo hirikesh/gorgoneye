@@ -5,26 +5,26 @@ QT += opengl \
     webkit
 TARGET = gorgoneye
 TEMPLATE = app
-unix {
-INCLUDEPATH += "/usr/local/include/opencv"
-LIBS += -L"/usr/local/lib" \
-    -lcv \
-    -lhighgui \
-    -lcxcore \
-    -lml
+unix { 
+    INCLUDEPATH += "/usr/local/include/opencv"
+    LIBS += -L"/usr/local/lib" \
+        -lcv \
+        -lhighgui \
+        -lcxcore \
+        -lml
 }
-win32 {
-INCLUDEPATH += "C:\OpenCV2.1\include\opencv"
-debug:LIBS += -L"C:\OpenCV2.1\lib\debug" \
-    -lcv210d \
-    -lhighgui210d \
-    -lcxcore210d \
-    -lml210d
-release:LIBS += -L"C:\OpenCV2.1\lib\release" \
-    -lcv210 \
-    -lhighgui210 \
-    -lcxcore210 \
-    -lml210
+win32 { 
+    INCLUDEPATH += "C:\OpenCV2.1\include\opencv"
+    debug:LIBS += -L"C:\OpenCV2.1\lib\debug" \
+        -lcv210d \
+        -lhighgui210d \
+        -lcxcore210d \
+        -lml210d
+    release:LIBS += -L"C:\OpenCV2.1\lib\release" \
+        -lcv210 \
+        -lhighgui210 \
+        -lcxcore210 \
+        -lml210
 }
 SOURCES += main.cpp \
     geyetracker.cpp \
@@ -39,7 +39,8 @@ SOURCES += main.cpp \
     parameter.cpp \
     guiparam.cpp \
     model.cpp \
-    glview.cpp
+    glview.cpp \
+    detectors/testdetector.cpp
 HEADERS += geyetracker.h \
     store.h \
     detectors/basedetector.h \
@@ -52,5 +53,6 @@ HEADERS += geyetracker.h \
     parameter.h \
     guiparam.h \
     model.h \
-    glview.h
+    glview.h \
+    detectors/testdetector.h
 FORMS += geyetracker.ui
