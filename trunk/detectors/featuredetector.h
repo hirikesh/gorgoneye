@@ -11,14 +11,19 @@
 class FeatureDetector : public BaseDetector
 {
 public:
-    FeatureDetector(const int type, int mins, int maxs, int minv, int maxv,
-                                    int mincb, int maxcb, int mincr, int maxcr);
+    FeatureDetector(const int type,
+                    int minh, int maxh,
+                    int mins, int maxs,
+                    int minv, int maxv,
+                    int mincb, int maxcb,
+                    int mincr, int maxcr);
 
     bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 
 private:
     bool histCalibrate;
-
+    int minHue;
+    int maxHue;
     int minSaturation;
     int maxSaturation;
     int minValue;
