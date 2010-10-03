@@ -31,7 +31,6 @@ void GLView::initializeGL()
     glGenTextures(1, &texture);
 
     npotCapable = isExtensionSupported("GL_ARB_texture_non_power_of_two");
-    qDebug() << npotCapable;
 }
 
 void GLView::resizeGL(int width, int height)

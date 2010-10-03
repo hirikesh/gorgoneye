@@ -33,21 +33,7 @@ Model::Model(int device) :
 void Model::update()
 {
     capture >> store.sceneImg;
-
-//    Lighting Compensation
-//    Scalar avgImg = mean(store.sceneImg);
-//    double avgB = avgImg[0];
-//    double avgG = avgImg[1];
-//    double avgR = avgImg[2];
-//    double avgGrey = (avgR + avgG + avgB)/3;
-//    double aR = avgGrey/avgR;
-//    double aG = avgGrey/avgG;
-//    double aB = avgGrey/avgB;
-//    static Mat scaleF(store.sceneImg.size(), CV_8UC3);
-//    scaleF = Scalar(aB, aG, aR);
-//    multiply(store.sceneImg, scaleF, store.sceneImg);
-
-// Histogram Equalisation
+//    Colour Space Conversion: BGR -> YCbCr
 //    static Size srcImgSize = store.sceneImg.size();
 //    static Mat cYCrCbImg(srcImgSize, CV_8UC3);
 //    static Mat lumaImg(srcImgSize, CV_8UC1);
@@ -56,9 +42,24 @@ void Model::update()
 //    static Mat cYCrCbChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
 //    cvtColor(store.sceneImg, cYCrCbImg, CV_BGR2YCrCb);
 //    split(cYCrCbImg, cYCrCbChannels);
+
+    //    --- Light Compensation ---
+//    Mat maskLumaImg = lumaImg >= 240;
+//    Scalar sumLuma = sum(maskLumaImg);
+//    if ((int)sumLuma[0]/255 > 100)
+//    {
+//        Scalar avgGray = mean(lumaImg, maskLumaImg);
+//        double scaleFactor = 255.0/avgGray[0];
+//        scaleF = Scalar(scaleFactor, scaleFactor, scaleFactor);
+//        multiply(store.sceneImg, scaleF, store.sceneImg);
+//        Scalar avgGrayChk = mean(store.sceneImg, maskLumaImg);
+//    }
+
+// --- Histogram Equalisation ---
 //    equalizeHist(lumaImg, lumaImg);
 //    merge(cYCrCbChannels, 3, cYCrCbImg);
 //    cvtColor(cYCrCbImg, store.sceneImg, CV_YCrCb2BGR);
+
     faceTracker.track();
     eyesTracker.track();
     //gazeTracker.track();
