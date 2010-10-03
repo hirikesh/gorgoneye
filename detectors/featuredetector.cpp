@@ -3,10 +3,16 @@
 
 using namespace cv;
 
-FeatureDetector::FeatureDetector(const int type, int mins, int maxs, int minv, int maxv,
-                                                 int mincb, int maxcb, int mincr, int maxcr) :
+FeatureDetector::FeatureDetector(const int type,
+                                 int minh, int maxh,
+                                 int mins, int maxs,
+                                 int minv, int maxv,
+                                 int mincb, int maxcb,
+                                 int mincr, int maxcr) :
     BaseDetector(type, "CAMShift"),
     histCalibrate(true),
+    minHue(minh),
+    maxHue(maxh),
     minSaturation(mins),
     maxSaturation(maxs),
     minValue(minv),
@@ -16,6 +22,8 @@ FeatureDetector::FeatureDetector(const int type, int mins, int maxs, int minv, i
     minChromaRed(mincr),
     maxChromaRed(maxcr)
 {
+    params.push_back(new RangeParam<int>("Min. Hue", Param::RANGE, &minHue, 0, 180, 5));
+    params.push_back(new RangeParam<int>("Max. Hue", Param::RANGE, &maxHue, 0, 180, 5));
     params.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSaturation, 0, 255, 5));
     params.push_back(new RangeParam<int>("Max. Saturation", Param::RANGE, &maxSaturation, 0, 255, 5));
     params.push_back(new RangeParam<int>("Min. Value", Param::RANGE, &minValue, 0, 255, 5));
@@ -72,8 +80,8 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     // set mask ROI (HSV)
     static Mat maskImg(srcImgSize, CV_8UC1);
     inRange(cHSVImg,
-            Scalar(0, minSaturation, minValue),
-            Scalar(180, maxSaturation, maxValue),
+            Scalar(minHue, minSaturation, minValue),
+            Scalar(maxHue, maxSaturation, maxValue),
             maskImg);
 
     // set Mask ROI (YCbCr)
