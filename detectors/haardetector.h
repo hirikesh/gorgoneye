@@ -34,7 +34,7 @@ private:
     cv::Size minSize;
 
     // Temporary vars
-    vector<Rect> rois;
+    std::vector<cv::Rect> rois;
 };
 
 #endif // HAAR_H
