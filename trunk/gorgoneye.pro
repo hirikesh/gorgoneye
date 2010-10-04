@@ -15,11 +15,11 @@ unix {
 }
 win32 { 
     INCLUDEPATH += "C:\OpenCV2.1\include\opencv"
-    debug:LIBS += -L"C:\OpenCV2.1\lib\debug" \
-        -lcv210d \
-        -lhighgui210d \
-        -lcxcore210d \
-        -lml210d
+#    debug:LIBS += -L"C:\OpenCV2.1\lib\debug" \
+#        -lcv210d \
+#        -lhighgui210d \
+#        -lcxcore210d \
+#        -lml210d
     release:LIBS += -L"C:\OpenCV2.1\lib\release" \
         -lcv210 \
         -lhighgui210 \
