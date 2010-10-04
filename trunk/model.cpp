@@ -19,7 +19,7 @@ Model::Model(int device) :
     capture.set(CV_CAP_PROP_EXPOSURE, 0.5);
 #endif
 
-    char* props[] = {"Millisecond", "Frames", "Ratio", "Width", "Height",
+    String props[] = {"Millisecond", "Frames", "Ratio", "Width", "Height",
                             "FPS", "FOURCC Codec", "Frame Count", "Format",
                             "Mode", "Brightness", "Contrast", "Saturation",
                             "Hue", "Gain", "Exposure", "RGB colour", "White Balancing",
@@ -27,7 +27,7 @@ Model::Model(int device) :
     for(int i=0; i<19; i++) {
         double prop = capture.get(i);
         if(prop > 0)
-            qDebug() << "Property supported:" << props[i] << '=' << prop;
+            qDebug() << "Property supported:" << props[i].c_str() << '=' << prop;
     }
     // Instantiate all trackers
     eyesTracker.setDetector(EyesTracker::HAAR);
