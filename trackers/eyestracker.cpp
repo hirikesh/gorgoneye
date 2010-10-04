@@ -1,14 +1,17 @@
 #include <cv.h>
 #include "eyestracker.h"
 #include "detectors/haardetector.h"
+#include "detectors/featuredetector.h"
 #include "detectors/testdetector.h"
 #include "store.h"
 
 EyesTracker::EyesTracker(Store* st) : BaseTracker(st, "Eyes")
 {
     haarDetector = new HaarDetector(HAAR, HAAR_CC_EYES, 1.1, 3, NULL, cv::Size(24,16));
+    featureDetector = new FeatureDetector(FEAT, 0, 180, 0, 255, 0, 255, 0, 255, 0, 255);
     testDetector = new TestDetector(TEST);
     detectors.push_back(haarDetector);
+    detectors.push_back(featureDetector);
     detectors.push_back(testDetector);
 }
 
@@ -17,34 +20,30 @@ void EyesTracker::track()
     if(enabled) {
         // Preprocessing
         // Smooth and downsample sceneImg
-        static cv::Mat tmpFaceImg;
+        cv::Mat tmpFaceImg;
         cv::pyrDown(store->faceImg, tmpFaceImg);
         // reduce faceImg to top left/right quadrants
-        static cv::Rect quadFaceRoi;
-        quadFaceRoi = cv::Rect(0, 0,
+        cv::Rect reducedFaceRoi;
+        reducedFaceRoi = cv::Rect(0, 0,
                                store->faceRoi.width / 4, // div by 4 because pyrDown
                                store->faceRoi.height / 4); // downsampled by 2
-        static cv::Rect tmpEyesRoi;
+        cv::Rect tmpEyesRoi;
+        tmpEyesRoi = cv::Rect(store->eyesRoi.x / 2,
+                              store->eyesRoi.y / 2,
+                              store->eyesRoi.width / 2,
+                              store->eyesRoi.height / 2);
 
-        store->eyesLocated = currDetector->locate(tmpFaceImg(quadFaceRoi), tmpEyesRoi);
-        if(store->eyesLocated) {
-//        if(currDetector->locate(store->faceImg, store->eyesRoi)) {
+        bool located = currDetector->locate(tmpFaceImg(reducedFaceRoi), tmpEyesRoi);
+        if(located) {
             // Post processing
             // Shift eyes ROI by quadROI
             store->eyesRoi = cv::Rect(tmpEyesRoi.x * 2,
                                       tmpEyesRoi.y * 2,
                                       tmpEyesRoi.width * 2,
                                       tmpEyesRoi.height * 2);
-            store->eyesImg = store->faceImg(store->eyesRoi);
-
-            // TEST CODE FOR EDGE DETECTION
-            testDetector->locate(store->eyesImg, store->eyesRoi);
-
-
-            // END TEST CODE FOR
-
+            store->eyesLocated = located;
+            store->eyesImg = store->faceImg(store->eyesRoi).clone();
         }
-//        store->eyesRoi = quadFaceRoi - store->faceRoi.tl();
     }
 }
 
@@ -54,6 +53,9 @@ void EyesTracker::setDetector(int type)
     {
     case HAAR:
         currDetector = haarDetector;
+        break;
+    case FEAT:
+        currDetector = featureDetector;
         break;
     case TEST:
         currDetector = testDetector;

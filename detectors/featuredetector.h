@@ -40,6 +40,11 @@ private:
     cv::MatND hist;
     cv::Mat backProjImg;
 
+    bool enBackProjImg;
+    bool enHueVisImg;
+    bool enChromaRedVisImg;
+    bool enChromaBlueVisImg;
+
     cv::Mat backProjGrayImg;
     cv::Mat hueVisImg;
     cv::Mat chromaRedVisImg;

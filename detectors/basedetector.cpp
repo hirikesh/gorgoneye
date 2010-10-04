@@ -7,8 +7,8 @@ using cv::Mat;
 using cv::Rect;
 
 BaseDetector::BaseDetector(const int& id, const string& s) :
-        type(id),
-        name(s)
+    type(id),
+    name(s)
 {
 }
 

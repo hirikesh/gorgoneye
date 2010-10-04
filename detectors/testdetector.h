@@ -12,6 +12,7 @@ public:
     bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 
 private:
+    bool enTestImg;
     cv::Mat testImg;
 };
 

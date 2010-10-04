@@ -51,7 +51,8 @@ void GUIDSpinBox::emitWithPtr(double state)
 
 GUIRadioButton::GUIRadioButton(ImageModeParam* imp) :
         QRadioButton(imp->getName()),
-        pValue(static_cast<cv::Mat*>(imp->getValue()))
+        pValue(static_cast<cv::Mat*>(imp->getValue())),
+        enPValue(static_cast<bool*>(imp->getPtrEnabled()))
 {
         connect(this, SIGNAL(toggled(bool)), this, SLOT(emitWithPtr(bool)));
 }
@@ -59,6 +60,7 @@ GUIRadioButton::GUIRadioButton(ImageModeParam* imp) :
 void GUIRadioButton::emitWithPtr(bool state)
 {
     emit valueChanged(pValue, state);
+    emit enableChanged(enPValue, state);
 }
 
 GUITrackerComboBox::GUITrackerComboBox(BaseTracker* trkr) :

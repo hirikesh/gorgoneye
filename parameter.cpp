@@ -4,11 +4,12 @@ using std::string;
 using cv::Mat;
 
 // Param *******************************************************
-    Param::Param(const string& s, void* val, paramType t) :
-        name(s),
-        value(val),
-        type(t)
+Param::Param(const string& s, void* val, paramType t) :
+    name(s),
+    value(val),
+    type(t)
 {}
+
 const char* Param::getName() const
 {
     return name.c_str();
@@ -37,16 +38,18 @@ bool ModeParam::isEnabled()
 
 // ImageModeParam **************************************************
 ImageModeParam::ImageModeParam(const string &s, Mat* val) :
-        Param(s, val, Param::IMG_MODE),
-        enabled(false)
-{}
-
-void ImageModeParam::setEnable(bool b)
+        Param(s, val, Param::IMG_MODE)
 {
-    enabled = b;
+    bool ignore_enabled;
+    enabled = &ignore_enabled;
 }
 
-bool ImageModeParam::isEnabled()
+ImageModeParam::ImageModeParam(const string &s, bool* en, Mat* val) :
+        Param(s, val, Param::IMG_MODE),
+        enabled(en)
+{}
+
+bool* ImageModeParam::getPtrEnabled()
 {
     return enabled;
 }
