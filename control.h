@@ -1,5 +1,5 @@
-#ifndef GEYETRACKER_H
-#define GEYETRACKER_H
+#ifndef CONTROL_H
+#define CONTROL_H
 
 #include <cv.h>
 #include <QWidget>
@@ -15,13 +15,13 @@ namespace Ui {
     class GEyeTracker;
 }
 
-class GEyeTracker : public QWidget
+class Control : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit GEyeTracker(QWidget *parent = 0);
-    ~GEyeTracker();
+    explicit Control(QWidget *parent = 0);
+    ~Control();
     void createTrackerGUI(BaseTracker*);
     void createDetectorGUI(BaseDetector*, QVBoxLayout*, QGridLayout*);
 
@@ -40,4 +40,4 @@ private:
     QButtonGroup* imgModeGroup;
 };
 
-#endif // GEYETRACKER_H
+#endif // CONTROL_H
