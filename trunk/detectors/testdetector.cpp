@@ -1,21 +1,70 @@
 #include <cv.h>
+#include <highgui.h>
 #include "testdetector.h"
 
 using namespace cv;
 
 TestDetector::TestDetector(const int type) :
-    BaseDetector(type, "Test"),
-    enTestImg(false)
+    BaseDetector(type, "Test")
 {
-    params.push_back(new ImageModeParam("Test image mode", &enTestImg, &testImg));
+    params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &minSobel, 0, 255, 1));
+    params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &maxSobel, 0, 255, 1));
+    params.push_back(new ImageModeParam("Sobel image mode", &sobelImg));
+    params.push_back(new ImageModeParam("Test image mode", &testImg));
+    minSobel = 45;
+    maxSobel = 255;
 }
 
 
 bool TestDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
+//    Mat yImg(srcImg.size(), CV_8UC1);
+//    Mat yccImg[] = {yImg, Mat(), Mat()};
+//
+//    Mat tmpImg;
+//    cvtColor(srcImg, tmpImg, CV_BGR2YCrCb);
+//    split(tmpImg, yccImg);
 
-    Sobel(srcImg, testImg, 3, 0, 1);
-    convertScaleAbs(testImg, testImg);
+    // Sobel test
+//    Mat nyImg(srcImg.size(), CV_8UC1);
+    Mat tmpImg, tmpImg2, tmpImg3;
+    Sobel(srcImg, tmpImg, 3, 0, 1, 3);
+    convertScaleAbs(tmpImg, tmpImg);
+    cvtColor(tmpImg, tmpImg2, CV_BGR2GRAY);
+    inRange(tmpImg2, Scalar(minSobel), Scalar(maxSobel), tmpImg3);
+
+//    imshow("masked sobel", tmpImg3);
+    cvtColor(tmpImg3, sobelImg, CV_GRAY2BGR);
+
+//    Mat tmpImg4[] = {tmpImg3, tmpImg3, tmpImg3};
+//    merge(tmpImg4, 3, sobelImg);
+
+//    Mat neutImg(srcImg.size(), CV_8UC1, Scalar(128));
+//    Mat bgrImg[] = {nyImg, neutImg, neutImg};
+//    merge(bgrImg, 3, testImg);
+//    cvtColor(testImg, testImg, CV_YCrCb2BGR);
+
+
+
+    // Harris test
+    Mat gray;
+    cvtColor(srcImg, gray, CV_BGR2GRAY);
+//    gray = tmpImg3;
+
+    std::vector<Point2f> corners;
+    goodFeaturesToTrack(gray, // input grayscale image
+                        corners, // output points found
+                        10, // max number of corners to return
+                        0.99, // min % quality level for a positive
+                        10, // min distance between any 2 points
+                        Mat(), // mask image
+                        3, // Sobel kernel dimensions
+                        false, // use Harris detection
+                        0.15); // free parameter of Harris detector
+
+    cvtColor(gray, testImg, CV_GRAY2BGR);
+    for(int i=0; i<corners.size(); i++)
+        circle(testImg, corners[i], 3, Scalar(0, 200, 200), 2);
 
     return true;
 }
