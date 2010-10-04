@@ -1,5 +1,6 @@
 #include <cv.h>
 #include "haardetector.h"
+#include "parameter.h"
 using namespace cv;
 
 HaarDetector::HaarDetector(const int type, string td, double sf, int mn, bool fg, Size ms) :

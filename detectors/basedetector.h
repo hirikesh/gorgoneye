@@ -7,7 +7,9 @@
 #define DETECTOR_H
 
 #include <vector>
-#include "parameter.h"
+#include <string>
+
+class Param;
 
 namespace cv
 {

@@ -1,5 +1,6 @@
 #include <cv.h>
 #include <highgui.h>
+#include "parameter.h"
 #include "testdetector.h"
 
 using namespace cv;

@@ -41,6 +41,10 @@ SOURCES += main.cpp \
     guiparam.cpp \
     model.cpp \
     glview.cpp \
+    filters/basefilter.cpp \
+    filters/grayscalefilter.cpp \
+    filters/hsvfilter.cpp \
+    filters/ycbcrfilter.cpp
 
 HEADERS += \
     control.h\
@@ -57,4 +61,8 @@ HEADERS += \
     guiparam.h \
     model.h \
     glview.h \    
+    filters/basefilter.h \
+    filters/grayscalefilter.h \
+    filters/hsvfilter.h \
+    filters/ycbcrfilter.h
 FORMS += ui/geyetracker.ui
