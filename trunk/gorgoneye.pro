@@ -27,12 +27,13 @@ win32 {
         -lml210
 }
 SOURCES += main.cpp \
-    geyetracker.cpp \
+    control.cpp \
     store.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
     detectors/featuredetector.cpp \
     detectors/hybriddetector.cpp \
+    detectors/testdetector.cpp \
     trackers/basetracker.cpp \
     trackers/facetracker.cpp \
     trackers/eyestracker.cpp \
@@ -40,19 +41,20 @@ SOURCES += main.cpp \
     guiparam.cpp \
     model.cpp \
     glview.cpp \
-    detectors/testdetector.cpp
-HEADERS += geyetracker.h \
+
+HEADERS += \
+    control.h\
     store.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
     detectors/featuredetector.h \
     detectors/hybriddetector.h \
+    detectors/testdetector.h \
     trackers/basetracker.h \
     trackers/facetracker.h \
     trackers/eyestracker.h \
     parameter.h \
     guiparam.h \
     model.h \
-    glview.h \
-    detectors/testdetector.h
-FORMS += geyetracker.ui
+    glview.h \    
+FORMS += ui/geyetracker.ui

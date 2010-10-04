@@ -63,7 +63,7 @@ bool TestDetector::locate(const Mat& srcImg, Rect& srcRoi)
                         0.10); // free parameter of Harris detector
 
     cvtColor(gray, testImg, CV_GRAY2BGR);
-    for(int i=0; i<corners.size(); i++)
+    for(unsigned int i = 0; i < corners.size(); i++)
         circle(testImg, corners[i], 2, Scalar(0, 0, 255), 2);
 
     return false;
