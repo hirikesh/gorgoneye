@@ -1,6 +1,6 @@
 #include <cv.h>
 #include "featuredetector.h"
-
+#include "parameter.h"
 using namespace cv;
 
 FeatureDetector::FeatureDetector(const int type,
