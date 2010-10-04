@@ -63,10 +63,12 @@ public:
     explicit GUIRadioButton(ImageModeParam* imp);
 signals:
     void valueChanged(cv::Mat* const, bool);
+    void enableChanged(bool* const, bool);
 private slots:
     void emitWithPtr(bool);
 private:
     cv::Mat* const pValue;
+    bool* const enPValue;
 };
 
 class GUITrackerComboBox : public QComboBox

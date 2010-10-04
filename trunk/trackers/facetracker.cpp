@@ -9,7 +9,7 @@
 FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 {
     haarDetector = new HaarDetector(HAAR, HAAR_CC_FACE, 1.2, 2, NULL, cv::Size(64,72));
-    featureDetector = new FeatureDetector(FEAT, 0, 26, 0, 255, 88, 255, 77, 127, 133, 173);
+    featureDetector = new FeatureDetector(FEAT, 0, 16, 0, 255, 88, 255, 77, 127, 133, 173);
     hybridDetector = new HybridDetector(HYBR, haarDetector, featureDetector);
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
@@ -21,27 +21,28 @@ void FaceTracker::track()
     if(enabled) {
         // Preprocessing
         // Smooth and downsample sceneImg
-        static cv::Mat tmpSceneImg;
+        cv::Mat tmpSceneImg;
         cv::pyrDown(store->sceneImg, tmpSceneImg);
-        static cv::Rect tmpFaceRoi;
+        cv::Rect tmpFaceRoi;
         tmpFaceRoi = cv::Rect(store->faceRoi.x / 2,
                               store->faceRoi.y / 2,
                               store->faceRoi.width / 2,
                               store->faceRoi.height / 2);
 
         double t = (double)cv::getTickCount();
-        store->faceLocated = currDetector->locate(tmpSceneImg, tmpFaceRoi);
+        bool located = currDetector->locate(tmpSceneImg, tmpFaceRoi);
         t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
         qDebug() << currDetector->getName().c_str() << "speed:" << 1000*t << "ms";
 
-        if(store->faceLocated) {
+        if(located) {
             // Postprocessing
             // Upsample tracked ROI
             store->faceRoi = cv::Rect(tmpFaceRoi.x * 2,
                                       tmpFaceRoi.y * 2,
                                       tmpFaceRoi.width * 2,
                                       tmpFaceRoi.height * 2);
-            store->faceImg = store->sceneImg(store->faceRoi);
+            store->faceLocated = located;
+            store->faceImg = store->sceneImg(store->faceRoi).clone();
         }
     }
 }

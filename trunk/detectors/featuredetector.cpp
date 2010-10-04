@@ -1,5 +1,4 @@
 #include <cv.h>
-#include <highgui.h>
 #include "featuredetector.h"
 
 using namespace cv;
@@ -21,7 +20,11 @@ FeatureDetector::FeatureDetector(const int type,
     minChromaBlue(mincb),
     maxChromaBlue(maxcb),
     minChromaRed(mincr),
-    maxChromaRed(maxcr)
+    maxChromaRed(maxcr),
+    enBackProjImg(false),
+    enHueVisImg(false),
+    enChromaRedVisImg(false),
+    enChromaBlueVisImg(false)
 {
     params.push_back(new RangeParam<int>("Min. Hue", Param::RANGE, &minHue, 0, 180, 5));
     params.push_back(new RangeParam<int>("Max. Hue", Param::RANGE, &maxHue, 0, 180, 5));
@@ -33,16 +36,14 @@ FeatureDetector::FeatureDetector(const int type,
     params.push_back(new RangeParam<int>("Max. Cb", Param::RANGE, &maxChromaBlue, 0, 255, 5));
     params.push_back(new RangeParam<int>("Min. Cr", Param::RANGE, &minChromaRed, 0, 255, 5));
     params.push_back(new RangeParam<int>("Max. Cr", Param::RANGE, &maxChromaRed, 0, 255, 5));
-    params.push_back(new ImageModeParam("Back Projected Image", &backProjGrayImg));
-    params.push_back(new ImageModeParam("Hue Visualisation Image", &hueVisImg));
-    params.push_back(new ImageModeParam("Cb Component Image", &chromaBlueVisImg));
-    params.push_back(new ImageModeParam("Cr Component Image", &chromaRedVisImg));
+    params.push_back(new ImageModeParam("Back Projected Image", &enBackProjImg, &backProjGrayImg));
+    params.push_back(new ImageModeParam("Hue Visualisation Image", &enHueVisImg, &hueVisImg));
+    params.push_back(new ImageModeParam("Cr Component Image", &enChromaRedVisImg, &chromaRedVisImg));
+    params.push_back(new ImageModeParam("Cb Component Image", &enChromaBlueVisImg, &chromaBlueVisImg));
 }
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
-
-
     Size srcImgSize = srcImg.size();
 
     // Extract Hue Info
@@ -66,21 +67,27 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     split(cYCrCbImg, cYCrCbChannels);
 
     // visualise Hue for debugging
-    static Mat emptyImg(srcImgSize, CV_8UC1, Scalar(255));
-    Mat hueVis[] = {hueImg, emptyImg, emptyImg};
-
-    merge(hueVis, 3, hueVisImg);
-    cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
+    if(enHueVisImg) {
+        Mat emptyImg(srcImgSize, CV_8UC1, Scalar(255));
+        Mat hueVis[] = {hueImg, emptyImg, emptyImg};
+        merge(hueVis, 3, hueVisImg);
+        cvtColor(hueVisImg, hueVisImg, CV_HSV2RGB);
+    }
 
     // visualise chrominance for debugging
-    static Mat neutralImg(srcImgSize, CV_8UC1, Scalar(128));
-    Mat chromaRedVis[] = {neutralImg, chromaRedImg, neutralImg};
-    Mat chromaBlueVis[] = {neutralImg, neutralImg, chromaBlueImg};
-
-    merge(chromaRedVis, 3, chromaRedVisImg);
-    cvtColor(chromaRedVisImg, chromaRedVisImg, CV_YCrCb2BGR);
-    merge(chromaBlueVis, 3, chromaBlueVisImg);
-    cvtColor(chromaBlueVisImg, chromaBlueVisImg, CV_YCrCb2BGR);
+    if(enChromaRedVisImg || enChromaBlueVisImg) {
+        Mat neutralImg(srcImgSize, CV_8UC1, Scalar(128));
+        if(enChromaRedVisImg) {
+            Mat chromaRedVis[] = {neutralImg, chromaRedImg, neutralImg};
+            merge(chromaRedVis, 3, chromaRedVisImg);
+            cvtColor(chromaRedVisImg, chromaRedVisImg, CV_YCrCb2BGR);
+        }
+        if(enChromaBlueVisImg) {
+            Mat chromaBlueVis[] = {neutralImg, neutralImg, chromaBlueImg};
+            merge(chromaBlueVis, 3, chromaBlueVisImg);
+            cvtColor(chromaBlueVisImg, chromaBlueVisImg, CV_YCrCb2BGR);
+        }
+    }
 
     // set mask ROI (HSV)
     Mat maskImg(srcImgSize, CV_8UC1);
@@ -106,24 +113,24 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     // merge mask images and prepare histogram
     bitwise_and(maskImg, maskChromaImg, maskImg, MatND());
 
-    Mat testImg = maskImg.clone();
-    vector<vector<Point> > contours;
-    vector<Vec4i> hierarchy;
-    findContours( testImg, contours, hierarchy,
-         CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
-
-    Mat ellipsedImg = Mat::zeros(testImg.rows, testImg.cols, CV_8UC3);
-    Mat* contourPath;
-    for(unsigned int i = 0; i < contours.size(); i++)
-    {
-        if (contours[i].size() > 10)
-        {
-            contourPath = new Mat(contours[i]);
-            RotatedRect ellipsed = fitEllipse(*contourPath);
-            ellipse(ellipsedImg, ellipsed, Scalar(128,0,0));
-            delete contourPath;
-        }
-    }
+//    Mat testImg = maskImg.clone();
+//    vector<vector<Point> > contours;
+//    vector<Vec4i> hierarchy;
+//    findContours( testImg, contours, hierarchy,
+//         CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+//
+//    Mat ellipsedImg = Mat::zeros(testImg.rows, testImg.cols, CV_8UC3);
+//    Mat* contourPath;
+//    for(unsigned int i = 0; i < contours.size(); i++)
+//    {
+//        if (contours[i].size() > 10)
+//        {
+//            contourPath = new Mat(contours[i]);
+//            RotatedRect ellipsed = fitEllipse(*contourPath);
+//            ellipse(ellipsedImg, ellipsed, Scalar(128,0,0));
+//            delete contourPath;
+//        }
+//    }
 //    imshow("Ellipse", ellipsedImg);
     // Mat dst = Mat::zeros(maskImg.rows, maskImg.cols, CV_8UC3);
     // iterate through all the top-level contours,
@@ -181,10 +188,12 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     bitwise_and(backProjImg, maskImg, backProjImg, MatND());
 
     // show back projection for debugging / parameter tweaking
-//    Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
-//    merge(backProjImg3, 3, backProjGrayImg);
-    Mat backProjImg3[] = {maskImg, maskImg, maskImg};
-    merge(backProjImg3, 3, backProjGrayImg);
+    if(enBackProjImg) {
+//        Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
+//        merge(backProjImg3, 3, backProjGrayImg);
+        Mat backProjImg3[] = {maskImg, maskImg, maskImg};
+        merge(backProjImg3, 3, backProjGrayImg);
+    }
 
     // CAMShift Calculations ---------
     // Search Window begins at region of interest determined using Haar
@@ -202,8 +211,8 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     if (tmpRoi.area() >= srcImgSize.area()/768 && tmpRoi.area() <= srcImgSize.area()/2) {
         int newTLx = tmpRoi.x < 0 ? 0 : tmpRoi.x;
         int newTLy = tmpRoi.y < 0 ? 0 : tmpRoi.y;
-        int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols : tmpRoi.br().x;
-        int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows : tmpRoi.br().y;
+        int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols - 1 : tmpRoi.br().x;
+        int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows - 1: tmpRoi.br().y;
         srcRoi = Rect(Point(newTLx, newTLy), Point(newBRx, newBRy));
         return true;
     } else {

@@ -9,7 +9,7 @@ namespace cv
 }
 
 class Param
-{    
+{
 
 public:
     enum paramType {RANGE, RANGE_DBL, MODE, IMG_MODE};
@@ -55,10 +55,10 @@ class ImageModeParam : public Param
 {
 public:
     ImageModeParam(const std::string&, cv::Mat*);
-    bool isEnabled();
-    void setEnable(bool);
+    ImageModeParam(const std::string&, bool* en, cv::Mat*);
+    bool* getPtrEnabled();
 private:
-    bool enabled;
+    bool* enabled;
     cv::Mat* image;
 };
 

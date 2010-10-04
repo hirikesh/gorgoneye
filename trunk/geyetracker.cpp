@@ -53,7 +53,7 @@ void GEyeTracker::initGUI()
     ui->mainLayout->deleteLater();
 #endif
 
-    timer->setInterval(30); // timer expires every N ms
+    timer->setInterval(35); // timer expires every N ms
     connect(timer, SIGNAL(timeout()), this, SLOT(procFrame()));
     connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
     connect(ui->stopBtn, SIGNAL(clicked()), timer, SLOT(stop()));
@@ -180,8 +180,9 @@ void GEyeTracker::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout,
         {
             gparams[i] = new GUIRadioButton(static_cast<ImageModeParam*>(params[i])); // create widget
 //            guiItems[i]->addWidget(gparams[i], 0, 0); // add to gui item
-            mode->addWidget(gparams[i], mode->rowCount()+2, 0, 1, 2);
+            mode->addWidget(gparams[i], mode->rowCount(), 0, 1, 2); // add to title layout
             connect(gparams[i], SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
+            connect(gparams[i], SIGNAL(enableChanged(bool* const, bool)), this, SLOT(setParam(bool* const, bool)));
             QAbstractButton* imgModeButton = qobject_cast<QAbstractButton*>(gparams[i]);
             imgModeGroup->addButton(imgModeButton); // add to global radio button group
         }
