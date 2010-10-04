@@ -17,7 +17,6 @@ public:
     void track();
 
     enum type { HAAR, FEAT, HYBR };
-    void setDetector(int type);
 
     cv::Mat* getDispImg();
 

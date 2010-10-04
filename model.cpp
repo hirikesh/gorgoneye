@@ -46,14 +46,14 @@ void Model::update()
 {
     capture >> store.sceneImg;
 //    Colour Space Conversion: BGR -> YCbCr
-    static Size srcImgSize = store.sceneImg.size();
-    static Mat cYCrCbImg(srcImgSize, CV_8UC3);
-    static Mat lumaImg(srcImgSize, CV_8UC1);
-    static Mat chromaRedImg(srcImgSize, CV_8UC1);
-    static Mat chromaBlueImg(srcImgSize, CV_8UC1);
-    static Mat cYCrCbChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
-    cvtColor(store.sceneImg, cYCrCbImg, CV_BGR2YCrCb);
-    split(cYCrCbImg, cYCrCbChannels);
+//    static Size srcImgSize = store.sceneImg.size();
+//    static Mat cYCrCbImg(srcImgSize, CV_8UC3);
+//    static Mat lumaImg(srcImgSize, CV_8UC1);
+//    static Mat chromaRedImg(srcImgSize, CV_8UC1);
+//    static Mat chromaBlueImg(srcImgSize, CV_8UC1);
+//    static Mat cYCrCbChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
+//    cvtColor(store.sceneImg, cYCrCbImg, CV_BGR2YCrCb);
+//    split(cYCrCbImg, cYCrCbChannels);
 
     //    --- Light Compensation ---
 //    Mat maskLumaImg = lumaImg >= 240;
@@ -68,9 +68,9 @@ void Model::update()
 //    }
 
 // --- Histogram Equalisation ---
-    equalizeHist(lumaImg, lumaImg);
-    merge(cYCrCbChannels, 3, cYCrCbImg);
-    cvtColor(cYCrCbImg, store.sceneImg, CV_YCrCb2BGR);
+//    equalizeHist(lumaImg, lumaImg);
+//    merge(cYCrCbChannels, 3, cYCrCbImg);
+//    cvtColor(cYCrCbImg, store.sceneImg, CV_YCrCb2BGR);
 
     // Track face
     faceTracker.track();

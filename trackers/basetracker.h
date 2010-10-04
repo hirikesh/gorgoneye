@@ -20,7 +20,7 @@ public:
     BaseTracker(Store* st, const std::string&);
 
     virtual void track() = 0;
-    virtual void setDetector(int type) = 0;
+    void setDetector(int type);
     int getCurrDetectorType();
     std::vector<BaseDetector*> getDetectors();
     void enable();
@@ -37,7 +37,6 @@ protected:
 
     std::vector<BaseDetector*> detectors;
     BaseDetector* currDetector;
-    static BaseDetector* nullDetector;
 };
 
 #endif // TRACKER_H

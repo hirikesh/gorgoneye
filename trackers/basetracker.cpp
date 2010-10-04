@@ -1,13 +1,15 @@
 #include "basetracker.h"
 
-BaseDetector* BaseTracker::nullDetector = new BaseDetector(-1, "Null Detector");
-
 BaseTracker::BaseTracker(Store* st, const std::string& s) :
     store(st),
     name(s),
-    enabled(false),
-    currDetector(nullDetector)
+    enabled(false)
 {
+}
+
+void BaseTracker::setDetector(int type)
+{
+    currDetector = detectors[type];
 }
 
 int BaseTracker::getCurrDetectorType()

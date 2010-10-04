@@ -48,23 +48,23 @@ bool TestDetector::locate(const Mat& srcImg, Rect& srcRoi)
 
     // Harris test
     Mat gray;
-    cvtColor(srcImg, gray, CV_BGR2GRAY);
+    cvtColor(srcImg(srcRoi), gray, CV_BGR2GRAY);
 //    gray = tmpImg3;
 
     std::vector<Point2f> corners;
     goodFeaturesToTrack(gray, // input grayscale image
                         corners, // output points found
-                        10, // max number of corners to return
-                        0.99, // min % quality level for a positive
+                        2, // max number of corners to return
+                        0.01, // min % quality level for a positive
                         10, // min distance between any 2 points
                         Mat(), // mask image
-                        3, // Sobel kernel dimensions
+                        7, // Sobel kernel dimensions
                         false, // use Harris detection
-                        0.15); // free parameter of Harris detector
+                        0.10); // free parameter of Harris detector
 
     cvtColor(gray, testImg, CV_GRAY2BGR);
     for(int i=0; i<corners.size(); i++)
-        circle(testImg, corners[i], 3, Scalar(0, 200, 200), 2);
+        circle(testImg, corners[i], 2, Scalar(0, 0, 255), 2);
 
-    return true;
+    return false;
 }
