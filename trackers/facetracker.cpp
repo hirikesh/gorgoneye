@@ -8,8 +8,8 @@
 
 FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 {
-    haarDetector = new HaarDetector(HAAR, HAAR_CC_FACE, 1.2, 2, NULL, cv::Size(64,72));
-    featureDetector = new FeatureDetector(FEAT, 0, 16, 0, 255, 88, 255, 77, 127, 133, 173);
+    haarDetector = new HaarDetector(HAAR, HAAR_CC_FACE, 1.2, 3, NULL, cv::Size(64,72));
+    featureDetector = new FeatureDetector(FEAT, 0, 24, 0, 255, 108, 255, 77, 127, 132, 173);
     hybridDetector = new HybridDetector(HYBR, haarDetector, featureDetector);
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
@@ -18,33 +18,34 @@ FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 
 void FaceTracker::track()
 {
-    if(enabled) {
-        // Preprocessing
-        // Smooth and downsample sceneImg
-        cv::Mat tmpSceneImg;
-        cv::pyrDown(store->sceneImg, tmpSceneImg);
-        cv::Rect tmpFaceRoi;
-        tmpFaceRoi = cv::Rect(store->faceRoi.x / 2,
-                              store->faceRoi.y / 2,
-                              store->faceRoi.width / 2,
-                              store->faceRoi.height / 2);
+    if(!enabled) return;
 
-        double t = (double)cv::getTickCount();
-        bool located = currDetector->locate(tmpSceneImg, tmpFaceRoi);
-        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-        qDebug() << currDetector->getName().c_str() << "speed:" << 1000*t << "ms";
+    // Preprocessing
+    // Smooth and downsample sceneImg
+    cv::Mat tmpSceneImg;
+    cv::pyrDown(store->sceneImg, tmpSceneImg);
 
-        if(located) {
-            // Postprocessing
-            // Upsample tracked ROI
-            store->faceRoi = cv::Rect(tmpFaceRoi.x * 2,
-                                      tmpFaceRoi.y * 2,
-                                      tmpFaceRoi.width * 2,
-                                      tmpFaceRoi.height * 2);
-            store->faceLocated = located;
-            store->faceImg = store->sceneImg(store->faceRoi).clone();
-        }
+    cv::Rect tmpFaceRoi;
+    tmpFaceRoi = cv::Rect(store->faceRoi.x / 2,
+                          store->faceRoi.y / 2,
+                          store->faceRoi.width / 2,
+                          store->faceRoi.height / 2);
+
+//    double t = (double)cv::getTickCount();
+    bool located = currDetector->locate(tmpSceneImg, tmpFaceRoi);
+//    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+//    qDebug() << currDetector->getName().c_str() << "speed:" << 1000*t << "ms";
+
+    if(located) {
+        // Postprocessing
+        // Upsample tracked ROI
+        store->faceRoi = cv::Rect(tmpFaceRoi.x * 2,
+                                  tmpFaceRoi.y * 2,
+                                  tmpFaceRoi.width * 2,
+                                  tmpFaceRoi.height * 2);
     }
+    // Updating store bool after attempting to ensures ROIs are valid
+    store->faceLocated = located;
 }
 
 void FaceTracker::setDetector(int type)

@@ -24,7 +24,7 @@ GEyeTracker::GEyeTracker(QWidget *parent) :
     model(new Model(0)),
     imgModeGroup(new QButtonGroup())
 {
-    static vector<bool*> is_valid_roi;
+    vector<bool*> is_valid_roi;
     is_valid_roi.push_back(&model->getStore()->faceLocated);
     is_valid_roi.push_back(&model->getStore()->eyesLocated);
     opengl = new GLView(is_valid_roi);

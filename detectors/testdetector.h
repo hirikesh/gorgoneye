@@ -12,8 +12,11 @@ public:
     bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 
 private:
-    bool enTestImg;
+    int minSobel;
+    int maxSobel;
+
     cv::Mat testImg;
+    cv::Mat sobelImg;
 };
 
 #endif // TEST_H

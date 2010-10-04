@@ -2,7 +2,7 @@
 #include "hybriddetector.h"
 
 HybridDetector::HybridDetector(const int type, BaseDetector* slowdet, BaseDetector* fastdet) :
-    BaseDetector(type, slowdet->getName() + " + " + fastdet->getName()),
+    BaseDetector(type, slowdet->getName() + "-" + fastdet->getName()),
     slowDetector(slowdet),
     fastDetector(fastdet),
     useFastDetector(false)
