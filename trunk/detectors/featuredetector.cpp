@@ -44,6 +44,12 @@ FeatureDetector::FeatureDetector(const int type,
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
+//    int newTLx = tmpRoi.x < 0 ? 0 : tmpRoi.x;
+//    int newTLy = tmpRoi.y < 0 ? 0 : tmpRoi.y;
+//    int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols - 1 : tmpRoi.br().x;
+//    int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows - 1 : tmpRoi.br().y;
+//    srcRoi = Rect(Point(newTLx, newTLy), Point(newBRx, newBRy));
+
     Size srcImgSize = srcImg.size();
 
     // Extract Hue Info
@@ -214,7 +220,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
         int newTLx = tmpRoi.x < 0 ? 0 : tmpRoi.x;
         int newTLy = tmpRoi.y < 0 ? 0 : tmpRoi.y;
         int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols - 1 : tmpRoi.br().x;
-        int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows - 1: tmpRoi.br().y;
+        int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows - 1 : tmpRoi.br().y;
         srcRoi = Rect(Point(newTLx, newTLy), Point(newBRx, newBRy));
         return true;
     } else {

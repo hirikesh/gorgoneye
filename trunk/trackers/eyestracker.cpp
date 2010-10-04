@@ -3,6 +3,7 @@
 #include "eyestracker.h"
 #include "detectors/haardetector.h"
 #include "detectors/featuredetector.h"
+#include <detectors/hybriddetector.h>
 #include "detectors/testdetector.h"
 #include "store.h"
 
@@ -10,9 +11,11 @@ EyesTracker::EyesTracker(Store* st) : BaseTracker(st, "Eyes")
 {
     haarDetector = new HaarDetector(HAAR, HAAR_CC_EYES, 1.2, 1, NULL, cv::Size(32,24));
     featureDetector = new FeatureDetector(FEAT, 0, 180, 0, 255, 0, 255, 0, 255, 0, 255);
+    hybridDetector = new HybridDetector(HYBR, haarDetector, featureDetector);
     testDetector = new TestDetector(TEST);
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
+    detectors.push_back(hybridDetector);
     detectors.push_back(testDetector);
 }
 
@@ -25,10 +28,10 @@ void EyesTracker::track()
 //    cv::Mat tmpFaceImg;
 //    cv::pyrDown(store->faceImg, tmpFaceImg);
         // reduce faceImg to top left/right quadrants
-//    cv::Rect reducedFaceRoi;
-//    reducedFaceRoi = cv::Rect(0, 0,
-//                              store->faceRoi.width / 2, // div by 4 because pyrDown
-//                              store->faceRoi.height / 2); // downsampled by 2
+    cv::Rect reducedFaceRoi;
+    reducedFaceRoi = cv::Rect(0, 0,
+                              store->faceRoi.width / 2, // div by 4 because pyrDown
+                              store->faceRoi.height / 2); // downsampled by 2
 //    cv::Rect tmpEyesRoi;
 //    tmpEyesRoi = cv::Rect(store->eyesRoi.x / 2,
 //                          store->eyesRoi.y / 2,
@@ -37,11 +40,13 @@ void EyesTracker::track()
 //    tmpEyesRoi = store->eyesRoi;
 
 //    double t = (double)cv::getTickCount();
-    bool located = currDetector->locate(store->faceImg, store->eyesRoi);
+    bool located = currDetector->locate(store->faceImg(reducedFaceRoi), store->eyesRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << currDetector->getName().c_str() << "speed:" << 1000*t << "ms";
 
     if(located) {
+        testDetector->locate(store->faceImg(reducedFaceRoi), store->eyesRoi);
+
         // Post processing
         // Shift eyes ROI by quadROI
 //        store->eyesRoi = cv::Rect(tmpEyesRoi.x * 2,
@@ -52,25 +57,6 @@ void EyesTracker::track()
     }
     // Updating store bool after attempting to ensures ROIs are valid
     store->eyesLocated = located;
-}
-
-void EyesTracker::setDetector(int type)
-{
-    switch(type)
-    {
-    case HAAR:
-        currDetector = haarDetector;
-        break;
-    case FEAT:
-        currDetector = featureDetector;
-        break;
-    case TEST:
-        currDetector = testDetector;
-        break;
-    default:
-        currDetector = nullDetector;
-        break;
-    }
 }
 
 cv::Mat* EyesTracker::getDispImg()

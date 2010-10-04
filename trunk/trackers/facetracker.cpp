@@ -48,25 +48,6 @@ void FaceTracker::track()
     store->faceLocated = located;
 }
 
-void FaceTracker::setDetector(int type)
-{
-    switch(type)
-    {
-    case HAAR:
-        currDetector = haarDetector;
-        break;
-    case FEAT:
-        currDetector = featureDetector;
-        break;
-    case HYBR:
-        currDetector = hybridDetector;
-        break;
-    default:
-        currDetector = nullDetector;
-        break;
-    }
-}
-
 cv::Mat* FaceTracker::getDispImg()
 {
     return &store->sceneImg;
