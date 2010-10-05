@@ -5,7 +5,7 @@ QT += opengl \
     webkit
 TARGET = gorgoneye
 TEMPLATE = app
-unix { 
+unix {
     INCLUDEPATH += "/usr/local/include/opencv"
     LIBS += -L"/usr/local/lib" \
         -lcv \
@@ -13,7 +13,7 @@ unix {
         -lcxcore \
         -lml
 }
-win32 { 
+win32 {
     INCLUDEPATH += "C:\OpenCV2.1\include\opencv"
 #    debug:LIBS += -L"C:\OpenCV2.1\lib\debug" \
 #        -lcv210d \
@@ -60,7 +60,7 @@ HEADERS += \
     parameter.h \
     guiparam.h \
     model.h \
-    glview.h \    
+    glview.h \
     filters/basefilter.h \
     filters/grayscalefilter.h \
     filters/hsvfilter.h \
