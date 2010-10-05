@@ -15,17 +15,22 @@ unix {
 }
 win32 {
     INCLUDEPATH += "C:\OpenCV2.1\include\opencv"
-#    debug:LIBS += -L"C:\OpenCV2.1\lib\debug" \
-#        -lcv210d \
-#        -lhighgui210d \
-#        -lcxcore210d \
-#        -lml210d
-    release:LIBS += -L"C:\OpenCV2.1\lib\release" \
-        -lcv210 \
-        -lhighgui210 \
-        -lcxcore210 \
-        -lml210
+    CONFIG(debug, debug|release) {
+        LIBS += -L"C:\OpenCV2.1\lib\debug" \
+            -lcv210d \
+            -lhighgui210d \
+            -lcxcore210d \
+            -lml210d
+    }
+    CONFIG(release, debug|release){
+        LIBS += -L"C:\OpenCV2.1\lib\release" \
+            -lcv210 \
+            -lhighgui210 \
+            -lcxcore210 \
+            -lml210
+    }
 }
+
 SOURCES += main.cpp \
     control.cpp \
     store.cpp \
@@ -45,7 +50,6 @@ SOURCES += main.cpp \
     filters/grayscalefilter.cpp \
     filters/hsvfilter.cpp \
     filters/ycbcrfilter.cpp
-
 HEADERS += \
     control.h\
     store.h \
