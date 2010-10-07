@@ -24,6 +24,7 @@ class GUICheckBox : public QFrame
 public:
     GUICheckBox(const std::string& title, bool* value);
     explicit GUICheckBox(ModeParam* mp);
+    void init();
 private slots:
     void setParamValue(bool);
 private:
