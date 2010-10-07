@@ -22,7 +22,7 @@ win32 {
             -lcxcore210d \
             -lml210d
     }
-    CONFIG(release, debug|release){
+    CONFIG(release, debug|release) {
         LIBS += -L"C:\OpenCV2.1\lib\release" \
             -lcv210 \
             -lhighgui210 \
@@ -33,40 +33,42 @@ win32 {
 
 SOURCES += main.cpp \
     control.cpp \
+    glview.cpp \
+    guiparam.cpp \
+    model.cpp \
     store.cpp \
+    parameter.cpp \
+    trackers/basetracker.cpp \
+    trackers/facetracker.cpp \
+    trackers/eyestracker.cpp \
+    filters/basefilter.cpp \
+    filters/grayscalefilter.cpp \
+    filters/hsvfilter.cpp \
+    filters/ycbcrfilter.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
     detectors/featuredetector.cpp \
     detectors/hybriddetector.cpp \
-    detectors/testdetector.cpp \
-    trackers/basetracker.cpp \
-    trackers/facetracker.cpp \
-    trackers/eyestracker.cpp \
-    parameter.cpp \
-    guiparam.cpp \
-    model.cpp \
-    glview.cpp \
-    filters/basefilter.cpp \
-    filters/grayscalefilter.cpp \
-    filters/hsvfilter.cpp \
-    filters/ycbcrfilter.cpp
+    detectors/testdetector.cpp
+
 HEADERS += \
     control.h\
+    glview.h \
+    guiparam.h \
+    model.h \
     store.h \
+    parameter.h \
+    trackers/basetracker.h \
+    trackers/facetracker.h \
+    trackers/eyestracker.h \
+    filters/basefilter.h \
+    filters/grayscalefilter.h \
+    filters/hsvfilter.h \
+    filters/ycbcrfilter.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
     detectors/featuredetector.h \
     detectors/hybriddetector.h \
-    detectors/testdetector.h \
-    trackers/basetracker.h \
-    trackers/facetracker.h \
-    trackers/eyestracker.h \
-    parameter.h \
-    guiparam.h \
-    model.h \
-    glview.h \
-    filters/basefilter.h \
-    filters/grayscalefilter.h \
-    filters/hsvfilter.h \
-    filters/ycbcrfilter.h
+    detectors/testdetector.h
+
 FORMS += ui/geyetracker.ui
