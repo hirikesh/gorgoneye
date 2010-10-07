@@ -2,9 +2,13 @@
 #include <highgui.h>
 #include <QDebug>
 #include "model.h"
+#include "filters/grayscalefilter.h"
+#include "filters/hsvfilter.h"
 
-using namespace cv;
+using cv::VideoCapture;
+using cv::Mat;
 using std::vector;
+using std::string;
 
 Model::Model(int device) :
     capture(VideoCapture(device)),
@@ -19,7 +23,7 @@ Model::Model(int device) :
     capture.set(CV_CAP_PROP_EXPOSURE, 0.5);
 #endif
 
-    String props[] = {"Millisecond", "Frames", "Ratio", "Width", "Height",
+    string props[] = {"Millisecond", "Frames", "Ratio", "Width", "Height",
                             "FPS", "FOURCC Codec", "Frame Count", "Format",
                             "Mode", "Brightness", "Contrast", "Saturation",
                             "Hue", "Gain", "Exposure", "RGB colour", "White Balancing",
@@ -29,12 +33,16 @@ Model::Model(int device) :
         if(prop > 0)
             qDebug() << "Property supported:" << props[i].c_str() << '=' << prop;
     }
+    //
+    filters.push_back(new GrayscaleFilter("Grayscale Filter", &store));
+    filters.push_back(new HSVFilter("HSV Filter", &store));
+
     // Instantiate all trackers
     eyesTracker.setDetector(EyesTracker::HAAR);
-    eyesTracker.enable();
+    eyesTracker.disable();
     trackers.push_back(&eyesTracker);
 
-    faceTracker.setDetector(FaceTracker::HYBR);
+    faceTracker.setDetector(FaceTracker::HAAR);
     faceTracker.enable();
     trackers.push_back(&faceTracker);
 
@@ -45,33 +53,7 @@ Model::Model(int device) :
 void Model::update()
 {
     capture >> store.sceneImg;
-//    Colour Space Conversion: BGR -> YCbCr
-//    static Size srcImgSize = store.sceneImg.size();
-//    static Mat cYCrCbImg(srcImgSize, CV_8UC3);
-//    static Mat lumaImg(srcImgSize, CV_8UC1);
-//    static Mat chromaRedImg(srcImgSize, CV_8UC1);
-//    static Mat chromaBlueImg(srcImgSize, CV_8UC1);
-//    static Mat cYCrCbChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
-//    cvtColor(store.sceneImg, cYCrCbImg, CV_BGR2YCrCb);
-//    split(cYCrCbImg, cYCrCbChannels);
-
-    //    --- Light Compensation ---
-//    Mat maskLumaImg = lumaImg >= 240;
-//    Scalar sumLuma = sum(maskLumaImg);
-//    if ((int)sumLuma[0]/255 > 100)
-//    {
-//        Scalar avgGray = mean(lumaImg, maskLumaImg);
-//        double scaleFactor = 255.0/avgGray[0];
-//        scaleF = Scalar(scaleFactor, scaleFactor, scaleFactor);
-//        multiply(store.sceneImg, scaleF, store.sceneImg);
-//        Scalar avgGrayChk = mean(store.sceneImg, maskLumaImg);
-//    }
-
-// --- Histogram Equalisation ---
-//    equalizeHist(lumaImg, lumaImg);
-//    merge(cYCrCbChannels, 3, cYCrCbImg);
-//    cvtColor(cYCrCbImg, store.sceneImg, CV_YCrCb2BGR);
-
+    preProcess();
     // Track face
     faceTracker.track();
 
@@ -87,6 +69,7 @@ void Model::update()
 
 //    if(store.eyesLocated)
 //        gazeTracker.track();
+    postProcess();
 }
 
 Store* Model::getStore()
@@ -99,7 +82,52 @@ vector<BaseTracker*> Model::getTrackers()
     return trackers;
 }
 
+vector<BaseFilter*>* Model::getFilters()
+{
+    return &filters;
+}
+
 Mat* Model::getDispImg()
 {
     return store.dispImg;
+}
+
+void Model::preProcess()
+{
+    for (unsigned int i = 0; i < filters.size(); i++)
+    {
+        BaseFilter* currFilter = filters[i];
+        currFilter->filter(store.sceneImg, store.sceneImg, store.sceneImg);
+    }
+        qDebug() << "filters running: " << filters.size();
+    //    Colour Space Conversion: BGR -> YCbCr
+    //    static Size srcImgSize = store.sceneImg.size();
+    //    static Mat cYCrCbImg(srcImgSize, CV_8UC3);
+    //    static Mat lumaImg(srcImgSize, CV_8UC1);
+    //    static Mat chromaRedImg(srcImgSize, CV_8UC1);
+    //    static Mat chromaBlueImg(srcImgSize, CV_8UC1);
+    //    static Mat cYCrCbChannels[] = {lumaImg, chromaRedImg, chromaBlueImg};
+    //    cvtColor(store.sceneImg, cYCrCbImg, CV_BGR2YCrCb);
+    //    split(cYCrCbImg, cYCrCbChannels);
+
+        //    --- Light Compensation ---
+    //    Mat maskLumaImg = lumaImg >= 240;
+    //    Scalar sumLuma = sum(maskLumaImg);
+    //    if ((int)sumLuma[0]/255 > 100)
+    //    {
+    //        Scalar avgGray = mean(lumaImg, maskLumaImg);
+    //        double scaleFactor = 255.0/avgGray[0];
+    //        scaleF = Scalar(scaleFactor, scaleFactor, scaleFactor);
+    //        multiply(store.sceneImg, scaleF, store.sceneImg);
+    //        Scalar avgGrayChk = mean(store.sceneImg, maskLumaImg);
+    //    }
+
+    // --- Histogram Equalisation ---
+    //    equalizeHist(lumaImg, lumaImg);
+    //    merge(cYCrCbChannels, 3, cYCrCbImg);
+    //    cvtColor(cYCrCbImg, store.sceneImg, CV_YCrCb2BGR);
+}
+
+void Model::postProcess()
+{
 }

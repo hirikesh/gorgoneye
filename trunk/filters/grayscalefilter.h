@@ -10,6 +10,11 @@ public:
     bool hasParams() const;
     void filter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& mask);
     void filter(const cv::Mat& src, cv::Mat& dst, const cv::Rect& roi);
+private:
+    int bool1;
+    int bool2;
+    int bool3;
+
 };
 
 #endif // GRAYSCALEFILTER_H

@@ -25,9 +25,8 @@ public:
     std::vector<BaseDetector*> getDetectors();
     void enable();
     void disable();
-    bool isEnabled();
     bool* getEnabled();
-    const std::string getName();
+    const std::string getName() const;
     virtual cv::Mat* getDispImg() = 0;
 
 protected:

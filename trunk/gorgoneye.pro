@@ -33,12 +33,9 @@ win32 {
 
 SOURCES += main.cpp \
     control.cpp \
-    glview.cpp \
-    guiparam.cpp \
     model.cpp \
     store.cpp \
     parameter.cpp \
-    guiprocessdiag.cpp \
     trackers/basetracker.cpp \
     trackers/facetracker.cpp \
     trackers/eyestracker.cpp \
@@ -50,16 +47,17 @@ SOURCES += main.cpp \
     detectors/haardetector.cpp \
     detectors/featuredetector.cpp \
     detectors/hybriddetector.cpp \
-    detectors/testdetector.cpp
+    detectors/testdetector.cpp \
+    ui/glview.cpp \
+    ui/guiparam.cpp \
+    ui/guiprocessdiag.cpp \
+    ui/guiparamdiag.cpp \
 
 HEADERS += \
     control.h\
-    glview.h \
-    guiparam.h \
     model.h \
     store.h \
     parameter.h \
-    guiprocessdiag.h \
     trackers/basetracker.h \
     trackers/facetracker.h \
     trackers/eyestracker.h \
@@ -71,6 +69,11 @@ HEADERS += \
     detectors/haardetector.h \
     detectors/featuredetector.h \
     detectors/hybriddetector.h \
-    detectors/testdetector.h
+    detectors/testdetector.h \
+    ui/glview.h \
+    ui/guiparam.h \
+    ui/guiprocessdiag.h \
+    ui/guiparamdiag.h \
+
 
 FORMS += ui/control.ui

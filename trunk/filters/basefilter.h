@@ -24,11 +24,13 @@ public:
     const std::string name() const;
     virtual void filter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& mask) = 0;
     virtual void filter(const cv::Mat& src, cv::Mat& dst, const cv::Rect& roi) = 0;
-private:
+    void enable();
+    void disable();
+protected:
     const std::string filterName;
     Store* imageStore;
     std::vector<Param*> filterParams;
-
+    bool enabled;
 };
 
 #endif // BASEFILTER_H
