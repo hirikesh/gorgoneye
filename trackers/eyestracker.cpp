@@ -3,7 +3,7 @@
 #include "eyestracker.h"
 #include "detectors/haardetector.h"
 #include "detectors/featuredetector.h"
-#include <detectors/hybriddetector.h>
+#include "detectors/hybriddetector.h"
 #include "detectors/testdetector.h"
 #include "store.h"
 
