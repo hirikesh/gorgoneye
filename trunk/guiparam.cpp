@@ -7,26 +7,23 @@
 #include <QDebug>
 
 GUICheckBox::GUICheckBox(const std::string& title, bool* value) :
-    QFrame(),
     checkbox(new QCheckBox(title.c_str(), this)),
-    layout(new QGridLayout(this)),
     pValue(value)
 {
-    layout->addWidget(checkbox);
-    this->setLayout(layout);
-    checkbox->setChecked(*pValue);
-    QObject::connect(checkbox, SIGNAL(toggled(bool)), this, SLOT(setParamValue(bool)));
+    init();
 }
 
 GUICheckBox::GUICheckBox(ModeParam* mp) :
-    QFrame(),
     checkbox(new QCheckBox(mp->getName(), this)),
-    layout(new QGridLayout(this)),
     pValue(static_cast<bool*>(mp->getValue()))
 {
+    init();
+}
+
+void GUICheckBox::init()
+{
+    layout = new QGridLayout(this);
     layout->addWidget(checkbox);
-    this->setLayout(layout);
-    checkbox->setParent(this);
     checkbox->setChecked(*pValue);
     QObject::connect(checkbox, SIGNAL(toggled(bool)), this, SLOT(setParamValue(bool)));
 }
@@ -47,14 +44,13 @@ GUISlider::GUISlider(RangeParam<int>* rp) :
     slider->setRange(rp->getMinimum(), rp->getMaximum());
     slider->setSingleStep(rp->getStep());
     slider->setValue(*pValue);
+
     spinbox->setRange(rp->getMinimum(), rp->getMaximum());
     spinbox->setValue(slider->value());
 
     layout->addWidget(title, 0, 0);
     layout->addWidget(slider, 1, 0);
     layout->addWidget(spinbox, 1, 1);
-
-    this->setLayout(layout);
 
     QObject::connect(spinbox, SIGNAL(valueChanged(int)), slider, SLOT(setValue(int)));
     QObject::connect(slider, SIGNAL(valueChanged(int)), spinbox, SLOT(setValue(int)));
@@ -69,7 +65,7 @@ void GUISlider::setParamValue(int value)
 GUIDSpinBox::GUIDSpinBox(RangeParam<double>* rp) :
         QFrame(),
         spinbox(new QDoubleSpinBox(this)),
-        title(new QLabel(this)),
+        title(new QLabel(rp->getName())),
         layout(new QGridLayout(this)),
         pValue(static_cast<double*>(rp->getValue()))
 {
@@ -77,8 +73,6 @@ GUIDSpinBox::GUIDSpinBox(RangeParam<double>* rp) :
     spinbox->setRange(rp->getMinimum(), rp->getMaximum());
     spinbox->setSingleStep(rp->getStep());
     spinbox->setValue(*pValue);
-
-    title->setText(rp->getName());
 
     layout->addWidget(title, 0, 0);
     layout->addWidget(spinbox, 0, 1);
