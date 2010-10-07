@@ -51,7 +51,7 @@ SOURCES += main.cpp \
     ui/glview.cpp \
     ui/guiparam.cpp \
     ui/guiprocessdiag.cpp \
-    ui/guiparamdiag.cpp \
+    ui/guiparamdiag.cpp
 
 HEADERS += \
     control.h\
