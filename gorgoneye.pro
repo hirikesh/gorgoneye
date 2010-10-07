@@ -71,4 +71,4 @@ HEADERS += \
     detectors/hybriddetector.h \
     detectors/testdetector.h
 
-FORMS += ui/geyetracker.ui
+FORMS += ui/control.ui
