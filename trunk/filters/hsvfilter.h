@@ -3,6 +3,14 @@
 
 #include "basefilter.h"
 
+namespace cv
+{
+    template <class T>
+    class Size_;
+    typedef Size_<int> Size;
+}
+
+
 class HSVFilter : public BaseFilter
 {
 public:

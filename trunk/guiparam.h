@@ -1,9 +1,6 @@
 #ifndef GUIPARAM_H
 #define GUIPARAM_H
 
-#include <QCheckBox>
-#include <QSlider>
-#include <QDoubleSpinBox>
 #include <QRadioButton>
 #include <QComboBox>
 #include "parameter.h"
@@ -11,39 +8,46 @@
 
 class ModeParam;
 class ImageModeParam;
+class QLabel;
+class QGridLayout;
+class QCheckBox;
+class QDoubleSpinBox;
+class QSpinBox;
 
 namespace cv {
     class Mat;
 }
 
-class GUICheckBox : public QCheckBox
+class GUICheckBox : public QFrame
 {
     Q_OBJECT
 public:
     GUICheckBox(const std::string& title, bool* value);
     explicit GUICheckBox(ModeParam* mp);
-signals:
-    void valueChanged(bool* const, bool);
 private slots:
-    void emitWithPtr(int);
+    void setParamValue(bool);
 private:
-   bool* const pValue;
+    QCheckBox* checkbox;
+    QGridLayout* layout;
+    bool* const pValue;
 };
 
-class GUISlider : public QSlider
+class GUISlider : public QFrame
 {
     Q_OBJECT
 public:
     explicit GUISlider(RangeParam<int>* rp);
-signals:
-    void valueChanged(int* const, int);
 private slots:
-    void emitWithPtr(int);
+    void setParamValue(int);
 private:
+    QSlider* slider;
+    QSpinBox* spinbox;
+    QLabel* title;
+    QGridLayout* layout;
     int* const pValue;
 };
 
-class GUIDSpinBox : public QDoubleSpinBox
+class GUIDSpinBox : public QFrame
 {
     Q_OBJECT
 public:
@@ -51,8 +55,11 @@ public:
 signals:
     void valueChanged(double* const, double);
 private slots:
-    void emitWithPtr(double);
+    void setParamValue(double);
 private:
+    QDoubleSpinBox* spinbox;
+    QLabel* title;
+    QGridLayout* layout;
     double* const pValue;
 };
 

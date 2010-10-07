@@ -38,6 +38,7 @@ SOURCES += main.cpp \
     model.cpp \
     store.cpp \
     parameter.cpp \
+    guiprocessdiag.cpp \
     trackers/basetracker.cpp \
     trackers/facetracker.cpp \
     trackers/eyestracker.cpp \
@@ -58,6 +59,7 @@ HEADERS += \
     model.h \
     store.h \
     parameter.h \
+    guiprocessdiag.h \
     trackers/basetracker.h \
     trackers/facetracker.h \
     trackers/eyestracker.h \
