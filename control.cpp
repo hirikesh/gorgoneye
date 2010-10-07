@@ -7,7 +7,7 @@
 #include <QComboBox>
 #include <QTimer>
 #include <QGridLayout>
-#include "guiprocessdiag.h"
+// #include "guiprocessdiag.h"
 #include "control.h"
 #include "ui_control.h"
 #include "parameter.h"
