@@ -5,7 +5,7 @@
 #include <QComboBox>
 #include <QTimer>
 #include "control.h"
-#include "ui_geyetracker.h"
+#include "ui_control.h"
 #include "parameter.h"
 #include "guiparam.h"
 #include "trackers/basetracker.h"
