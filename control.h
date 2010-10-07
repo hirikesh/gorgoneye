@@ -26,10 +26,8 @@ public:
     void createDetectorGUI(BaseDetector*, QVBoxLayout*, QGridLayout*);
 
 public slots:
-    void procFrame();
-    void setParam(int* const, int);
+    void procFrame();   
     void setParam(bool* const, bool);
-    void setParam(double* const, double);
     void setImage(cv::Mat* const, bool);
 private:
     void initGUI();
