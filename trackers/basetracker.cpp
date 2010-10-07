@@ -32,17 +32,12 @@ void BaseTracker::disable()
     enabled = false;
 }
 
-bool BaseTracker::isEnabled()
-{
-    return enabled;
-}
-
 bool* BaseTracker::getEnabled()
 {
     return &enabled;
 }
 
-const std::string BaseTracker::getName()
+const std::string BaseTracker::getName() const
 {
     return name;
 }

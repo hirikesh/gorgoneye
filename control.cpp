@@ -1,20 +1,19 @@
-#include <QDebug>
-#include <QCheckBox>
 #include <cv.h>
 #include <highgui.h>
-#include <QLabel>
 #include <QGroupBox>
 #include <QComboBox>
 #include <QTimer>
 #include <QGridLayout>
-// #include "guiprocessdiag.h"
 #include "control.h"
 #include "ui_control.h"
 #include "parameter.h"
-#include "guiparam.h"
-#include "trackers/basetracker.h"
+#include "ui/guiparam.h"
+#include "ui/glview.h"
+#include "ui/guiprocessdiag.h"
+#include "ui/guiparamdiag.h"
+//#include "trackers/basetracker.h"
 #include "detectors/basedetector.h"
-#include "glview.h"
+
 
 #define USE_OPENGL 1
 
@@ -46,10 +45,11 @@ void Control::initGUI()
 {
     ui->setupUi(this);
     vector<BaseTracker*> trackers = model->getTrackers();
+    GUIProcessDiag* filterList = new GUIProcessDiag(model->getFilters(), this);
+    ui->auxLayout->insertWidget(0, filterList);
     for (unsigned int i = 0; i < trackers.size(); i++) {
         createTrackerGUI(trackers[i]);
     }
-//    createTrackerGUI(trackers[0]);
 
 #if(USE_OPENGL)
     ui->viewLayout->insertWidget(0, opengl);
@@ -113,9 +113,6 @@ void Control::createTrackerGUI(BaseTracker* tracker)
     QAbstractButton* normImgButton = qobject_cast<QAbstractButton*>(normImgMode);
     imgModeGroup->addButton(normImgButton); // add to global radio button group
 
-//    GUIProcessDiag* helpful = new GUIProcessDiag(this);
-//    trackerLayout->addWidget(helpful);
-
     string title = "Enable " + tracker->getName() + " Tracking";
 
     GUICheckBox *trackerEnable = new GUICheckBox(title, tracker->getEnabled());
@@ -142,25 +139,12 @@ void Control::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout, QGr
     groupBox->setLayout(paramLayout);
     vector<QWidget*> gparams(params.size());
 
+    GUIParamDiag* pDialog = new GUIParamDiag(title, params);
+    paramLayout->addWidget(pDialog);
+
     for (unsigned int i = 0; i < params.size(); i++)
     {
-        if (params[i]->getType() == Param::MODE)
-        {
-            gparams[i] = new GUICheckBox(static_cast<ModeParam*>(params[i]));
-            paramLayout->addWidget(gparams[i]);
-
-        }
-        else if (params[i]->getType() == Param::RANGE)
-        {
-            gparams[i] = new GUISlider(static_cast<RangeParam<int>*>(params[i]));
-            paramLayout->addWidget(gparams[i]);
-        }
-        else if (params[i]->getType() == Param::RANGE_DBL)
-        {
-            gparams[i] = new GUIDSpinBox(static_cast<RangeParam<double>*>(params[i])); // create widget
-            paramLayout->addWidget(gparams[i]);
-        }
-        else if (params[i]->getType() == Param::IMG_MODE)
+        if (params[i]->getType() == Param::IMG_MODE)
         {
             gparams[i] = new GUIRadioButton(static_cast<ImageModeParam*>(params[i])); // create widget
             mode->addWidget(gparams[i], mode->rowCount(), 0, 1, 2); // add to title layout
@@ -170,6 +154,7 @@ void Control::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout, QGr
             imgModeGroup->addButton(imgModeButton); // add to global radio button group
         }
     }
+
     layout->addWidget(groupBox);
     groupBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 }

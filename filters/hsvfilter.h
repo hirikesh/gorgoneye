@@ -26,6 +26,10 @@ private:
     cv::Mat* hueChannel;
     cv::Mat* satChannel;
     cv::Mat* valChannel;
+
+    int bool1;
+    int bool2;
+    int bool3;
 };
 
 #endif // HSVFILTER_H

@@ -1,5 +1,6 @@
 #include <cv.h>
 #include "hsvfilter.h"
+#include "parameter.h"
 
 using cv::Mat;
 
@@ -9,6 +10,9 @@ HSVFilter::HSVFilter(const std::string& nm, Store* st) :
 //    hsvChannels[0] = hueChannel;
 //    hsvChannels[1] = satChannel;
 //    hsvChannels[2] = valChannel;
+    filterParams.push_back(new ModeParam("HSV Version 1", &bool1, false));
+    filterParams.push_back(new ModeParam("HSV Version 2", &bool2, false));
+    filterParams.push_back(new ModeParam("HSV Version 3", &bool3, false));
 }
 
 bool HSVFilter::hasParams()const
@@ -18,6 +22,8 @@ bool HSVFilter::hasParams()const
 
 void HSVFilter::filter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& mask)
 {
+    if (!enabled)
+        return;
     cv::Size srcSize = src.size();
     Mat tmp(srcSize, CV_8UC3);
     cvtColor(src, tmp, CV_BGR2HSV);
@@ -34,6 +40,8 @@ void HSVFilter::filter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& mask)
 
 void HSVFilter::filter(const cv::Mat& src, cv::Mat& dst, const cv::Rect& roi)
 {
+    if (!enabled)
+        return;
     Mat srcROI = src(roi);
     Mat dstROI = dst(roi);
     cv::Size srcSize = src(roi).size();

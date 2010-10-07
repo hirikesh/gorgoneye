@@ -22,3 +22,13 @@ const std::string BaseFilter::name() const
 {
     return filterName;
 }
+
+void BaseFilter::enable()
+{
+    enabled = true;
+}
+
+void BaseFilter::disable()
+{
+    enabled = false;
+}
