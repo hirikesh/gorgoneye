@@ -1,19 +1,15 @@
-#include <QLabel>
-#include <QDebug>
+#include <vector>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QLabel>
 #include <QListWidget>
 #include <QPushButton>
 #include <QGroupBox>
+#include <QDebug>
 #include "guiprocessdiag.h"
 #include "guiparamdiag.h"
 #include "filters/basefilter.h"
-#include "filters/grayscalefilter.h"
-#include "filters/hsvfilter.h"
-#include "store.h"
-#include <string>
-#include "parameter.h"
-#include <vector>
+
 GUIProcessDiag::GUIProcessDiag(std::vector<BaseFilter*>* ft, QWidget *parent) :
     QFrame(parent),
     mainLayout(new QHBoxLayout(this)),
@@ -36,7 +32,7 @@ void GUIProcessDiag::init()
 {
     for(unsigned int i = 0; i < filters->size(); i++)
     {
-        BaseFilter* currFilter = (*filters)[i];
+        BaseFilter* currFilter = filters->at(i);
         QListWidgetItem* currItem = new QListWidgetItem(currFilter->name().c_str());
         processList->addItem(currItem);
         currItem->setCheckState(Qt::Unchecked);

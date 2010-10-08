@@ -113,7 +113,7 @@ void Control::createTrackerGUI(BaseTracker* tracker)
     QAbstractButton* normImgButton = qobject_cast<QAbstractButton*>(normImgMode);
     imgModeGroup->addButton(normImgButton); // add to global radio button group
 
-    string title = "Enable " + tracker->getName() + " Tracking";
+    string title = "Enable " + tracker->name() + " Tracking";
 
     GUICheckBox *trackerEnable = new GUICheckBox(title, tracker->getEnabled());
 

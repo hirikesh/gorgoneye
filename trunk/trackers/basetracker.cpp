@@ -2,7 +2,7 @@
 
 BaseTracker::BaseTracker(Store* st, const std::string& s) :
     store(st),
-    name(s),
+    _name(s),
     enabled(false)
 {
 }
@@ -37,7 +37,7 @@ bool* BaseTracker::getEnabled()
     return &enabled;
 }
 
-const std::string BaseTracker::getName() const
+const std::string BaseTracker::name() const
 {
-    return name;
+    return _name;
 }
