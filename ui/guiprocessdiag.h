@@ -51,9 +51,6 @@ private:
     QVBoxLayout* paramLayout;
     GUIParamDiag* paramDialog;
 
-    QListWidgetItem* firstItem;
-    QListWidgetItem* secondItem;
-
     std::vector<BaseFilter*>* filters;
 };
 

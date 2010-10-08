@@ -14,7 +14,7 @@ namespace cv
 class HSVFilter : public BaseFilter
 {
 public:
-    HSVFilter(const std::string& nm, Store* st);
+    explicit HSVFilter(const std::string& nm, Store* st);
 
     bool hasParams() const;
     void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk);

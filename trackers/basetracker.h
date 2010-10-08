@@ -26,12 +26,12 @@ public:
     void enable();
     void disable();
     bool* getEnabled();
-    const std::string getName() const;
+    const std::string name() const;
     virtual cv::Mat* getDispImg() = 0;
 
 protected:
     Store* store;
-    const std::string name;
+    const std::string _name;
     bool enabled;
 
     std::vector<BaseDetector*> detectors;
