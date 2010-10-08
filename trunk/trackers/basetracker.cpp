@@ -37,6 +37,11 @@ bool* BaseTracker::getEnabled()
     return &enabled;
 }
 
+bool BaseTracker::isEnabled()
+{
+    return enabled;
+}
+
 const std::string BaseTracker::name() const
 {
     return _name;

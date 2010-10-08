@@ -20,7 +20,7 @@ class GUIProcessDiag : public QFrame
 {
     Q_OBJECT
 public:
-    GUIProcessDiag(std::vector<BaseFilter*>*, QWidget *parent = 0);
+    GUIProcessDiag(const std::string&, std::vector<BaseFilter*>*, QWidget *parent = 0);
 
 signals:
 

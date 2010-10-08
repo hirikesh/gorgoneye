@@ -5,8 +5,10 @@
 #include <string>
 #include <vector>
 
-
+class QScrollArea;
 class QVBoxLayout;
+class QGroupBox;
+class QFrame;
 class Param;
 
 class GUIParamDiag: public QFrame
@@ -21,7 +23,13 @@ signals:
 public slots:
 
 private:
+    QVBoxLayout* auxLayout;
     QVBoxLayout* layout;
+    QScrollArea* scrollArea;
+    QFrame* frame;
+    QGroupBox* groupBox;
+    std::vector<QWidget*> gparams;
+    QWidget *scrollContents;
 };
 
 #endif // GUIPARAMDIAG_H

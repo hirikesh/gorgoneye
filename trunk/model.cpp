@@ -82,6 +82,11 @@ vector<BaseTracker*> Model::getTrackers()
     return trackers;
 }
 
+vector<BaseTracker*>* Model::getPtrTrackers()
+{
+    return &trackers;
+}
+
 vector<BaseFilter*>* Model::getFilters()
 {
     return &filters;

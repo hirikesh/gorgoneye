@@ -1,26 +1,30 @@
 #include <vector>
-
+#include <string>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QScrollArea>
 #include <QLabel>
 #include <QTreeWidget>
 #include <QPushButton>
 #include <QGroupBox>
-#include <QDebug>
-
+#include <QHeaderView>
 #include "parameter.h"
 #include "trackers/basetracker.h"
+#include "detectors/basedetector.h"
 #include "ui/guiparamdiag.h"
 #include "guitrackerdiag.h"
+#include "ui/guitreewidgetitem.h"
 
-GUITrackerDiag::GUITrackerDiag(std::vector<BaseTracker*>* tr, QWidget *parent) :
+GUITrackerDiag::GUITrackerDiag(const std::string& title, std::vector<BaseTracker*>* tr, QWidget *parent) :
     QFrame(parent),
     mainLayout(new QHBoxLayout(this)),
     auxLayout(new QVBoxLayout()),
-    listTitle(new QLabel("Filters:")),
-    trackerTree(new QTreeWidget(this)),
-    paramBox(new QGroupBox("Selected Item Parameters", this)),
+    listTitle(new QLabel(title.c_str())),
+    trackerTree(new QTreeWidget()),
+    paramBox(new QGroupBox("Selected Item Parameters")),
     paramLayout(new QVBoxLayout()),
+    //scrollArea(new QScrollArea()),
+    //scrollContents(new QWidget()),
     trackers(tr)
 {
     init();
@@ -28,67 +32,91 @@ GUITrackerDiag::GUITrackerDiag(std::vector<BaseTracker*>* tr, QWidget *parent) :
 
 void GUITrackerDiag::init()
 {
-/*    for(unsigned int i = 0; i < trackers->size(); i++)
+    int firstColumn = 0;
+    BaseTracker* currTracker;
+    for(unsigned int i = 0; i < trackers->size(); i++)
     {
-        BaseTracker* currTracker = trackers->at(i);
-        QTreeWidgetItem* currItem = new QTreeWidgetItem(i, currTracker->name().c_str());
-        trackerTree->addTopLevelItem(currItem);
-        currItem->setCheckState(i, Qt::Unchecked);
+        currTracker = trackers->at(i);
+        GUITreeWidgetItem* currTrackerItem = new GUITreeWidgetItem(trackerTree);
+        std::string trackerEntry = "Enable " + currTracker->name() + " Tracking";
+        currTrackerItem->setText(firstColumn, trackerEntry.c_str());
+        if (currTracker->isEnabled())
+        {
+            currTrackerItem->setCheckState(firstColumn, Qt::Checked);
+        }
+        else
+        {
+            currTrackerItem->setCheckState(firstColumn, Qt::Unchecked);
+        }
 
-    }*/
+        std::vector<BaseDetector*> detectors = currTracker->getDetectors();
+        for(unsigned int j = 0; j < detectors.size(); j++)
+        {
 
-    paramBox->setLayout(paramLayout);
+            if (detectors[j]->hasParams())
+            {
+                GUITreeWidgetItem* currDetectorItem = new GUITreeWidgetItem(currTrackerItem, detectors[j]->getParams());
+                std::string trackerItemEntry = detectors[j]->name() + " Algorithm";
+                currDetectorItem->setText(firstColumn, trackerItemEntry.c_str());
+            }
+
+        }
+    }
+
+    trackerTree->header()->hide();
 
     auxLayout->addWidget(listTitle);
     auxLayout->addWidget(trackerTree);
 
     paramBox->setMinimumWidth(200);
-    paramBox->setMinimumHeight(200);
+    paramBox->setMinimumHeight(400);
+
+    //scrollContents->setGeometry(QRect(0, 0, 400, 500));
+    //scrollArea->setWidget(scrollContents);
 
     mainLayout->addLayout(auxLayout);
     mainLayout->addWidget(paramBox);
-
-
-    QObject::connect(trackerTree, SIGNAL(itemChanged(QTreeWidgetItem*)),
-                     this, SLOT(filterItemToggled(QTreeWidgetItem*)));
+    //mainLayout->addWidget(paramBox);
+    //paramBox->setParent(scrollContents);
+    //scrollContents->setLayout(paramLayout);
+    paramBox->setLayout(paramLayout);
+    QObject::connect(trackerTree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
+                     this, SLOT(trackerItemToggled(QTreeWidgetItem*, int)));
     QObject::connect(trackerTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
                      this, SLOT(changeParamBox(QTreeWidgetItem*,QTreeWidgetItem*)));
 }
 
-void GUITrackerDiag::trackerItemToggled(QTreeWidgetItem * item)
+void GUITrackerDiag::trackerItemToggled(QTreeWidgetItem * item, int index)
 {
-    // item check state broken
-    /*if(item->checkState() == Qt::Checked)
+    if(item->checkState(0) == Qt::Checked)
+
     {
-        int currIndex = trackerTree->currentRow();
+        int currIndex = trackerTree->currentIndex().row();
         BaseTracker* currTracker = trackers->at(currIndex);
         currTracker->enable();
     }
     else
     {
-        int currIndex = trackerTree->currentRow();
+        int currIndex = trackerTree->currentIndex().row();
         BaseTracker* currTracker = trackers->at(currIndex);
         currTracker->disable();
-    }*/
+    }
 }
 
 void GUITrackerDiag::changeParamBox(QTreeWidgetItem *currItem, QTreeWidgetItem *prevItem)
 {
-    /*if (currItem!= NULL)
+    if (currItem!= NULL)
     {
+        GUITreeWidgetItem* currentItem = (GUITreeWidgetItem *) currItem;
 
-        int currIndex = trackerTree->currentRow();
-
-        BaseTracker* currTracker = trackers->at(currIndex);
         if (paramDialog != NULL)
         {
             paramLayout->removeWidget(paramDialog);
             delete paramDialog;
             paramDialog = NULL;
         }
-        qDebug() << "Current Index:" << currIndex << "Current Tracker" << currTracker->name().c_str();
-        paramDialog = new GUIParamDiag(currTracker->name(), currTracker->params());
+        paramDialog = new GUIParamDiag(currentItem->text(0).toStdString(), currentItem->getParams());
         paramLayout->addWidget(paramDialog);
-    }*/
+    }
 
 }
