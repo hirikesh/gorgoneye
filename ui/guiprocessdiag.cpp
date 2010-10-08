@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -10,12 +11,12 @@
 #include "guiparamdiag.h"
 #include "filters/basefilter.h"
 
-GUIProcessDiag::GUIProcessDiag(std::vector<BaseFilter*>* ft, QWidget *parent) :
+GUIProcessDiag::GUIProcessDiag(const std::string& title, std::vector<BaseFilter*>* ft, QWidget *parent) :
     QFrame(parent),
     mainLayout(new QHBoxLayout(this)),
     auxLayout(new QVBoxLayout()),
     buttonLayout(new QHBoxLayout()),
-    listTitle(new QLabel("Filters:")),
+    listTitle(new QLabel(title.c_str())),
     processList(new QListWidget(this)),
     pbAdd(new QPushButton("+", this)),
     pbRemove(new QPushButton("-", this)),

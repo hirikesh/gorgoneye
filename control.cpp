@@ -4,14 +4,15 @@
 #include <QComboBox>
 #include <QTimer>
 #include <QGridLayout>
+#include <QDebug>
 #include "control.h"
 #include "ui_control.h"
 #include "parameter.h"
 #include "ui/guiparam.h"
 #include "ui/glview.h"
 #include "ui/guiprocessdiag.h"
+#include "ui/guitrackerdiag.h"
 #include "ui/guiparamdiag.h"
-//#include "trackers/basetracker.h"
 #include "detectors/basedetector.h"
 
 
@@ -45,8 +46,11 @@ void Control::initGUI()
 {
     ui->setupUi(this);
     vector<BaseTracker*> trackers = model->getTrackers();
-    GUIProcessDiag* filterList = new GUIProcessDiag(model->getFilters(), this);
+    GUIProcessDiag* filterList = new GUIProcessDiag("Filters:" , model->getFilters(), this);
+    GUITrackerDiag* trackerList = new GUITrackerDiag("Trackers:", model->getPtrTrackers(), this);
     ui->auxLayout->insertWidget(0, filterList);
+    ui->auxLayout->insertWidget(1, trackerList);
+    qDebug() << ui->auxLayout->parentWidget()->objectName();
     for (unsigned int i = 0; i < trackers.size(); i++) {
         createTrackerGUI(trackers[i]);
     }
@@ -123,7 +127,7 @@ void Control::createTrackerGUI(BaseTracker* tracker)
     vector<BaseDetector*> detectors = tracker->getDetectors();
     for (unsigned int i = 0; i < detectors.size(); i++)
     {
-        detectorSelection->addItem(detectors[i]->getName().c_str());
+        detectorSelection->addItem(detectors[i]->name().c_str());
         if (detectors[i]->hasParams()) createDetectorGUI(detectors[i], trackerLayout, trackerTitle);
     }
     detectorSelection->setCurrentIndex(tracker->getCurrDetectorType());
@@ -134,13 +138,13 @@ void Control::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout, QGr
     // Detector Level
     vector<Param*> params = detector->getParams();
     QVBoxLayout *paramLayout = new QVBoxLayout();
-    string title = detector->getName() + " Algorithm Parameters:";
+    string title = detector->name() + " Algorithm Parameters:";
     QGroupBox *groupBox = new QGroupBox(title.c_str());
     groupBox->setLayout(paramLayout);
     vector<QWidget*> gparams(params.size());
 
-    GUIParamDiag* pDialog = new GUIParamDiag(title, params);
-    paramLayout->addWidget(pDialog);
+//    GUIParamDiag* pDialog = new GUIParamDiag(title, params);
+//    paramLayout->addWidget(pDialog);
 
     for (unsigned int i = 0; i < params.size(); i++)
     {

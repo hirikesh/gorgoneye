@@ -11,17 +11,18 @@ class QVBoxLayout;
 class QGroupBox;
 class BaseTracker;
 class QTreeWidgetItem;
+class QScrollArea;
 
 class GUITrackerDiag : public QFrame
 {
     Q_OBJECT
 public:
-    GUITrackerDiag(std::vector<BaseTracker*>*, QWidget *parent = 0);
+    GUITrackerDiag(const std::string&, std::vector<BaseTracker*>*, QWidget *parent = 0);
 
 signals:
 
 public slots:
-    void trackerItemToggled(QTreeWidgetItem*);
+    void trackerItemToggled(QTreeWidgetItem*, int);
     void changeParamBox(QTreeWidgetItem*, QTreeWidgetItem*);
 private:
     void init();
@@ -34,6 +35,9 @@ private:
     QGroupBox* paramBox;
     QVBoxLayout* paramLayout;
     GUIParamDiag* paramDialog;
+
+    QScrollArea* scrollArea;
+    QWidget *scrollContents;
 
     std::vector<BaseTracker*>* trackers;
 };

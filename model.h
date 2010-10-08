@@ -20,6 +20,7 @@ public:
     void update(); // instructs model to grab new frame and process it, thereby updating Store.
     Store* getStore();
     std::vector<BaseTracker*> getTrackers();
+    std::vector<BaseTracker*>* getPtrTrackers();
     std::vector<BaseFilter*>* getFilters();
     cv::Mat* getDispImg();
 private:

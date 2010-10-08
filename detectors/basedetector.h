@@ -26,13 +26,14 @@ public:
 
     virtual bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
     const int getType() const;
-    const std::string getName() const;
+    const std::string name() const;
     std::vector<Param*> getParams();
+    std::vector<Param*>* getPtrParams();
     bool hasParams();
 
 protected:
     const int type;
-    const std::string name;
+    const std::string _name;
     std::vector<Param*> params;
 };
 

@@ -8,7 +8,7 @@ using cv::Rect;
 
 BaseDetector::BaseDetector(const int& id, const string& s) :
     type(id),
-    name(s)
+    _name(s)
 {
 }
 
@@ -23,9 +23,9 @@ const int BaseDetector::getType() const
     return type;
 }
 
-const string BaseDetector::getName() const
+const string BaseDetector::name() const
 {
-    return name;
+    return _name;
 }
 
 vector<Param*> BaseDetector::getParams()
@@ -35,5 +35,10 @@ vector<Param*> BaseDetector::getParams()
 
 bool BaseDetector::hasParams()
 {
-    return (params.size()>0);
+    return (params.size() > 0);
+}
+
+std::vector<Param*>* BaseDetector::getPtrParams()
+{
+    return &params;
 }
