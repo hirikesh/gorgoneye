@@ -24,10 +24,10 @@ Model::Model(int device) :
 #endif
 
     string props[] = {"Millisecond", "Frames", "Ratio", "Width", "Height",
-                            "FPS", "FOURCC Codec", "Frame Count", "Format",
-                            "Mode", "Brightness", "Contrast", "Saturation",
-                            "Hue", "Gain", "Exposure", "RGB colour", "White Balancing",
-                            "Rectification"};
+                      "FPS", "FOURCC Codec", "Frame Count", "Format",
+                      "Mode", "Brightness", "Contrast", "Saturation",
+                      "Hue", "Gain", "Exposure", "RGB colour", "White Balancing",
+                      "Rectification"};
     for(int i=0; i<19; i++) {
         double prop = capture.get(i);
         if(prop > 0)
@@ -99,7 +99,7 @@ void Model::preProcess()
         BaseFilter* currFilter = filters[i];
         currFilter->filter(store.sceneImg, store.sceneImg, store.sceneImg);
     }
-        qDebug() << "filters running: " << filters.size();
+//        qDebug() << "filters running: " << filters.size();
     //    Colour Space Conversion: BGR -> YCbCr
     //    static Size srcImgSize = store.sceneImg.size();
     //    static Mat cYCrCbImg(srcImgSize, CV_8UC3);

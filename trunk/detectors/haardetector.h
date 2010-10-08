@@ -11,7 +11,7 @@
 #ifdef _WIN32
 #define HAAR_CC_DIR "c:\\opencv2.1\\data\\haarcascades\\"
 #else
-#define HAAR_CC_DIR "/usr/local/share/opencv/haarcascades/"
+#define HAAR_CC_DIR "/usr/share/opencv/haarcascades/"
 #endif
 
 #define HAAR_CC_FACE HAAR_CC_DIR"haarcascade_frontalface_default.xml"
