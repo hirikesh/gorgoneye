@@ -17,24 +17,24 @@ bool GrayscaleFilter::hasParams()const
     return true;
 }
 
-void GrayscaleFilter::filter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& mask)
+void GrayscaleFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk)
 {
     if (!enabled)
         return;
-    Mat tmp(src.size(), CV_8UC1);
-    cvtColor(src, tmp, CV_BGR2GRAY);
-    cvtColor(tmp, dst, CV_GRAY2BGR);
+    Mat tmp(srcImg.size(), CV_8UC1);
+    cvtColor(srcImg, tmp, CV_BGR2GRAY);
+    cvtColor(tmp, dstImg, CV_GRAY2BGR);
     // TODO: Apply Mask
 
 }
 
-void GrayscaleFilter::filter(const cv::Mat& src, cv::Mat& dst, const cv::Rect& roi)
+void GrayscaleFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 {
     if (!enabled)
         return;
-    Mat srcROI = src(roi);
+    Mat srcROI = srcImg(srcRoi);
     Mat tmp(srcROI.size(), CV_8UC1);
-    Mat dstROI = dst(roi);
+    Mat dstROI = dstImg(srcRoi);
     cvtColor(srcROI, tmp, CV_BGR2GRAY);
     cvtColor(tmp, dstROI, CV_GRAY2BGR);
 }
