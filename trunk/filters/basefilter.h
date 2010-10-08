@@ -22,8 +22,8 @@ public:
     virtual bool hasParams() const = 0;
     std::vector<Param*> params() const;
     const std::string name() const;
-    virtual void filter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& mask) = 0;
-    virtual void filter(const cv::Mat& src, cv::Mat& dst, const cv::Rect& roi) = 0;
+    virtual void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk) = 0;
+    virtual void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi) = 0;
     void enable();
     void disable();
 protected:

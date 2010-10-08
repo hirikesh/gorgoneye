@@ -17,8 +17,8 @@ public:
     HSVFilter(const std::string& nm, Store* st);
 
     bool hasParams() const;
-    void filter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& mask);
-    void filter(const cv::Mat& src, cv::Mat& dst, const cv::Rect& roi);
+    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk);
+    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi);
 private:
     void prepareChannels(cv::Size size);
     void cleanChannels(cv::Size size);

@@ -97,7 +97,7 @@ void Model::preProcess()
     for (unsigned int i = 0; i < filters.size(); i++)
     {
         BaseFilter* currFilter = filters[i];
-        currFilter->filter(store.sceneImg, store.sceneImg, store.sceneImg);
+        currFilter->filter(store.sceneImg, store.sceneImg, store.sceneImg, store.sceneImg);
     }
 //        qDebug() << "filters running: " << filters.size();
     //    Colour Space Conversion: BGR -> YCbCr

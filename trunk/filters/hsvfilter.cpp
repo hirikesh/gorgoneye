@@ -20,31 +20,31 @@ bool HSVFilter::hasParams()const
     return true;
 }
 
-void HSVFilter::filter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& mask)
+void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk)
 {
     if (!enabled)
         return;
-    cv::Size srcSize = src.size();
+    cv::Size srcSize = srcImg.size();
     Mat tmp(srcSize, CV_8UC3);
-    cvtColor(src, tmp, CV_BGR2HSV);
+    cvtColor(srcImg, tmp, CV_BGR2HSV);
     prepareChannels(srcSize);
 
     Mat hsvChannels[] = {*hueChannel, *satChannel, *valChannel};
     split(tmp, hsvChannels);
     Mat hueImg[] = {*hueChannel, *whiteImg, *whiteImg};
-    merge(hueImg, 3, dst);
-    cvtColor(dst, dst, CV_HSV2RGB);
+    merge(hueImg, 3, dstImg);
+    cvtColor(dstImg, dstImg, CV_HSV2RGB);
     cleanChannels(srcSize);
     // TODO: Apply Mask
 }
 
-void HSVFilter::filter(const cv::Mat& src, cv::Mat& dst, const cv::Rect& roi)
+void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 {
     if (!enabled)
         return;
-    Mat srcROI = src(roi);
-    Mat dstROI = dst(roi);
-    cv::Size srcSize = src(roi).size();
+    Mat srcROI = srcImg(srcRoi);
+    Mat dstROI = dstImg(srcRoi);
+    cv::Size srcSize = srcImg(srcRoi).size();
     Mat tmp(srcSize, CV_8UC3);
     cvtColor(srcROI, tmp, CV_BGR2HSV);
     prepareChannels(srcSize);
