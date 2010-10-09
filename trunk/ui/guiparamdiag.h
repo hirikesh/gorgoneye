@@ -23,13 +23,17 @@ signals:
 public slots:
 
 private:
+    void initUI();
+
     QVBoxLayout* auxLayout;
     QVBoxLayout* layout;
-    QScrollArea* scrollArea;
-    QFrame* frame;
+
+    //QFrame* frame;
     QGroupBox* groupBox;
     std::vector<QWidget*> gparams;
-    QWidget *scrollContents;
+
+    QScrollArea* scrollArea;
+    QWidget *scrollableContents;
 };
 
 #endif // GUIPARAMDIAG_H

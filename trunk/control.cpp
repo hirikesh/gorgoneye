@@ -50,7 +50,7 @@ void Control::initGUI()
     GUITrackerDiag* trackerList = new GUITrackerDiag("Trackers:", model->getPtrTrackers(), this);
     ui->auxLayout->insertWidget(0, filterList);
     ui->auxLayout->insertWidget(1, trackerList);
-    qDebug() << ui->auxLayout->parentWidget()->objectName();
+
     for (unsigned int i = 0; i < trackers.size(); i++) {
         createTrackerGUI(trackers[i]);
     }

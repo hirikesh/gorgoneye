@@ -26,14 +26,17 @@ public slots:
     void changeParamBox(QTreeWidgetItem*, QTreeWidgetItem*);
 private:
     void init();
+    void initTreeList();
 
     QHBoxLayout* mainLayout;
-    QVBoxLayout* auxLayout;
+    QVBoxLayout* leftLayout;
+    QVBoxLayout* rightLayout;
     QLabel* listTitle;
     QTreeWidget* trackerTree;
 
-    QGroupBox* paramBox;
     QVBoxLayout* paramLayout;
+    QGroupBox* paramBox;
+
     GUIParamDiag* paramDialog;
 
     QScrollArea* scrollArea;
