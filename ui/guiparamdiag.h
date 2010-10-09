@@ -2,20 +2,17 @@
 #define GUIPARAMDIAG_H
 
 #include <QFrame>
-#include <string>
 #include <vector>
 
-class QScrollArea;
 class QVBoxLayout;
-class QGroupBox;
-class QFrame;
+class QSpacerItem;
 class Param;
 
 class GUIParamDiag: public QFrame
 {
     Q_OBJECT
 public:
-    GUIParamDiag(const std::string, std::vector<Param*>, QWidget *parent = 0);
+    GUIParamDiag(std::vector<Param*>, QWidget *parent = 0);
     ~GUIParamDiag();
 
 signals:
@@ -23,17 +20,12 @@ signals:
 public slots:
 
 private:
-    void initUI();
+    void init();
 
-    QVBoxLayout* auxLayout;
-    QVBoxLayout* layout;
+    QVBoxLayout* paramLayout;
+    QSpacerItem* paramSpacer;
 
-    //QFrame* frame;
-    QGroupBox* groupBox;
     std::vector<QWidget*> gparams;
-
-    QScrollArea* scrollArea;
-    QWidget *scrollableContents;
 };
 
 #endif // GUIPARAMDIAG_H

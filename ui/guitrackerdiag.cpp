@@ -7,9 +7,8 @@
 #include <QLabel>
 #include <QTreeWidget>
 #include <QPushButton>
-#include <QGroupBox>
 #include <QHeaderView>
-
+#include <QGridLayout>
 #include "trackers/basetracker.h"
 #include "detectors/basedetector.h"
 #include "ui/guiparamdiag.h"
@@ -20,15 +19,11 @@
 
 GUITrackerDiag::GUITrackerDiag(const std::string& title, std::vector<BaseTracker*>* tr, QWidget *parent) :
     QFrame(parent),
-    mainLayout(new QHBoxLayout(this)),
-    leftLayout(new QVBoxLayout()),
-    rightLayout(new QVBoxLayout()),
+    mainLayout(new QGridLayout(this)),
     listTitle(new QLabel(title.c_str())),
+    paramTitle(new QLabel("Tracking Parameters:")),
     trackerTree(new QTreeWidget()),
-    paramLayout(new QVBoxLayout()),
-    paramBox(new QGroupBox("Selected Item Parameters")),
-    //scrollArea(new QScrollArea()),
-    //scrollContents(new QWidget()),
+    scrollArea(new QScrollArea()),
     trackers(tr)
 {
     initTreeList();
@@ -69,19 +64,15 @@ void GUITrackerDiag::initTreeList()
 
 void GUITrackerDiag::init()
 {
-    mainLayout->addLayout(leftLayout);
-    mainLayout->addLayout(rightLayout);
-
     trackerTree->header()->hide();
 
-    leftLayout->addWidget(listTitle);
-    leftLayout->addWidget(trackerTree);
+    mainLayout->addWidget(listTitle, 0, 0);
+    mainLayout->addWidget(paramTitle, 0, 1);
+    mainLayout->addWidget(trackerTree, 1, 0);
+    mainLayout->addWidget(scrollArea, 1, 1);
 
-    rightLayout->addWidget(paramBox);
-
-    paramBox->setMinimumWidth(200);
-    paramBox->setMinimumHeight(400);
-    paramBox->setLayout(paramLayout);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setMinimumHeight(300);
 
     QObject::connect(trackerTree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
                      this, SLOT(trackerItemToggled(QTreeWidgetItem*, int)));
@@ -92,7 +83,6 @@ void GUITrackerDiag::init()
 void GUITrackerDiag::trackerItemToggled(QTreeWidgetItem * item, int index)
 {
     if(item->checkState(0) == Qt::Checked)
-
     {
         int currIndex = trackerTree->currentIndex().row();
         BaseTracker* currTracker = trackers->at(currIndex);
@@ -110,16 +100,15 @@ void GUITrackerDiag::changeParamBox(QTreeWidgetItem *currItem, QTreeWidgetItem *
 {
     if (currItem!= NULL)
     {
-        GUITreeWidgetItem* currentItem = (GUITreeWidgetItem *) currItem;
+        GUITreeWidgetItem* currentItem = static_cast<GUITreeWidgetItem*>(currItem);
 
         if (paramDialog != NULL)
         {
-            paramLayout->removeWidget(paramDialog);
             delete paramDialog;
             paramDialog = NULL;
         }
-        paramDialog = new GUIParamDiag(currentItem->text(0).toStdString(), currentItem->getParams());
-        paramLayout->addWidget(paramDialog);
+        paramDialog = new GUIParamDiag(currentItem->getParams());
+        scrollArea->setWidget(paramDialog);
     }
 
 }

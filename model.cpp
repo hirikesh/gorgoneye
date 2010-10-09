@@ -89,7 +89,7 @@ vector<BaseTracker*>* Model::getPtrTrackers()
     return &trackers;
 }
 
-vector<BaseFilter*>* Model::getFilters()
+vector<BaseFilter*>* Model::getPtrFilters()
 {
     return &filters;
 }

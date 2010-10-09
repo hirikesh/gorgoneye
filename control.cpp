@@ -46,7 +46,7 @@ void Control::initGUI()
 {
     ui->setupUi(this);
     vector<BaseTracker*> trackers = model->getTrackers();
-    GUIProcessDiag* filterList = new GUIProcessDiag("Filters:" , model->getFilters(), this);
+    GUIProcessDiag* filterList = new GUIProcessDiag("Filters:" , model->getPtrFilters(), this);
     GUITrackerDiag* trackerList = new GUITrackerDiag("Trackers:", model->getPtrTrackers(), this);
     ui->auxLayout->insertWidget(0, filterList);
     ui->auxLayout->insertWidget(1, trackerList);

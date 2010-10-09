@@ -1,17 +1,17 @@
 #ifndef GUITRACKERDIAG_H
 #define GUITRACKERDIAG_H
 
-#include <QTreeView>
 #include <vector>
-class QHBoxLayout;
+#include <QFrame>
+
+class QGridLayout;
 class QLabel;
-class QTreeWidget;
-class GUIParamDiag;
-class QVBoxLayout;
-class QGroupBox;
-class BaseTracker;
-class QTreeWidgetItem;
 class QScrollArea;
+class QTreeWidget;
+class QTreeWidgetItem;
+class BaseTracker;
+class GUIParamDiag;
+
 
 class GUITrackerDiag : public QFrame
 {
@@ -28,19 +28,13 @@ private:
     void init();
     void initTreeList();
 
-    QHBoxLayout* mainLayout;
-    QVBoxLayout* leftLayout;
-    QVBoxLayout* rightLayout;
+    QGridLayout* mainLayout;
+
     QLabel* listTitle;
+    QLabel* paramTitle;
     QTreeWidget* trackerTree;
-
-    QVBoxLayout* paramLayout;
-    QGroupBox* paramBox;
-
-    GUIParamDiag* paramDialog;
-
     QScrollArea* scrollArea;
-    QWidget *scrollContents;
+    GUIParamDiag* paramDialog;
 
     std::vector<BaseTracker*>* trackers;
 };
