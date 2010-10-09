@@ -28,13 +28,16 @@ public:
     const int getType() const;
     const std::string name() const;
     std::vector<Param*> getParams();
+    std::vector<Param*> getImageModes();
     std::vector<Param*>* getPtrParams();
+
     bool hasParams();
 
 protected:
     const int type;
     const std::string _name;
     std::vector<Param*> params;
+    std::vector<Param*> imageModes;
 };
 
 #endif // DETECTOR_H

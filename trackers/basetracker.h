@@ -13,6 +13,7 @@
 
 class BaseDetector;
 class Store;
+class Param;
 
 class BaseTracker
 {
@@ -29,6 +30,7 @@ public:
     bool* getEnabled();
     const std::string name() const;
     virtual cv::Mat* getDispImg() = 0;
+    std::vector<Param*> getImageModes();
 
 protected:
     Store* store;
@@ -36,6 +38,7 @@ protected:
     bool enabled;
 
     std::vector<BaseDetector*> detectors;
+    std::vector<Param*> imageModes;
     BaseDetector* currDetector;
 };
 

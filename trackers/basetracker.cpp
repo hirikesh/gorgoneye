@@ -46,3 +46,12 @@ const std::string BaseTracker::name() const
 {
     return _name;
 }
+
+std::vector<Param*> BaseTracker::getImageModes()
+{
+    // TODO:
+    // Add Normal/Tracking Environment mode available from store
+    // Loop through detectors and insert items found
+    // return imagemodes;
+    return imageModes;
+}
