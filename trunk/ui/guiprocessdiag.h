@@ -7,13 +7,15 @@
 class BaseFilter;
 class GrayscaleFilter;
 class HSVFilter;
-class QLabel;
+
+class QGridLayout;
 class QHBoxLayout;
 class QVBoxLayout;
-class QPushButton;
+class QLabel;
 class QListWidget;
-class QGroupBox;
 class QListWidgetItem;
+class QPushButton;
+class QScrollArea;
 class GUIParamDiag;
 
 class GUIProcessDiag : public QFrame
@@ -35,8 +37,8 @@ private:
     void init();
     void swapProcessItems(int currIndex, int newIndex);
 
-    QHBoxLayout* mainLayout;
-    QVBoxLayout* leftLayout;
+    QGridLayout* mainLayout;
+    QVBoxLayout* leftLayout; // qt crashes when this is removed.
 
     QLabel* listTitle;
     QListWidget* processList;
@@ -47,8 +49,7 @@ private:
     QPushButton* pbMoveUp;
     QPushButton* pbMoveDown;
 
-    QGroupBox* paramBox;
-    QVBoxLayout* paramLayout;
+    QScrollArea* scrollArea;
     GUIParamDiag* paramDialog;
 
     std::vector<BaseFilter*>* filters;

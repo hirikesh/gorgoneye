@@ -2,12 +2,14 @@
 #include <vector>
 
 #include <QHBoxLayout>
-#include <QVBoxLayout>
+
+#include <QGridLayout>
 #include <QLabel>
 #include <QListWidget>
 #include <QPushButton>
 #include <QGroupBox>
 #include <QDebug>
+#include <QScrollArea>
 
 #include "guiprocessdiag.h"
 #include "guiparamdiag.h"
@@ -15,17 +17,15 @@
 
 GUIProcessDiag::GUIProcessDiag(const std::string& title, std::vector<BaseFilter*>* ft, QWidget *parent) :
     QFrame(parent),
-    mainLayout(new QHBoxLayout(this)),
-    leftLayout(new QVBoxLayout()),
+    mainLayout(new QGridLayout(this)),
     listTitle(new QLabel(title.c_str())),
-    processList(new QListWidget(this)),
+    processList(new QListWidget()),
     buttonLayout(new QHBoxLayout()),
-    pbAdd(new QPushButton("+", this)),
-    pbRemove(new QPushButton("-", this)),
-    pbMoveUp(new QPushButton("Up", this)),
-    pbMoveDown(new QPushButton("Down", this)),
-    paramBox(new QGroupBox("Selected Item Parameters", this)),
-    paramLayout(new QVBoxLayout()),
+    pbAdd(new QPushButton("+")),
+    pbRemove(new QPushButton("-")),
+    pbMoveUp(new QPushButton("Up")),
+    pbMoveDown(new QPushButton("Down")),
+    scrollArea(new QScrollArea()),
     filters(ft)
 {
     init();
@@ -43,21 +43,19 @@ void GUIProcessDiag::init()
     }
 
     // organise appearance and layout of widgets
-    mainLayout->addLayout(leftLayout);
-    mainLayout->addWidget(paramBox);
-
-    leftLayout->addWidget(listTitle);
-    leftLayout->addWidget(processList);
-    leftLayout->addLayout(buttonLayout);
+    setLayout(mainLayout);
+    mainLayout->addWidget(listTitle, 0, 0);
+    mainLayout->addWidget(processList, 1, 0);
+    mainLayout->addLayout(buttonLayout, 2, 0);
+    mainLayout->addWidget(scrollArea, 0, 1, 3, 1);
 
     buttonLayout->addWidget(pbAdd);
     buttonLayout->addWidget(pbRemove);
     buttonLayout->addWidget(pbMoveUp);
     buttonLayout->addWidget(pbMoveDown);
 
-    paramBox->setMinimumWidth(200);
-    paramBox->setMinimumHeight(200);
-    paramBox->setLayout(paramLayout);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setMinimumHeight(200);
 
     // create event handlers
     QObject::connect(pbAdd, SIGNAL(clicked()), this, SLOT(addProcessItem()));
@@ -128,11 +126,10 @@ void GUIProcessDiag::moveDownProcessItem()
 }
 
 void GUIProcessDiag::swapProcessItems(int currIndex, int newIndex)
-{
+{   
     QListWidgetItem* currItem = processList->takeItem(currIndex);
     processList->insertItem(newIndex, currItem);
     processList->setCurrentRow(newIndex);
-
     BaseFilter* tmp = filters->at(currIndex);
     filters->erase(filters->begin() + currIndex);
     filters->insert(filters->begin() + newIndex, tmp);
@@ -164,12 +161,10 @@ void GUIProcessDiag::changeParamBox(QListWidgetItem* currItem, QListWidgetItem* 
         BaseFilter* currFilter = filters->at(currIndex);
         if (paramDialog != NULL)
         {
-            paramLayout->removeWidget(paramDialog);
             delete paramDialog;
             paramDialog = NULL;
         }
-//        qDebug() << "Current Index:" << currIndex << "Current Filter" << currFilter->name().c_str();
-        paramDialog = new GUIParamDiag(currFilter->name(), currFilter->params());
-        paramLayout->addWidget(paramDialog);
+        paramDialog = new GUIParamDiag(currFilter->params());
+        scrollArea->setWidget(paramDialog);
     }
 }
