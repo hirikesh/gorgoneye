@@ -42,3 +42,10 @@ std::vector<Param*>* BaseDetector::getPtrParams()
 {
     return &params;
 }
+
+std::vector<Param*> BaseDetector::getImageModes()
+{
+    // TODO:
+    // return parameters
+    return imageModes;
+}
