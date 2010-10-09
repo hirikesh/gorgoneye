@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -7,6 +8,7 @@
 #include <QPushButton>
 #include <QGroupBox>
 #include <QDebug>
+
 #include "guiprocessdiag.h"
 #include "guiparamdiag.h"
 #include "filters/basefilter.h"
@@ -14,10 +16,10 @@
 GUIProcessDiag::GUIProcessDiag(const std::string& title, std::vector<BaseFilter*>* ft, QWidget *parent) :
     QFrame(parent),
     mainLayout(new QHBoxLayout(this)),
-    auxLayout(new QVBoxLayout()),
-    buttonLayout(new QHBoxLayout()),
+    leftLayout(new QVBoxLayout()),
     listTitle(new QLabel(title.c_str())),
     processList(new QListWidget(this)),
+    buttonLayout(new QHBoxLayout()),
     pbAdd(new QPushButton("+", this)),
     pbRemove(new QPushButton("-", this)),
     pbMoveUp(new QPushButton("Up", this)),
@@ -31,6 +33,7 @@ GUIProcessDiag::GUIProcessDiag(const std::string& title, std::vector<BaseFilter*
 
 void GUIProcessDiag::init()
 {
+    // create items appearing in the list initially
     for(unsigned int i = 0; i < filters->size(); i++)
     {
         BaseFilter* currFilter = filters->at(i);
@@ -39,11 +42,13 @@ void GUIProcessDiag::init()
         currItem->setCheckState(Qt::Unchecked);
     }
 
-    paramBox->setLayout(paramLayout);
+    // organise appearance and layout of widgets
+    mainLayout->addLayout(leftLayout);
+    mainLayout->addWidget(paramBox);
 
-    auxLayout->addWidget(listTitle);
-    auxLayout->addWidget(processList);
-    auxLayout->addLayout(buttonLayout);
+    leftLayout->addWidget(listTitle);
+    leftLayout->addWidget(processList);
+    leftLayout->addLayout(buttonLayout);
 
     buttonLayout->addWidget(pbAdd);
     buttonLayout->addWidget(pbRemove);
@@ -52,31 +57,28 @@ void GUIProcessDiag::init()
 
     paramBox->setMinimumWidth(200);
     paramBox->setMinimumHeight(200);
+    paramBox->setLayout(paramLayout);
 
-    mainLayout->addLayout(auxLayout);
-    mainLayout->addWidget(paramBox);
-
-
-    QObject::connect(pbAdd, SIGNAL(clicked()), this, SLOT(addFilterItem()));
-    QObject::connect(pbRemove, SIGNAL(clicked()), this, SLOT(removeFilterItem()));
-    QObject::connect(pbMoveUp, SIGNAL(clicked()), this, SLOT(moveUpFilterItem()));
-    QObject::connect(pbMoveDown, SIGNAL(clicked()), this, SLOT(moveDownFilterItem()));
-
+    // create event handlers
+    QObject::connect(pbAdd, SIGNAL(clicked()), this, SLOT(addProcessItem()));
+    QObject::connect(pbRemove, SIGNAL(clicked()), this, SLOT(removeProcessItem()));
+    QObject::connect(pbMoveUp, SIGNAL(clicked()), this, SLOT(moveUpProcessItem()));
+    QObject::connect(pbMoveDown, SIGNAL(clicked()), this, SLOT(moveDownProcessItem()));
     QObject::connect(processList, SIGNAL(itemChanged(QListWidgetItem*)),
                      this, SLOT(filterItemToggled(QListWidgetItem*)));
     QObject::connect(processList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
                      this, SLOT(changeParamBox(QListWidgetItem*,QListWidgetItem*)));
 }
 
-void GUIProcessDiag::addFilterItem()
+void GUIProcessDiag::addProcessItem()
 {
-    qDebug() << "You wanted to add a filter, but there are no filters to add yet.";
+    qDebug() << "You wanted to add a filter, but there is no menu for adding filters yet.";
     // TODO: PopUp Menu
     // TODO: Create Item + possibly Create Params
     // NOTE: do not select new item
 }
 
-void GUIProcessDiag::removeFilterItem()
+void GUIProcessDiag::removeProcessItem()
 {
     if (filters->size() > 0)
     {
@@ -98,7 +100,7 @@ void GUIProcessDiag::removeFilterItem()
     }
 }
 
-void GUIProcessDiag::moveUpFilterItem()
+void GUIProcessDiag::moveUpProcessItem()
 {
     int currIndex = processList->currentRow();
     if(currIndex < 0)
@@ -108,10 +110,10 @@ void GUIProcessDiag::moveUpFilterItem()
         newIndex = 0;
     else
         newIndex = currIndex - 1;
-    swapFilterItems(currIndex, newIndex);
+    swapProcessItems(currIndex, newIndex);
 }
 
-void GUIProcessDiag::moveDownFilterItem()
+void GUIProcessDiag::moveDownProcessItem()
 {
     int currIndex = processList->currentRow();
     if (currIndex < 0)
@@ -122,10 +124,10 @@ void GUIProcessDiag::moveDownFilterItem()
     {   newIndex = endIndex;  }
     else
     {   newIndex = currIndex + 1;  }
-    swapFilterItems(currIndex, newIndex);
+    swapProcessItems(currIndex, newIndex);
 }
 
-void GUIProcessDiag::swapFilterItems(int currIndex, int newIndex)
+void GUIProcessDiag::swapProcessItems(int currIndex, int newIndex)
 {
     QListWidgetItem* currItem = processList->takeItem(currIndex);
     processList->insertItem(newIndex, currItem);

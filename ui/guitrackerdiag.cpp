@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QScrollArea>
@@ -8,31 +9,36 @@
 #include <QPushButton>
 #include <QGroupBox>
 #include <QHeaderView>
-#include "parameter.h"
+
 #include "trackers/basetracker.h"
 #include "detectors/basedetector.h"
 #include "ui/guiparamdiag.h"
-#include "guitrackerdiag.h"
 #include "ui/guitreewidgetitem.h"
+#include "parameter.h"
+#include "guitrackerdiag.h"
+
 
 GUITrackerDiag::GUITrackerDiag(const std::string& title, std::vector<BaseTracker*>* tr, QWidget *parent) :
     QFrame(parent),
     mainLayout(new QHBoxLayout(this)),
-    auxLayout(new QVBoxLayout()),
+    leftLayout(new QVBoxLayout()),
+    rightLayout(new QVBoxLayout()),
     listTitle(new QLabel(title.c_str())),
     trackerTree(new QTreeWidget()),
-    paramBox(new QGroupBox("Selected Item Parameters")),
     paramLayout(new QVBoxLayout()),
+    paramBox(new QGroupBox("Selected Item Parameters")),
     //scrollArea(new QScrollArea()),
     //scrollContents(new QWidget()),
     trackers(tr)
 {
+    initTreeList();
     init();
 }
 
-void GUITrackerDiag::init()
+void GUITrackerDiag::initTreeList()
 {
     int firstColumn = 0;
+
     BaseTracker* currTracker;
     for(unsigned int i = 0; i < trackers->size(); i++)
     {
@@ -48,38 +54,35 @@ void GUITrackerDiag::init()
         {
             currTrackerItem->setCheckState(firstColumn, Qt::Unchecked);
         }
-
         std::vector<BaseDetector*> detectors = currTracker->getDetectors();
         for(unsigned int j = 0; j < detectors.size(); j++)
         {
-
             if (detectors[j]->hasParams())
             {
                 GUITreeWidgetItem* currDetectorItem = new GUITreeWidgetItem(currTrackerItem, detectors[j]->getParams());
                 std::string trackerItemEntry = detectors[j]->name() + " Algorithm";
                 currDetectorItem->setText(firstColumn, trackerItemEntry.c_str());
             }
-
         }
     }
+}
+
+void GUITrackerDiag::init()
+{
+    mainLayout->addLayout(leftLayout);
+    mainLayout->addLayout(rightLayout);
 
     trackerTree->header()->hide();
 
-    auxLayout->addWidget(listTitle);
-    auxLayout->addWidget(trackerTree);
+    leftLayout->addWidget(listTitle);
+    leftLayout->addWidget(trackerTree);
+
+    rightLayout->addWidget(paramBox);
 
     paramBox->setMinimumWidth(200);
     paramBox->setMinimumHeight(400);
-
-    //scrollContents->setGeometry(QRect(0, 0, 400, 500));
-    //scrollArea->setWidget(scrollContents);
-
-    mainLayout->addLayout(auxLayout);
-    mainLayout->addWidget(paramBox);
-    //mainLayout->addWidget(paramBox);
-    //paramBox->setParent(scrollContents);
-    //scrollContents->setLayout(paramLayout);
     paramBox->setLayout(paramLayout);
+
     QObject::connect(trackerTree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
                      this, SLOT(trackerItemToggled(QTreeWidgetItem*, int)));
     QObject::connect(trackerTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),

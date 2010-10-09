@@ -25,23 +25,23 @@ public:
 signals:
 
 public slots:
-    void addFilterItem();
-    void removeFilterItem();
-    void moveUpFilterItem();
-    void moveDownFilterItem();
+    void addProcessItem();
+    void removeProcessItem();
+    void moveUpProcessItem();
+    void moveDownProcessItem();
     void filterItemToggled(QListWidgetItem*);
     void changeParamBox(QListWidgetItem*, QListWidgetItem*);
 private:
     void init();
-    void swapFilterItems(int currIndex, int newIndex);
+    void swapProcessItems(int currIndex, int newIndex);
 
     QHBoxLayout* mainLayout;
-    QVBoxLayout* auxLayout;
-    QHBoxLayout* buttonLayout;
+    QVBoxLayout* leftLayout;
 
     QLabel* listTitle;
     QListWidget* processList;
 
+    QHBoxLayout* buttonLayout;
     QPushButton* pbAdd;
     QPushButton* pbRemove;
     QPushButton* pbMoveUp;
