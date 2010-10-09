@@ -4,6 +4,7 @@
 #include "model.h"
 #include "filters/grayscalefilter.h"
 #include "filters/hsvfilter.h"
+#include "filters/ycbcrfilter.h"
 
 using cv::VideoCapture;
 using cv::Mat;
@@ -17,10 +18,10 @@ Model::Model(int device) :
     eyesTracker(EyesTracker(&store))
 {
 #ifdef __linux__
-    capture.set(CV_CAP_PROP_BRIGHTNESS, 0.004);
-    capture.set(CV_CAP_PROP_CONTRAST, 0.12);
-    capture.set(CV_CAP_PROP_GAIN, 0.05);
-    capture.set(CV_CAP_PROP_EXPOSURE, 0.5);
+//    capture.set(CV_CAP_PROP_BRIGHTNESS, 0.004);
+//    capture.set(CV_CAP_PROP_CONTRAST, 0.12);
+//    capture.set(CV_CAP_PROP_GAIN, 0.05);
+//    capture.set(CV_CAP_PROP_EXPOSURE, 0.5);
 #endif
 
     string props[] = {"Millisecond", "Frames", "Ratio", "Width", "Height",
@@ -36,6 +37,7 @@ Model::Model(int device) :
     //
     filters.push_back(new GrayscaleFilter("Grayscale Filter", &store));
     filters.push_back(new HSVFilter("HSV Filter", &store));
+    filters.push_back(new YCbCrFilter("YCrCb Filter", &store));
 
     // Instantiate all trackers
     eyesTracker.setDetector(EyesTracker::HAAR);
@@ -102,7 +104,7 @@ void Model::preProcess()
     for (unsigned int i = 0; i < filters.size(); i++)
     {
         BaseFilter* currFilter = filters[i];
-        currFilter->filter(store.sceneImg, store.sceneImg, store.sceneImg, store.sceneImg);
+        currFilter->filter(store.sceneImg, store.sceneImg, store.sceneMsk);
     }
 //        qDebug() << "filters running: " << filters.size();
     //    Colour Space Conversion: BGR -> YCbCr

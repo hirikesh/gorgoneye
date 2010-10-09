@@ -10,26 +10,31 @@ namespace cv
     typedef Size_<int> Size;
 }
 
-
 class HSVFilter : public BaseFilter
 {
 public:
-    explicit HSVFilter(const std::string& nm, Store* st);
+    HSVFilter(const std::string& nm, Store* st);
 
     bool hasParams() const;
-    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk);
-    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi);
-private:
-    void prepareChannels(cv::Size size);
-    void cleanChannels(cv::Size size);
-    cv::Mat* whiteImg;
-    cv::Mat* hueChannel;
-    cv::Mat* satChannel;
-    cv::Mat* valChannel;
+    void setParams(int, int, int, int, int, int);
 
-    int bool1;
-    int bool2;
-    int bool3;
+    void filter(const cv::Mat& srcImg, cv::Mat& dstMsk);
+    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk);
+//    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk);
+//    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi);
+
+private:
+    bool visHue;
+
+    int minHue, maxHue;
+    int minSat, maxSat;
+    int minVal, maxVal;
+
+    cv::Mat hsvImg;
+    cv::Mat visHueImg;
+
+    void _filter(const cv::Mat &srcImg, cv::Mat &dstMsk);
+    void _visualise();
 };
 
 #endif // HSVFILTER_H

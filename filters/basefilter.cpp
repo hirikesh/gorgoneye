@@ -8,14 +8,14 @@
 #include "basefilter.h"
 
 BaseFilter::BaseFilter(const std::string& nm, Store* st) :
-        filterName(nm),
-        imageStore(st)
+    filterName(nm),
+    imageStore(st)
 {
 }
 
 std::vector<Param*> BaseFilter::params() const
 {
-        return filterParams;
+    return filterParams;
 }
 
 const std::string BaseFilter::name() const

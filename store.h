@@ -15,6 +15,11 @@ public:
     cv::Mat faceImg;
     cv::Mat eyesImg;
 
+    // Mask images (binary)
+    cv::Mat sceneMsk;
+    cv::Mat faceMsk;
+    cv::Mat eyesMsk;
+
     // Image to display
     cv::Mat* dispImg;
 

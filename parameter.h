@@ -46,6 +46,7 @@ class ModeParam : public Param
 {
 public:
     ModeParam(const std::string&, int*, bool);
+    ModeParam(const std::string&, bool*, bool);
     bool isEnabled();
 protected:
     bool enabled;
