@@ -31,6 +31,11 @@ ModeParam::ModeParam(const string& s, int* val, bool en) :
         enabled(en)
 {}
 
+ModeParam::ModeParam(const string& s, bool* val, bool en) :
+        Param(s, val, Param::MODE),
+        enabled(en)
+{}
+
 bool ModeParam::isEnabled()
 {
     return enabled;
