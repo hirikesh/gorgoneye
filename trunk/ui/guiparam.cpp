@@ -15,8 +15,8 @@ GUICheckBox::GUICheckBox(const std::string& title, bool* value) :
 }
 
 GUICheckBox::GUICheckBox(ModeParam* mp) :
-    checkbox(new QCheckBox(mp->getName(), this)),
-    pValue(static_cast<bool*>(mp->getValue()))
+    checkbox(new QCheckBox(mp->name(), this)),
+    pValue(static_cast<bool*>(mp->value()))
 {
     init();
 }
@@ -38,9 +38,9 @@ GUISlider::GUISlider(RangeParam<int>* rp) :
         QFrame(),
         slider(new QSlider(Qt::Horizontal, this)),
         spinbox(new QSpinBox(this)),
-        title(new QLabel(rp->getName())),
+        title(new QLabel(rp->name())),
         layout(new QGridLayout(this)),
-        pValue(static_cast<int*>(rp->getValue()))
+        pValue(static_cast<int*>(rp->value()))
 {
     slider->setRange(rp->getMinimum(), rp->getMaximum());
     slider->setSingleStep(rp->getStep());
@@ -66,9 +66,9 @@ void GUISlider::setParamValue(int value)
 GUIDSpinBox::GUIDSpinBox(RangeParam<double>* rp) :
         QFrame(),
         spinbox(new QDoubleSpinBox(this)),
-        title(new QLabel(rp->getName())),
+        title(new QLabel(rp->name())),
         layout(new QGridLayout(this)),
-        pValue(static_cast<double*>(rp->getValue()))
+        pValue(static_cast<double*>(rp->value()))
 {
 
     spinbox->setRange(rp->getMinimum(), rp->getMaximum());
@@ -87,15 +87,15 @@ void GUIDSpinBox::setParamValue(double value)
 }
 
 GUIRadioButton::GUIRadioButton(ImageModeParam* imp) :
-        QFrame(),
-        layout(new QGridLayout(this)),
-        radioButton(new QRadioButton(imp->getName())),
-        pValue(static_cast<cv::Mat*>(imp->getValue())),
+        QRadioButton(imp->name()),
+        //layout(new QGridLayout(this)),
+        radioButton(new QRadioButton(imp->name())),
+        pValue(static_cast<cv::Mat*>(imp->value())),
         enPValue(static_cast<bool*>(imp->getPtrEnabled())),
         dispImg(imp->getDstImgPtr())
 {
-        layout->addWidget(radioButton);
-        connect(radioButton, SIGNAL(toggled(bool)), this, SLOT(setParamValues(bool)));
+        //layout->addWidget(radioButton);
+        connect(this, SIGNAL(toggled(bool)), this, SLOT(setParamValues(bool)));
 }
 
 void GUIRadioButton::setParamValues(bool state)

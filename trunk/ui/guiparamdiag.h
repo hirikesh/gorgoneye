@@ -7,13 +7,14 @@
 class QVBoxLayout;
 class QSpacerItem;
 class Param;
+class QButtonGroup;
 
 class GUIParamDiag: public QFrame
 {
     Q_OBJECT
 public:
-    explicit GUIParamDiag(QWidget *parent = 0);
-    GUIParamDiag(std::vector<Param*>, QWidget *parent = 0);
+    explicit GUIParamDiag(QButtonGroup*, QWidget *parent = 0);
+    GUIParamDiag(std::vector<Param*>, QButtonGroup*, QWidget *parent = 0);
     ~GUIParamDiag();
 
 signals:
@@ -25,7 +26,6 @@ private:
 
     QVBoxLayout* paramLayout;
     QSpacerItem* paramSpacer;
-
     std::vector<QWidget*> gparams;
 };
 

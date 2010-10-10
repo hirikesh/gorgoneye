@@ -14,13 +14,13 @@ class Param
 public:
     enum paramType {RANGE, RANGE_DBL, MODE, IMG_MODE};
     Param(const std::string&, void*, paramType);
-    const char* getName() const;
-    void* getValue() const;
-    paramType getType() const;
+    const char* name() const;
+    void* value() const;
+    paramType type() const;
 protected:
-    const std::string name;
-    void* const value;
-    const paramType type;
+    const std::string _name;
+    void* const _value;
+    const paramType _type;
 };
 
 template <class T>

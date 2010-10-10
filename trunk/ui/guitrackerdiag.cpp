@@ -9,6 +9,7 @@
 #include <QPushButton>
 #include <QHeaderView>
 #include <QGridLayout>
+#include <QButtonGroup>
 #include "trackers/basetracker.h"
 #include "detectors/basedetector.h"
 #include "ui/guiparamdiag.h"
@@ -25,7 +26,8 @@ GUITrackerDiag::GUITrackerDiag(const std::string& title, Model* m, QWidget *pare
     paramTitle(new QLabel("Tracking Parameters:")),
     trackerTree(new QTreeWidget()),
     scrollArea(new QScrollArea()),
-    trackers(m->getPtrTrackers())
+    buttonGroup(new QButtonGroup()),
+    trackers(m->getPtrTrackers())   
 {
     initTreeList();
     init();
@@ -135,7 +137,7 @@ void GUITrackerDiag::changeParamBox(QTreeWidgetItem *currItem, QTreeWidgetItem *
 //            delete paramDialog;
 //            paramDialog = NULL;
 //        }
-        paramDialog = new GUIParamDiag(currentItem->getParams());
+        paramDialog = new GUIParamDiag(currentItem->getParams(), buttonGroup);
         scrollArea->setWidget(paramDialog);
     }
 

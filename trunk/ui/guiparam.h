@@ -2,6 +2,7 @@
 #define GUIPARAM_H
 
 #include <QComboBox>
+#include <QRadioButton>
 #include "parameter.h"
 #include "trackers/basetracker.h"
 
@@ -64,7 +65,7 @@ private:
     double* const pValue;
 };
 
-class GUIRadioButton : public QFrame
+class GUIRadioButton : public QRadioButton
 {
     Q_OBJECT
 public:

@@ -5,24 +5,24 @@ using cv::Mat;
 
 // Param *******************************************************
 Param::Param(const string& s, void* val, paramType t) :
-    name(s),
-    value(val),
-    type(t)
+    _name(s),
+    _value(val),
+    _type(t)
 {}
 
-const char* Param::getName() const
+const char* Param::name() const
 {
-    return name.c_str();
+    return _name.c_str();
 }
 
-void* Param::getValue() const
+void* Param::value() const
 {
-    return value;
+    return _value;
 }
 
-Param::paramType Param::getType() const
+Param::paramType Param::type() const
 {
-    return type;
+    return _type;
 }
 
 // ModeParam *******************************************************
