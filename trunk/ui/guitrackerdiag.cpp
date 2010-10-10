@@ -34,13 +34,18 @@ GUITrackerDiag::GUITrackerDiag(const std::string& title, Model* m, QWidget *pare
 void GUITrackerDiag::initTreeList()
 {
     trackerTree->setColumnCount(2);
-
+    bool firstItemAdded = true;
     int firstColumn = 0;
     BaseTracker* currTracker;
     for(unsigned int i = 0; i < trackers->size(); i++)
     {
         currTracker = trackers->at(i);
         GUITreeWidgetItem* currTrackerItem = new GUITreeWidgetItem(trackerTree, currTracker->getImageModes());
+        if (firstItemAdded)
+        {
+            firstItemAdded = false;
+            initItemAdded = currTrackerItem;
+        }
         std::string trackerEntry = "Enable " + currTracker->name() + " Tracking";
         currTrackerItem->setText(firstColumn, trackerEntry.c_str());
 
@@ -79,10 +84,10 @@ void GUITrackerDiag::init()
 {
 
     trackerTree->header()->hide();
-    trackerTree->header()->resizeSection(0, 200);
-    trackerTree->header()->resizeSection(1, 100);
+    trackerTree->header()->resizeSection(0, 180);
     trackerTree->expandAll();
-    trackerTree->setMinimumWidth(350);
+    trackerTree->setMinimumWidth(300);
+    changeParamBox(initItemAdded, NULL);
 
     mainLayout->addWidget(listTitle, 0, 0);
     mainLayout->addWidget(paramTitle, 0, 1);
@@ -91,6 +96,7 @@ void GUITrackerDiag::init()
 
     scrollArea->setWidgetResizable(true);
     scrollArea->setMinimumHeight(300);
+    scrollArea->setMinimumWidth(200);
 
     trackerTree->setSelectionMode(QAbstractItemView::SingleSelection);
     trackerTree->setSelectionBehavior(QAbstractItemView::SelectRows);
