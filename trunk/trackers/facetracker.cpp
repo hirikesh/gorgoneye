@@ -8,9 +8,9 @@
 
 FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
 {
-    haarDetector = new HaarDetector(HAAR, HAAR_CC_FACE, 1.2, 3, NULL, cv::Size(64,72));
-    featureDetector = new FeatureDetector(FEAT, 0, 24, 0, 255, 108, 255, 77, 127, 132, 173);
-    hybridDetector = new HybridDetector(HYBR, haarDetector, featureDetector);
+    haarDetector = new HaarDetector(st, HAAR, HAAR_CC_FACE, 1.2, 3, NULL, cv::Size(64,72));
+    featureDetector = new FeatureDetector(st, FEAT, 0, 24, 0, 255, 108, 255, 77, 127, 132, 173);
+    hybridDetector = new HybridDetector(st, HYBR, haarDetector, featureDetector);
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
     detectors.push_back(hybridDetector);

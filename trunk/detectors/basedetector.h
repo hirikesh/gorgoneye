@@ -10,6 +10,7 @@
 #include <string>
 
 class Param;
+class Store;
 
 namespace cv
 {
@@ -22,7 +23,7 @@ namespace cv
 class BaseDetector
 {
 public:
-    BaseDetector(const int&, const std::string&);
+    BaseDetector(Store *st, const int&, const std::string&);
 
     virtual bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
     const int type() const;

@@ -3,8 +3,8 @@
 #include "parameter.h"
 using namespace cv;
 
-HaarDetector::HaarDetector(const int type, string td, double sf, int mn, bool fg, Size ms) :
-    BaseDetector(type, "Haar"),
+HaarDetector::HaarDetector(Store *st, const int type, string td, double sf, int mn, bool fg, Size ms) :
+    BaseDetector(st, type, "Haar"),
     cClassifier(td),
     scaleFactor(sf),
     minNeighbours(mn),

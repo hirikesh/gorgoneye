@@ -5,8 +5,8 @@
 
 using namespace cv;
 
-TestDetector::TestDetector(const int type) :
-    BaseDetector(type, "Test")
+TestDetector::TestDetector(Store *st, const int type) :
+    BaseDetector(st, type, "Test")
 {
     _params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &minSobel, 0, 255, 1));
     _params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &maxSobel, 0, 255, 1));

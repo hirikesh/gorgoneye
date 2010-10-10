@@ -3,13 +3,13 @@
 #include "parameter.h"
 using namespace cv;
 
-FeatureDetector::FeatureDetector(const int type,
+FeatureDetector::FeatureDetector(Store* st, const int type,
                                  int minh, int maxh,
                                  int mins, int maxs,
                                  int minv, int maxv,
                                  int mincb, int maxcb,
                                  int mincr, int maxcr) :
-    BaseDetector(type, "CAMShift"),
+    BaseDetector(st, type, "CAMShift"),
     histCalibrate(true),
     minHue(minh),
     maxHue(maxh),
