@@ -1,6 +1,8 @@
 #include <cv.h>
 #include "featuredetector.h"
 #include "parameter.h"
+#include "store.h"
+
 using namespace cv;
 
 FeatureDetector::FeatureDetector(Store* st, const int type,
@@ -21,7 +23,7 @@ FeatureDetector::FeatureDetector(Store* st, const int type,
     maxChromaBlue(maxcb),
     minChromaRed(mincr),
     maxChromaRed(maxcr),
-    enBackProjImg(false),
+    enBackProjImg(true),
     enHueVisImg(false),
     enChromaRedVisImg(false),
     enChromaBlueVisImg(false)
@@ -36,10 +38,10 @@ FeatureDetector::FeatureDetector(Store* st, const int type,
     _params.push_back(new RangeParam<int>("Max. Cb", Param::RANGE, &maxChromaBlue, 0, 255, 5));
     _params.push_back(new RangeParam<int>("Min. Cr", Param::RANGE, &minChromaRed, 0, 255, 5));
     _params.push_back(new RangeParam<int>("Max. Cr", Param::RANGE, &maxChromaRed, 0, 255, 5));
-    imageModes.push_back(new ImageModeParam("Back Projected Image", &enBackProjImg, &backProjGrayImg));
-    imageModes.push_back(new ImageModeParam("Hue Visualisation Image", &enHueVisImg, &hueVisImg));
-    imageModes.push_back(new ImageModeParam("Cr Component Image", &enChromaRedVisImg, &chromaRedVisImg));
-    imageModes.push_back(new ImageModeParam("Cb Component Image", &enChromaBlueVisImg, &chromaBlueVisImg));
+    imageModes.push_back(new ImageModeParam("Back Projected Image", &backProjGrayImg, &st->dispImg));
+    imageModes.push_back(new ImageModeParam("Hue Visualisation Image", &enHueVisImg, &hueVisImg, &st->dispImg));
+    imageModes.push_back(new ImageModeParam("Cr Component Image", &enChromaRedVisImg, &chromaRedVisImg, &st->dispImg));
+    imageModes.push_back(new ImageModeParam("Cb Component Image", &enChromaBlueVisImg, &chromaBlueVisImg, &st->dispImg));
 }
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)

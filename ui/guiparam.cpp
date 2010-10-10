@@ -1,4 +1,5 @@
 #include "guiparam.h"
+#include <highgui.h>
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QGridLayout>
@@ -86,17 +87,24 @@ void GUIDSpinBox::setParamValue(double value)
 }
 
 GUIRadioButton::GUIRadioButton(ImageModeParam* imp) :
-        QRadioButton(imp->getName()),
+        QFrame(),
+        layout(new QGridLayout(this)),
+        radioButton(new QRadioButton(imp->getName())),
         pValue(static_cast<cv::Mat*>(imp->getValue())),
-        enPValue(static_cast<bool*>(imp->getPtrEnabled()))
+        enPValue(static_cast<bool*>(imp->getPtrEnabled())),
+        dispImg(imp->getDstImgPtr())
 {
-        connect(this, SIGNAL(toggled(bool)), this, SLOT(emitWithPtr(bool)));
+        layout->addWidget(radioButton);
+        connect(radioButton, SIGNAL(toggled(bool)), this, SLOT(setParamValues(bool)));
 }
 
-void GUIRadioButton::emitWithPtr(bool state)
+void GUIRadioButton::setParamValues(bool state)
 {
-    emit valueChanged(pValue, state);
-    emit enableChanged(enPValue, state);
+    *enPValue = state;
+    if (state)
+    {
+        *dispImg = pValue;
+    }
 }
 
 GUITrackerComboBox::GUITrackerComboBox(BaseTracker* trkr) :

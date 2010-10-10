@@ -11,7 +11,7 @@ GrayscaleFilter::GrayscaleFilter(const std::string& nm, Store* st) :
     visGray(false),
     minGray(0), maxGray(255)
 {
-    filterParams.push_back(new ImageModeParam("Grayscale visual", &visGray, &visGrayImg));
+    //filterParams.push_back(new ImageModeParam("Grayscale visual", &visGray, &visGrayImg, &st->dispImg));
     filterParams.push_back(new RangeParam<int>("Min. Gray", Param::RANGE, &minGray, 0, 255, 2));
     filterParams.push_back(new RangeParam<int>("Max. Gray", Param::RANGE, &maxGray, 0, 255, 2));
 }

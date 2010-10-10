@@ -26,8 +26,6 @@ public:
 
 public slots:
     void procFrame();   
-    void setParam(bool* const, bool);
-    void setImage(cv::Mat* const, bool);
 private:
     void initGUI();
     Ui::GEyeTracker *ui;

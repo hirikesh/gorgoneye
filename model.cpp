@@ -40,7 +40,7 @@ Model::Model(int device) :
     filters.push_back(new YCbCrFilter("YCrCb Filter", &store));
 
     // Instantiate all trackers
-    faceTracker.setDetector(FaceTracker::HAAR);
+    faceTracker.setDetector(FaceTracker::HYBR);
     faceTracker.enable();
     trackers.push_back(&faceTracker);
 
