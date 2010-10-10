@@ -7,8 +7,6 @@
 class BaseFilter;
 
 class QGridLayout;
-class QHBoxLayout;
-class QVBoxLayout;
 class QLabel;
 class QListWidget;
 class QListWidgetItem;
@@ -37,13 +35,12 @@ private:
     void swapProcessItems(int currIndex, int newIndex);
 
     QGridLayout* mainLayout;
-    //QVBoxLayout* leftLayout; // qt crashes when this is removed.
 
     QLabel* listTitle;
+    QLabel* paramTitle;
     QListWidget* processList;
 
     QGridLayout* buttonLayout;
-//    QHBoxLayout* buttonLayout;
     QPushButton* pbAdd;
     QPushButton* pbRemove;
     QPushButton* pbMoveUp;

@@ -1,8 +1,6 @@
 #include <string>
 #include <vector>
 
-#include <QHBoxLayout>
-
 #include <QGridLayout>
 #include <QLabel>
 #include <QListWidget>
@@ -20,9 +18,9 @@ GUIProcessDiag::GUIProcessDiag(const std::string& title, Model* m, QWidget *pare
     QFrame(parent),
     mainLayout(new QGridLayout(this)),
     listTitle(new QLabel(title.c_str())),
+    paramTitle(new QLabel("Filter Parameters:")),
     processList(new QListWidget()),
     buttonLayout(new QGridLayout()),
-//    buttonLayout(new QHBoxLayout()),
     pbAdd(new QPushButton("+")),
     pbRemove(new QPushButton("-")),
     pbMoveUp(new QPushButton("Up")),
@@ -49,24 +47,19 @@ void GUIProcessDiag::init()
         {
                currItem->setCheckState(Qt::Unchecked);
         }
-
-
     }
     // organise appearance and layout of widgets
     setLayout(mainLayout);
     mainLayout->addWidget(listTitle, 0, 0);
     mainLayout->addWidget(processList, 1, 0);
     mainLayout->addLayout(buttonLayout, 2, 0);
-    mainLayout->addWidget(scrollArea, 0, 1, 3, 1);
+    mainLayout->addWidget(paramTitle, 0, 1);
+    mainLayout->addWidget(scrollArea, 1, 1, 2, 1);
 
     buttonLayout->addWidget(pbAdd, 0, 0);
     buttonLayout->addWidget(pbRemove, 0, 1);
     buttonLayout->addWidget(pbMoveUp, 1, 0);
     buttonLayout->addWidget(pbMoveDown, 1, 1);
-//    buttonLayout->addWidget(pbAdd);
-//    buttonLayout->addWidget(pbRemove);
-//    buttonLayout->addWidget(pbMoveUp);
-//    buttonLayout->addWidget(pbMoveDown);
 
     scrollArea->setWidgetResizable(true);
     scrollArea->setMinimumHeight(200);
