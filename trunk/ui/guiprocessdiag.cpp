@@ -68,14 +68,14 @@ void GUIProcessDiag::init()
     scrollArea->setMinimumHeight(200);
 
     // create event handlers
-//    QObject::connect(pbAdd, SIGNAL(clicked()), this, SLOT(addProcessItem()));
-//    QObject::connect(pbRemove, SIGNAL(clicked()), this, SLOT(removeProcessItem()));
-//    QObject::connect(pbMoveUp, SIGNAL(clicked()), this, SLOT(moveUpProcessItem()));
-//    QObject::connect(pbMoveDown, SIGNAL(clicked()), this, SLOT(moveDownProcessItem()));
-//    QObject::connect(processList, SIGNAL(itemChanged(QListWidgetItem*)),
-//                     this, SLOT(filterItemToggled(QListWidgetItem*)));
-//    QObject::connect(processList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
-//                     this, SLOT(changeParamBox(QListWidgetItem*,QListWidgetItem*)));
+    QObject::connect(pbAdd, SIGNAL(clicked()), this, SLOT(addProcessItem()));
+    QObject::connect(pbRemove, SIGNAL(clicked()), this, SLOT(removeProcessItem()));
+    QObject::connect(pbMoveUp, SIGNAL(clicked()), this, SLOT(moveUpProcessItem()));
+    QObject::connect(pbMoveDown, SIGNAL(clicked()), this, SLOT(moveDownProcessItem()));
+    QObject::connect(processList, SIGNAL(itemChanged(QListWidgetItem*)),
+                     this, SLOT(filterItemToggled(QListWidgetItem*)));
+    QObject::connect(processList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                     this, SLOT(changeParamBox(QListWidgetItem*,QListWidgetItem*)));
 }
 
 void GUIProcessDiag::addProcessItem()
@@ -171,8 +171,8 @@ void GUIProcessDiag::changeParamBox(QListWidgetItem* currItem, QListWidgetItem* 
         BaseFilter* currFilter = filters->at(currIndex);
         if (paramDialog != NULL)
         {
-            delete paramDialog;
-            paramDialog = NULL;
+            //delete paramDialog;
+            //paramDialog = NULL;
         }
         paramDialog = new GUIParamDiag(currFilter->params());
         scrollArea->setWidget(paramDialog);
