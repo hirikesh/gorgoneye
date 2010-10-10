@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QGridLayout>
@@ -88,13 +89,19 @@ void GUIDSpinBox::setParamValue(double value)
 
 GUIRadioButton::GUIRadioButton(ImageModeParam* imp) :
         QRadioButton(imp->name()),
-        //layout(new QGridLayout(this)),
         radioButton(new QRadioButton(imp->name())),
         pValue(static_cast<cv::Mat*>(imp->value())),
         enPValue(static_cast<bool*>(imp->getPtrEnabled())),
         dispImg(imp->getDstImgPtr())
 {
-        //layout->addWidget(radioButton);
+        if (*dispImg == pValue)
+        {
+            this->setChecked(true);
+        }
+        else
+        {
+            this->setChecked(false);
+        }
         connect(this, SIGNAL(toggled(bool)), this, SLOT(setParamValues(bool)));
 }
 
