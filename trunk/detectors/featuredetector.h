@@ -7,6 +7,7 @@
 
 #include <cv.h>
 #include "basedetector.h"
+#include "filters/basefilter.h"
 
 class FeatureDetector : public BaseDetector
 {
@@ -19,9 +20,6 @@ public:
                     int mincr, int maxcr);
 
     bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
-
-protected:
-
 
 private:
     bool histCalibrate;
@@ -45,7 +43,7 @@ private:
     bool enChromaRedVisImg;
     bool enChromaBlueVisImg;
 
-    cv::Mat backProjGrayImg;
+    cv::Mat backProjVisImg;
     cv::Mat hueVisImg;
     cv::Mat chromaRedVisImg;
     cv::Mat chromaBlueVisImg;

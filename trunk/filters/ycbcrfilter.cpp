@@ -1,6 +1,7 @@
 #include <cv.h>
 #include "ycbcrfilter.h"
 #include "parameter.h"
+#include "store.h"
 
 using cv::Mat;
 using cv::Size;
@@ -15,8 +16,8 @@ YCbCrFilter::YCbCrFilter(const std::string& nm, Store* st) :
     minCb(0), maxCb(255)
 {
     filterParams.push_back((new ModeParam("Chrom. Red | Chrom. Blue", &dstCr, true)));
-    /*filterParams.push_back(new ImageModeParam("Chrominance Red visual", &visCr, &visCrImg));
-    filterParams.push_back(new ImageModeParam("Chrominance Blue visual", &visCb, &visCbImg))*/;
+    filterParams.push_back(new ImageModeParam("Chrominance Red visual", &visCr, &visCrImg, &st->dispImg));
+    filterParams.push_back(new ImageModeParam("Chrominance Blue visual", &visCb, &visCbImg, &st->dispImg));
     filterParams.push_back(new RangeParam<int>("Min. Luma", Param::RANGE, &minLuma, 16, 240, 2));
     filterParams.push_back(new RangeParam<int>("Max. Luma", Param::RANGE, &maxLuma, 16, 240, 2));
     filterParams.push_back(new RangeParam<int>("Min. Chrom. Red", Param::RANGE, &minCr, 0, 255, 2));
@@ -40,36 +41,27 @@ void YCbCrFilter::setParams(int mny, int mxy, int mncr, int mxcr, int mncb, int 
     maxCb = mxcb;
 }
 
-void YCbCrFilter::filter(const cv::Mat &srcImg, cv::Mat &dstMsk)
+void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk)
 {
     // Stop here if disabled
-    if (!enabled) return;
-
-    // Convert and threshold
-    _filter(srcImg, dstMsk);
-
-    // Visualise if set
-    if(visCr || visCb)
-        _visualise();
-}
-
-void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk)
-{
-    // Stop here if disabled
-    if (!enabled) return;
+    if(!enabled) return;
 
     // Convert and threshold
     _filter(srcImg, dstMsk);
 
     // Convert back
-    _visualise();
-    if(dstCr)
-        dstImg = visCrImg;
-    else
-        dstImg = visCbImg;
-}
+    if(dstImg.data || visCr || visCb)
+        _visualise();
 
-//void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk)
+    // Store the result
+    if(dstImg.data)
+    {
+        if(dstCr)
+            dstImg = visCrImg;
+        else
+            dstImg = visCbImg;
+    }
+}
 
 //void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 

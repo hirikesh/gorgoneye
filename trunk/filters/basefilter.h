@@ -28,13 +28,13 @@ public:
     virtual bool hasParams() const = 0;
     std::vector<Param*> params() const;
 
-    virtual void filter(const cv::Mat& srcImg, cv::Mat& dstMsk) = 0;
-    virtual void filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk) = 0;
-//    virtual void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk) = 0;
+    virtual void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk) = 0;
 //    virtual void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi) = 0;
 
 protected:
-    virtual void _filter(const cv::Mat& srcImg, cv::Mat& dstMsk) = 0;
+    virtual void _filter(const cv::Mat& src, cv::Mat& dst) = 0;
+    virtual void _visualise() = 0;
+
     const std::string filterName;
     Store* imageStore;
     bool enabled;
