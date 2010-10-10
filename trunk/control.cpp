@@ -105,7 +105,7 @@ void Control::createTrackerGUI(BaseTracker* tracker)
     // Tracker Level
     QVBoxLayout* trackerLayout = new QVBoxLayout();
     QGridLayout* trackerTitle = new QGridLayout();
-    ui->paramsLayout->insertLayout(0, trackerLayout);
+    ui->paramsLayout->addLayout(trackerLayout);
     ui->paramsLayout->setAlignment(trackerLayout, Qt::AlignTop);
     trackerLayout->addLayout(trackerTitle);
 
