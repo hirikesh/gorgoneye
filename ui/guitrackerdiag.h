@@ -12,6 +12,7 @@ class QTreeWidgetItem;
 class BaseTracker;
 class GUIParamDiag;
 class Model;
+class GUITreeWidgetItem;
 
 class GUITrackerDiag : public QFrame
 {
@@ -35,7 +36,7 @@ private:
     QTreeWidget* trackerTree;
     QScrollArea* scrollArea;
     GUIParamDiag* paramDialog;
-
+    GUITreeWidgetItem* initItemAdded;
     std::vector<BaseTracker*>* trackers;
 };
 
