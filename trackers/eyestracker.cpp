@@ -17,6 +17,7 @@ EyesTracker::EyesTracker(Store* st) : BaseTracker(st, "Eyes")
     detectors.push_back(featureDetector);
     detectors.push_back(hybridDetector);
     detectors.push_back(testDetector);
+    BaseTracker::initImageModes();
 }
 
 void EyesTracker::track()

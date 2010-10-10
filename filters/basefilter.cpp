@@ -9,7 +9,8 @@
 
 BaseFilter::BaseFilter(const std::string& nm, Store* st) :
     filterName(nm),
-    imageStore(st)
+    imageStore(st),
+    enabled(false)
 {
 }
 
@@ -21,6 +22,11 @@ std::vector<Param*> BaseFilter::params() const
 const std::string BaseFilter::name() const
 {
     return filterName;
+}
+
+bool BaseFilter::isEnabled() const
+{
+    return enabled;
 }
 
 void BaseFilter::enable()

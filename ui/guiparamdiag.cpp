@@ -27,9 +27,9 @@ GUIParamDiag::GUIParamDiag(std::vector<Param*> params, QWidget *parent) :
         {
             gparams.push_back(new GUIDSpinBox(static_cast<RangeParam<double>*>(params[i])));
         }
-        else // if (params[i]->getType() == Param::IMG_MODE)
+        else if (params[i]->getType() == Param::IMG_MODE)
         {
-            /* Do nothing */
+            gparams.push_back(new GUIRadioButton(static_cast<ImageModeParam*>(params[i])));
         }
     }
 

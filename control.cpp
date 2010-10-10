@@ -46,8 +46,8 @@ void Control::initGUI()
 {
     ui->setupUi(this);
     vector<BaseTracker*> trackers = model->getTrackers();
-    GUIProcessDiag* filterList = new GUIProcessDiag("Filters:" , model->getPtrFilters(), this);
-    GUITrackerDiag* trackerList = new GUITrackerDiag("Trackers:", model->getPtrTrackers(), this);
+    GUIProcessDiag* filterList = new GUIProcessDiag("Filters:" , model, this);
+    GUITrackerDiag* trackerList = new GUITrackerDiag("Trackers:", model, this);
     ui->auxLayout->insertWidget(0, filterList);
     ui->auxLayout->insertWidget(1, trackerList);
 
@@ -136,15 +136,12 @@ void Control::createTrackerGUI(BaseTracker* tracker)
 void Control::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout, QGridLayout* mode)
 {
     // Detector Level
-    vector<Param*> params = detector->getParams();
+    vector<Param*> params = detector->getImageModes();
     QVBoxLayout *paramLayout = new QVBoxLayout();
     string title = detector->name() + " Algorithm Parameters:";
     QGroupBox *groupBox = new QGroupBox(title.c_str());
     groupBox->setLayout(paramLayout);
     vector<QWidget*> gparams(params.size());
-
-//    GUIParamDiag* pDialog = new GUIParamDiag(title, params);
-//    paramLayout->addWidget(pDialog);
 
     for (unsigned int i = 0; i < params.size(); i++)
     {

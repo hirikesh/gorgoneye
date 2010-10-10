@@ -14,6 +14,7 @@ FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
     detectors.push_back(hybridDetector);
+    BaseTracker::initImageModes();
 }
 
 void FaceTracker::track()

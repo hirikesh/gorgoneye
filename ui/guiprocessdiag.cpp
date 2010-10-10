@@ -14,8 +14,9 @@
 #include "guiprocessdiag.h"
 #include "guiparamdiag.h"
 #include "filters/basefilter.h"
+#include "model.h"
 
-GUIProcessDiag::GUIProcessDiag(const std::string& title, std::vector<BaseFilter*>* ft, QWidget *parent) :
+GUIProcessDiag::GUIProcessDiag(const std::string& title, Model* m, QWidget *parent) :
     QFrame(parent),
     mainLayout(new QGridLayout(this)),
     listTitle(new QLabel(title.c_str())),
@@ -26,7 +27,7 @@ GUIProcessDiag::GUIProcessDiag(const std::string& title, std::vector<BaseFilter*
     pbMoveUp(new QPushButton("Up")),
     pbMoveDown(new QPushButton("Down")),
     scrollArea(new QScrollArea()),
-    filters(ft)
+    filters(m->getPtrFilters())
 {
     init();
 }
@@ -39,7 +40,16 @@ void GUIProcessDiag::init()
         BaseFilter* currFilter = filters->at(i);
         QListWidgetItem* currItem = new QListWidgetItem(currFilter->name().c_str());
         processList->addItem(currItem);
-        currItem->setCheckState(Qt::Unchecked);
+        if (currFilter->isEnabled())
+        {
+            currItem->setCheckState(Qt::Checked);
+        }
+        else
+        {
+               currItem->setCheckState(Qt::Unchecked);
+        }
+
+
     }
 
     // organise appearance and layout of widgets

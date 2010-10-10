@@ -8,10 +8,10 @@ using namespace cv;
 TestDetector::TestDetector(const int type) :
     BaseDetector(type, "Test")
 {
-    params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &minSobel, 0, 255, 1));
-    params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &maxSobel, 0, 255, 1));
-    params.push_back(new ImageModeParam("Sobel image mode", &sobelImg));
-    params.push_back(new ImageModeParam("Test image mode", &testImg));
+    _params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &minSobel, 0, 255, 1));
+    _params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &maxSobel, 0, 255, 1));
+    imageModes.push_back(new ImageModeParam("Sobel image mode", &sobelImg));
+    imageModes.push_back(new ImageModeParam("Test image mode", &testImg));
     minSobel = 45;
     maxSobel = 255;
 }

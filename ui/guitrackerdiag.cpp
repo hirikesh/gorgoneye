@@ -15,16 +15,16 @@
 #include "ui/guitreewidgetitem.h"
 #include "parameter.h"
 #include "guitrackerdiag.h"
+#include "model.h"
 
-
-GUITrackerDiag::GUITrackerDiag(const std::string& title, std::vector<BaseTracker*>* tr, QWidget *parent) :
+GUITrackerDiag::GUITrackerDiag(const std::string& title, Model* m, QWidget *parent) :
     QFrame(parent),
     mainLayout(new QGridLayout(this)),
     listTitle(new QLabel(title.c_str())),
     paramTitle(new QLabel("Tracking Parameters:")),
     trackerTree(new QTreeWidget()),
     scrollArea(new QScrollArea()),
-    trackers(tr)
+    trackers(m->getPtrTrackers())
 {
     initTreeList();
     init();
@@ -38,7 +38,7 @@ void GUITrackerDiag::initTreeList()
     for(unsigned int i = 0; i < trackers->size(); i++)
     {
         currTracker = trackers->at(i);
-        GUITreeWidgetItem* currTrackerItem = new GUITreeWidgetItem(trackerTree);
+        GUITreeWidgetItem* currTrackerItem = new GUITreeWidgetItem(trackerTree, currTracker->getImageModes());
         std::string trackerEntry = "Enable " + currTracker->name() + " Tracking";
         currTrackerItem->setText(firstColumn, trackerEntry.c_str());
         if (currTracker->isEnabled())
@@ -54,7 +54,7 @@ void GUITrackerDiag::initTreeList()
         {
             if (detectors[j]->hasParams())
             {
-                GUITreeWidgetItem* currDetectorItem = new GUITreeWidgetItem(currTrackerItem, detectors[j]->getParams());
+                GUITreeWidgetItem* currDetectorItem = new GUITreeWidgetItem(currTrackerItem, detectors[j]->params());
                 std::string trackerItemEntry = detectors[j]->name() + " Algorithm";
                 currDetectorItem->setText(firstColumn, trackerItemEntry.c_str());
             }

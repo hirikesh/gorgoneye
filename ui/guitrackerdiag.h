@@ -11,13 +11,13 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class BaseTracker;
 class GUIParamDiag;
-
+class Model;
 
 class GUITrackerDiag : public QFrame
 {
     Q_OBJECT
 public:
-    GUITrackerDiag(const std::string&, std::vector<BaseTracker*>*, QWidget *parent = 0);
+    GUITrackerDiag(const std::string&, Model* m, QWidget *parent = 0);
 
 signals:
 

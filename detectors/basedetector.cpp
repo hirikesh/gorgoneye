@@ -7,7 +7,7 @@ using cv::Mat;
 using cv::Rect;
 
 BaseDetector::BaseDetector(const int& id, const string& s) :
-    type(id),
+    _type(id),
     _name(s)
 {
 }
@@ -18,9 +18,9 @@ bool BaseDetector::locate(const Mat& srcImg, Rect& srcRoi)
     return true;
 }
 
-const int BaseDetector::getType() const
+const int BaseDetector::type() const
 {
-    return type;
+    return _type;
 }
 
 const string BaseDetector::name() const
@@ -28,19 +28,19 @@ const string BaseDetector::name() const
     return _name;
 }
 
-vector<Param*> BaseDetector::getParams()
+vector<Param*> BaseDetector::params()
 {
-    return params;
+    return _params;
 }
 
 bool BaseDetector::hasParams()
 {
-    return (params.size() > 0);
+    return (_params.size() > 0);
 }
 
 std::vector<Param*>* BaseDetector::getPtrParams()
 {
-    return &params;
+    return &_params;
 }
 
 std::vector<Param*> BaseDetector::getImageModes()
