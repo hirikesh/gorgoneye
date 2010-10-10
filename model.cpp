@@ -5,6 +5,7 @@
 #include "filters/grayscalefilter.h"
 #include "filters/hsvfilter.h"
 #include "filters/ycbcrfilter.h"
+#include "filters/erodedilatefilter.h"
 
 using cv::VideoCapture;
 using cv::Mat;
@@ -38,6 +39,7 @@ Model::Model(int device) :
     filters.push_back(new GrayscaleFilter("Grayscale Filter", &store));
     filters.push_back(new HSVFilter("HSV Filter", &store));
     filters.push_back(new YCbCrFilter("YCrCb Filter", &store));
+    filters.push_back(new ErodeDilateFilter("Erode-Dilate Filter", &store));
 
     // Instantiate all trackers
     faceTracker.setDetector(FaceTracker::HYBR);
@@ -55,6 +57,7 @@ Model::Model(int device) :
 void Model::update()
 {
     capture >> store.sceneImg;
+
     preProcess();
     // Track face
     faceTracker.track();
@@ -104,7 +107,7 @@ void Model::preProcess()
     for (unsigned int i = 0; i < filters.size(); i++)
     {
         BaseFilter* currFilter = filters[i];
-        currFilter->filter(store.sceneImg, store.sceneImg, store.sceneMsk);
+        currFilter->filter(store.sceneImg, store.sceneImg, store.sceneMsk, store.sceneMsk);
     }
 //        qDebug() << "filters running: " << filters.size();
     //    Colour Space Conversion: BGR -> YCbCr

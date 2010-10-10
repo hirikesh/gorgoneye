@@ -25,7 +25,7 @@ public:
 
     // Tracked region of interests
     cv::Rect faceRoi; // relative to sceneImg
-    cv::Rect eyesRoi;  // relative to faceImg
+    cv::Rect eyesRoi; // relative to faceImg
     cv::Rect gazeRoi; // relative to screen
 
     // Status flags

@@ -38,7 +38,7 @@ FeatureDetector::FeatureDetector(Store* st, const int type,
     _params.push_back(new RangeParam<int>("Max. Cb", Param::RANGE, &maxChromaBlue, 0, 255, 5));
     _params.push_back(new RangeParam<int>("Min. Cr", Param::RANGE, &minChromaRed, 0, 255, 5));
     _params.push_back(new RangeParam<int>("Max. Cr", Param::RANGE, &maxChromaRed, 0, 255, 5));
-    imageModes.push_back(new ImageModeParam("Back Projected Image", &backProjGrayImg, &st->dispImg));
+    imageModes.push_back(new ImageModeParam("Back Projected Image", &enBackProjImg, &backProjVisImg, &st->dispImg));
     imageModes.push_back(new ImageModeParam("Hue Visualisation Image", &enHueVisImg, &hueVisImg, &st->dispImg));
     imageModes.push_back(new ImageModeParam("Cr Component Image", &enChromaRedVisImg, &chromaRedVisImg, &st->dispImg));
     imageModes.push_back(new ImageModeParam("Cb Component Image", &enChromaBlueVisImg, &chromaBlueVisImg, &st->dispImg));
@@ -46,12 +46,6 @@ FeatureDetector::FeatureDetector(Store* st, const int type,
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 {
-//    int newTLx = tmpRoi.x < 0 ? 0 : tmpRoi.x;
-//    int newTLy = tmpRoi.y < 0 ? 0 : tmpRoi.y;
-//    int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols - 1 : tmpRoi.br().x;
-//    int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows - 1 : tmpRoi.br().y;
-//    srcRoi = Rect(Point(newTLx, newTLy), Point(newBRx, newBRy));
-
     Size srcImgSize = srcImg.size();
 
     // Extract Hue Info
@@ -114,10 +108,10 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
     //erode(maskChromaImg, maskChromaImg, Mat(), Point(-1, -1), 2);
     //dilate(maskChromaImg, maskChromaImg, Mat(), Point(-1, -1), 2);
 
-    morphologyEx(maskChromaImg, maskChromaImg, MORPH_CLOSE, Mat());
-    morphologyEx(maskChromaImg, maskChromaImg, MORPH_CLOSE, Mat());
-    morphologyEx(maskChromaImg, maskChromaImg, MORPH_OPEN, Mat());
-    morphologyEx(maskChromaImg, maskChromaImg, MORPH_OPEN, Mat());
+    morphologyEx(maskChromaImg, maskChromaImg, MORPH_CLOSE, Mat(), Point(-1,-1), 2);
+//    morphologyEx(maskChromaImg, maskChromaImg, MORPH_CLOSE, Mat());
+    morphologyEx(maskChromaImg, maskChromaImg, MORPH_OPEN, Mat(), Point(-1,-1), 2);
+//    morphologyEx(maskChromaImg, maskChromaImg, MORPH_OPEN, Mat());
 
     // merge mask images and prepare histogram
     bitwise_and(maskImg, maskChromaImg, maskImg, MatND());
@@ -201,7 +195,7 @@ bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
 //        Mat backProjImg3[] = {backProjImg, backProjImg, backProjImg};
         Mat backProjImg3[] = {maskImg, maskImg, maskImg};
 //        Mat backProjImg3[] = {maskChromaImg, maskChromaImg, maskChromaImg};
-        merge(backProjImg3, 3, backProjGrayImg);
+        merge(backProjImg3, 3, backProjVisImg);
     }
 
     // CAMShift Calculations ---------
