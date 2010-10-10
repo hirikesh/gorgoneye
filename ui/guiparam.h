@@ -1,7 +1,6 @@
 #ifndef GUIPARAM_H
 #define GUIPARAM_H
 
-#include <QRadioButton>
 #include <QComboBox>
 #include "parameter.h"
 #include "trackers/basetracker.h"
@@ -13,6 +12,7 @@ class QGridLayout;
 class QCheckBox;
 class QDoubleSpinBox;
 class QSpinBox;
+class QRadioButton;
 
 namespace cv {
     class Mat;

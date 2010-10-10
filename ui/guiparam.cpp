@@ -1,11 +1,11 @@
-#include "guiparam.h"
-#include <highgui.h>
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QSlider>
-#include <QDebug>
+#include <QRadioButton>
+
+#include "guiparam.h"
 
 GUICheckBox::GUICheckBox(const std::string& title, bool* value) :
     checkbox(new QCheckBox(title.c_str(), this)),
