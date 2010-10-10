@@ -33,7 +33,6 @@ GUITrackerDiag::GUITrackerDiag(const std::string& title, Model* m, QWidget *pare
 void GUITrackerDiag::initTreeList()
 {
     int firstColumn = 0;
-
     BaseTracker* currTracker;
     for(unsigned int i = 0; i < trackers->size(); i++)
     {
@@ -65,6 +64,7 @@ void GUITrackerDiag::initTreeList()
 void GUITrackerDiag::init()
 {
     trackerTree->header()->hide();
+    trackerTree->expandAll();
 
     mainLayout->addWidget(listTitle, 0, 0);
     mainLayout->addWidget(paramTitle, 0, 1);

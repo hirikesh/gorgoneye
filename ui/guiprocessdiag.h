@@ -37,7 +37,7 @@ private:
     void swapProcessItems(int currIndex, int newIndex);
 
     QGridLayout* mainLayout;
-    QVBoxLayout* leftLayout; // qt crashes when this is removed.
+    //QVBoxLayout* leftLayout; // qt crashes when this is removed.
 
     QLabel* listTitle;
     QListWidget* processList;

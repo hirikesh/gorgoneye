@@ -15,7 +15,6 @@
 #include "ui/guiparamdiag.h"
 #include "detectors/basedetector.h"
 
-
 #define USE_OPENGL 1
 
 using cv::Mat;
@@ -128,19 +127,15 @@ void Control::createTrackerGUI(BaseTracker* tracker)
     for (unsigned int i = 0; i < detectors.size(); i++)
     {
         detectorSelection->addItem(detectors[i]->name().c_str());
-        if (detectors[i]->hasParams()) createDetectorGUI(detectors[i], trackerLayout, trackerTitle);
+        if (detectors[i]->hasParams()) createDetectorGUI(detectors[i], trackerTitle);
     }
     detectorSelection->setCurrentIndex(tracker->getCurrDetectorType());
 }
 
-void Control::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout, QGridLayout* mode)
+void Control::createDetectorGUI(BaseDetector* detector, QGridLayout* mode)
 {
     // Detector Level
     vector<Param*> params = detector->getImageModes();
-    QVBoxLayout *paramLayout = new QVBoxLayout();
-    string title = detector->name() + " Algorithm Parameters:";
-    QGroupBox *groupBox = new QGroupBox(title.c_str());
-    groupBox->setLayout(paramLayout);
     vector<QWidget*> gparams(params.size());
 
     for (unsigned int i = 0; i < params.size(); i++)
@@ -155,7 +150,4 @@ void Control::createDetectorGUI(BaseDetector* detector, QVBoxLayout* layout, QGr
             imgModeGroup->addButton(imgModeButton); // add to global radio button group
         }
     }
-
-    layout->addWidget(groupBox);
-    groupBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 }
