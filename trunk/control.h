@@ -6,7 +6,6 @@
 #include <QButtonGroup>
 #include "model.h"
 
-class QVBoxLayout;
 class QGridLayout;
 class BaseDetector;
 class GLView;
@@ -23,7 +22,7 @@ public:
     explicit Control(QWidget *parent = 0);
     ~Control();
     void createTrackerGUI(BaseTracker*);
-    void createDetectorGUI(BaseDetector*, QVBoxLayout*, QGridLayout*);
+    void createDetectorGUI(BaseDetector*, QGridLayout*);
 
 public slots:
     void procFrame();   
