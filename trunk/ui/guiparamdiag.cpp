@@ -7,6 +7,11 @@
 #include "guiparam.h"
 #include "parameter.h"
 #include <QSpacerItem>
+GUIParamDiag::GUIParamDiag(QWidget *parent) :
+        QFrame(parent)
+{
+
+}
 
 GUIParamDiag::GUIParamDiag(std::vector<Param*> params, QWidget *parent) :
     QFrame(parent),

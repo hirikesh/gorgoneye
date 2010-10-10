@@ -66,13 +66,13 @@ void GUITrackerDiag::init()
     trackerTree->header()->hide();
     trackerTree->expandAll();
 
-    //mainLayout->addWidget(listTitle, 0, 0);
-    //mainLayout->addWidget(paramTitle, 0, 1);
+    mainLayout->addWidget(listTitle, 0, 0);
+    mainLayout->addWidget(paramTitle, 0, 1);
     mainLayout->addWidget(trackerTree, 1, 0);
-    //mainLayout->addWidget(scrollArea, 1, 1);
+    mainLayout->addWidget(scrollArea, 1, 1);
 
-    //scrollArea->setWidgetResizable(true);
-    //scrollArea->setMinimumHeight(300);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setMinimumHeight(300);
 
     QObject::connect(trackerTree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
                      this, SLOT(trackerItemToggled(QTreeWidgetItem*, int)));
@@ -102,13 +102,13 @@ void GUITrackerDiag::changeParamBox(QTreeWidgetItem *currItem, QTreeWidgetItem *
     {
         GUITreeWidgetItem* currentItem = static_cast<GUITreeWidgetItem*>(currItem);
 
-        if (paramDialog != NULL)
-        {
-            //delete paramDialog;
-            //paramDialog = NULL;
-        }
+//        if (paramDialog != NULL)
+//        {
+//            delete paramDialog;
+//            paramDialog = NULL;
+//        }
         paramDialog = new GUIParamDiag(currentItem->getParams());
-       // scrollArea->setWidget(paramDialog);
+        scrollArea->setWidget(paramDialog);
     }
 
 }
