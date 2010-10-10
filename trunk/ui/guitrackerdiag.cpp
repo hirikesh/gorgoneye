@@ -71,19 +71,19 @@ void GUITrackerDiag::initTreeList()
         {
             if (detectors[j]->hasParams())
             {
-                GUITreeWidgetItem* currDetectorItem = new GUITreeWidgetItem(currTrackerItem, detectors[j]->params(), NULL);
+                GUITreeWidgetItem* currDetectorItem = new GUITreeWidgetItem(currTrackerItem, detectors[j]->params(), buttonGroup);
                 std::string trackerItemEntry = detectors[j]->name() + " Algorithm";
                 currDetectorItem->setText(firstColumn, trackerItemEntry.c_str());
                 paramDialogs.push_back(currDetectorItem->getParamDialog());
             }
         }
-//        GUITrackerComboBox* detectorSelection = new GUITrackerComboBox(currTracker);
-//        for (unsigned int i = 0; i < detectors.size(); i++)
-//        {
-//            detectorSelection->addItem(detectors[i]->name().c_str());
-//        }
-//        detectorSelection->setCurrentIndex(currTracker->getCurrDetectorType());
-//        trackerTree->setItemWidget(currTrackerItem, 1, detectorSelection);
+        GUITrackerComboBox* detectorSelection = new GUITrackerComboBox(currTracker);
+        for (unsigned int i = 0; i < detectors.size(); i++)
+        {
+            detectorSelection->addItem(detectors[i]->name().c_str());
+        }
+        detectorSelection->setCurrentIndex(currTracker->getCurrDetectorType());
+        trackerTree->setItemWidget(currTrackerItem, 1, detectorSelection);
 
     }
     // When user chooses different tracker; destroy top-level item associated with tracker, it's parameter dialogs? and re-create it.
