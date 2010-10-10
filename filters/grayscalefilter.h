@@ -11,8 +11,6 @@ public:
     bool hasParams() const;
     void setParams(int, int);
 
-//    void filter(const cv::Mat& srcImg, cv::Mat& dstMsk);
-//    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk);
     void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk);
 //    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi);
 
