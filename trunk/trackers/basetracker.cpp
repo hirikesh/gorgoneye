@@ -1,4 +1,8 @@
 #include "basetracker.h"
+#include "store.h"
+#include "detectors/basedetector.h"
+#include "parameter.h"
+#include <QDebug>
 
 BaseTracker::BaseTracker(Store* st, const std::string& s) :
     store(st),
@@ -14,7 +18,7 @@ void BaseTracker::setDetector(int type)
 
 int BaseTracker::getCurrDetectorType()
 {
-    return currDetector->getType();
+    return currDetector->type();
 }
 
 std::vector<BaseDetector*> BaseTracker::getDetectors()
@@ -49,9 +53,16 @@ const std::string BaseTracker::name() const
 
 std::vector<Param*> BaseTracker::getImageModes()
 {
-    // TODO:
-    // Add Normal/Tracking Environment mode available from store
-    // Loop through detectors and insert items found
-    // return imagemodes;
     return imageModes;
+}
+
+void BaseTracker::initImageModes()
+{
+    for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+        BaseDetector* currDetector = detectors[i];
+        std::vector<Param*> vec = currDetector->getImageModes();
+        imageModes.insert(imageModes.begin(), vec.begin(), vec.end());
+    }
+    imageModes.insert(imageModes.begin(), new ImageModeParam("Scene Image", &store->sceneImg));
 }

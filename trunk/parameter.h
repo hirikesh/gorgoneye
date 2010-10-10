@@ -59,6 +59,7 @@ public:
     ImageModeParam(const std::string&, bool* en, cv::Mat*);
     bool* getPtrEnabled();
 private:
+    bool ignore_enabled;
     bool* enabled;
     cv::Mat* image;
 };

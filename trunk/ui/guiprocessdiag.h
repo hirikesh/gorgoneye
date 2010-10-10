@@ -5,8 +5,6 @@
 #include <QFrame>
 
 class BaseFilter;
-class GrayscaleFilter;
-class HSVFilter;
 
 class QGridLayout;
 class QHBoxLayout;
@@ -17,12 +15,13 @@ class QListWidgetItem;
 class QPushButton;
 class QScrollArea;
 class GUIParamDiag;
+class Model;
 
 class GUIProcessDiag : public QFrame
 {
     Q_OBJECT
 public:
-    GUIProcessDiag(const std::string&, std::vector<BaseFilter*>*, QWidget *parent = 0);
+    GUIProcessDiag(const std::string&, Model* m, QWidget *parent = 0);
 
 signals:
 

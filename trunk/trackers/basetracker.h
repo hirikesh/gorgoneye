@@ -33,6 +33,8 @@ public:
     std::vector<Param*> getImageModes();
 
 protected:
+    void initImageModes();
+
     Store* store;
     const std::string _name;
     bool enabled;

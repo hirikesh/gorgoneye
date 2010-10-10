@@ -45,7 +45,6 @@ bool ModeParam::isEnabled()
 ImageModeParam::ImageModeParam(const string &s, Mat* val) :
         Param(s, val, Param::IMG_MODE)
 {
-    bool ignore_enabled;
     enabled = &ignore_enabled;
 }
 

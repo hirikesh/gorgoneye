@@ -26,20 +26,20 @@ FeatureDetector::FeatureDetector(const int type,
     enChromaRedVisImg(false),
     enChromaBlueVisImg(false)
 {
-    params.push_back(new RangeParam<int>("Min. Hue", Param::RANGE, &minHue, 0, 180, 5));
-    params.push_back(new RangeParam<int>("Max. Hue", Param::RANGE, &maxHue, 0, 180, 5));
-    params.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSaturation, 0, 255, 5));
-    params.push_back(new RangeParam<int>("Max. Saturation", Param::RANGE, &maxSaturation, 0, 255, 5));
-    params.push_back(new RangeParam<int>("Min. Value", Param::RANGE, &minValue, 0, 255, 5));
-    params.push_back(new RangeParam<int>("Max. Value", Param::RANGE, &maxValue, 0, 255, 5));
-    params.push_back(new RangeParam<int>("Min. Cb", Param::RANGE, &minChromaBlue, 0, 255, 5));
-    params.push_back(new RangeParam<int>("Max. Cb", Param::RANGE, &maxChromaBlue, 0, 255, 5));
-    params.push_back(new RangeParam<int>("Min. Cr", Param::RANGE, &minChromaRed, 0, 255, 5));
-    params.push_back(new RangeParam<int>("Max. Cr", Param::RANGE, &maxChromaRed, 0, 255, 5));
-    params.push_back(new ImageModeParam("Back Projected Image", &enBackProjImg, &backProjGrayImg));
-    params.push_back(new ImageModeParam("Hue Visualisation Image", &enHueVisImg, &hueVisImg));
-    params.push_back(new ImageModeParam("Cr Component Image", &enChromaRedVisImg, &chromaRedVisImg));
-    params.push_back(new ImageModeParam("Cb Component Image", &enChromaBlueVisImg, &chromaBlueVisImg));
+    _params.push_back(new RangeParam<int>("Min. Hue", Param::RANGE, &minHue, 0, 180, 5));
+    _params.push_back(new RangeParam<int>("Max. Hue", Param::RANGE, &maxHue, 0, 180, 5));
+    _params.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSaturation, 0, 255, 5));
+    _params.push_back(new RangeParam<int>("Max. Saturation", Param::RANGE, &maxSaturation, 0, 255, 5));
+    _params.push_back(new RangeParam<int>("Min. Value", Param::RANGE, &minValue, 0, 255, 5));
+    _params.push_back(new RangeParam<int>("Max. Value", Param::RANGE, &maxValue, 0, 255, 5));
+    _params.push_back(new RangeParam<int>("Min. Cb", Param::RANGE, &minChromaBlue, 0, 255, 5));
+    _params.push_back(new RangeParam<int>("Max. Cb", Param::RANGE, &maxChromaBlue, 0, 255, 5));
+    _params.push_back(new RangeParam<int>("Min. Cr", Param::RANGE, &minChromaRed, 0, 255, 5));
+    _params.push_back(new RangeParam<int>("Max. Cr", Param::RANGE, &maxChromaRed, 0, 255, 5));
+    imageModes.push_back(new ImageModeParam("Back Projected Image", &enBackProjImg, &backProjGrayImg));
+    imageModes.push_back(new ImageModeParam("Hue Visualisation Image", &enHueVisImg, &hueVisImg));
+    imageModes.push_back(new ImageModeParam("Cr Component Image", &enChromaRedVisImg, &chromaRedVisImg));
+    imageModes.push_back(new ImageModeParam("Cb Component Image", &enChromaBlueVisImg, &chromaBlueVisImg));
 }
 
 bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)

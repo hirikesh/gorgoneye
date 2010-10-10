@@ -21,7 +21,7 @@ class BaseFilter
 public:
     BaseFilter(const std::string& nm, Store* st);
     const std::string name() const;
-
+    bool isEnabled() const;
     void enable();
     void disable();
 
@@ -35,10 +35,9 @@ public:
 
 protected:
     virtual void _filter(const cv::Mat& srcImg, cv::Mat& dstMsk) = 0;
-
     const std::string filterName;
-    bool enabled;
     Store* imageStore;
+    bool enabled;
     std::vector<Param*> filterParams;
 };
 
