@@ -5,6 +5,7 @@
 #include <QFrame>
 
 class QGridLayout;
+class QVBoxLayout;
 class QLabel;
 class QScrollArea;
 class QTreeWidget;
@@ -31,13 +32,14 @@ private:
     void initTreeList();
 
     QGridLayout* mainLayout;
-
+    QVBoxLayout* paramLayout;
     QLabel* listTitle;
     QLabel* paramTitle;
     QTreeWidget* trackerTree;
     QScrollArea* scrollArea;
+    QWidget* scrollContents;
     QButtonGroup* buttonGroup;
-    GUIParamDiag* paramDialog;
+    std::vector<GUIParamDiag*> paramDialogs;
     GUITreeWidgetItem* initItemAdded;
     std::vector<BaseTracker*>* trackers;
 };

@@ -1,7 +1,7 @@
 #ifndef ERODEDILATEFILTER_H
 #define ERODEDILATEFILTER_H
 
-#include "basefilter.h"e"
+#include "basefilter.h"
 
 class ErodeDilateFilter : public BaseFilter
 {
