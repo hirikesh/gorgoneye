@@ -40,13 +40,13 @@ Model::Model(int device) :
     filters.push_back(new YCbCrFilter("YCrCb Filter", &store));
 
     // Instantiate all trackers
-    eyesTracker.setDetector(EyesTracker::HAAR);
-    eyesTracker.disable();
-    trackers.push_back(&eyesTracker);
-
     faceTracker.setDetector(FaceTracker::HAAR);
     faceTracker.enable();
     trackers.push_back(&faceTracker);
+
+    eyesTracker.setDetector(EyesTracker::HAAR);
+    eyesTracker.disable();
+    trackers.push_back(&eyesTracker);
 
     // Initialisation of store vars
     store.dispImg = &store.sceneImg;
