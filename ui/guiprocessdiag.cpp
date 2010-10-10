@@ -51,7 +51,6 @@ void GUIProcessDiag::init()
 
 
     }
-
     // organise appearance and layout of widgets
     setLayout(mainLayout);
     mainLayout->addWidget(listTitle, 0, 0);
@@ -169,11 +168,7 @@ void GUIProcessDiag::changeParamBox(QListWidgetItem* currItem, QListWidgetItem* 
         int currIndex = processList->currentRow();
 
         BaseFilter* currFilter = filters->at(currIndex);
-        if (paramDialog != NULL)
-        {
-            //delete paramDialog;
-            //paramDialog = NULL;
-        }
+        //delete paramDialog;
         paramDialog = new GUIParamDiag(currFilter->params());
         scrollArea->setWidget(paramDialog);
     }

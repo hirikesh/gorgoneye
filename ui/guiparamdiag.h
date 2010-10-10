@@ -12,6 +12,7 @@ class GUIParamDiag: public QFrame
 {
     Q_OBJECT
 public:
+    explicit GUIParamDiag(QWidget *parent = 0);
     GUIParamDiag(std::vector<Param*>, QWidget *parent = 0);
     ~GUIParamDiag();
 
