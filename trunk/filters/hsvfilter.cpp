@@ -13,7 +13,7 @@ HSVFilter::HSVFilter(const std::string& nm, Store* st) :
     minSat(0), maxSat(255),
     minVal(0), maxVal(255)
 {
-    filterParams.push_back(new ImageModeParam("Hue visual", &visHue, &visHueImg));
+    //filterParams.push_back(new ImageModeParam("Hue visual", &visHue, &visHueImg));
     filterParams.push_back(new RangeParam<int>("Min. Hue", Param::RANGE, &minHue, 0, 180, 2));
     filterParams.push_back(new RangeParam<int>("Max. Hue", Param::RANGE, &maxHue, 0, 180, 2));
     filterParams.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSat, 0, 255, 2));

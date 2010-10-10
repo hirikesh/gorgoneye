@@ -64,7 +64,7 @@ private:
     double* const pValue;
 };
 
-class GUIRadioButton : public QRadioButton
+class GUIRadioButton : public QFrame
 {
     Q_OBJECT
 public:
@@ -73,10 +73,13 @@ signals:
     void valueChanged(cv::Mat* const, bool);
     void enableChanged(bool* const, bool);
 private slots:
-    void emitWithPtr(bool);
+    void setParamValues(bool);
 private:
+    QGridLayout* layout;
+    QRadioButton* radioButton;
     cv::Mat* const pValue;
     bool* const enPValue;
+    cv::Mat** dispImg;
 };
 
 class GUITrackerComboBox : public QComboBox

@@ -42,18 +42,26 @@ bool ModeParam::isEnabled()
 }
 
 // ImageModeParam **************************************************
-ImageModeParam::ImageModeParam(const string &s, Mat* val) :
-        Param(s, val, Param::IMG_MODE)
+ImageModeParam::ImageModeParam(const string &s, Mat* val, Mat** dst) :
+        Param(s, val, Param::IMG_MODE),
+        dstImg(dst)
+
 {
     enabled = &ignore_enabled;
 }
 
-ImageModeParam::ImageModeParam(const string &s, bool* en, Mat* val) :
+ImageModeParam::ImageModeParam(const string &s, bool* en, Mat* val, Mat** dst) :
         Param(s, val, Param::IMG_MODE),
-        enabled(en)
+        enabled(en),
+        dstImg(dst)
 {}
 
 bool* ImageModeParam::getPtrEnabled()
 {
     return enabled;
+}
+
+Mat** ImageModeParam::getDstImgPtr()
+{
+    return dstImg;
 }

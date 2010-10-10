@@ -64,5 +64,4 @@ void BaseTracker::initImageModes()
         std::vector<Param*> vec = currDetector->getImageModes();
         imageModes.insert(imageModes.begin(), vec.begin(), vec.end());
     }
-    imageModes.insert(imageModes.begin(), new ImageModeParam("Scene Image", &store->sceneImg));
-}
+    imageModes.insert(imageModes.begin(), new ImageModeParam("Scene Image", &store->sceneImg, &store->dispImg));}

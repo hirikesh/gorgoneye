@@ -15,8 +15,8 @@ YCbCrFilter::YCbCrFilter(const std::string& nm, Store* st) :
     minCb(0), maxCb(255)
 {
     filterParams.push_back((new ModeParam("Chrom. Red | Chrom. Blue", &dstCr, true)));
-    filterParams.push_back(new ImageModeParam("Chrominance Red visual", &visCr, &visCrImg));
-    filterParams.push_back(new ImageModeParam("Chrominance Blue visual", &visCb, &visCbImg));
+    /*filterParams.push_back(new ImageModeParam("Chrominance Red visual", &visCr, &visCrImg));
+    filterParams.push_back(new ImageModeParam("Chrominance Blue visual", &visCb, &visCbImg))*/;
     filterParams.push_back(new RangeParam<int>("Min. Luma", Param::RANGE, &minLuma, 16, 240, 2));
     filterParams.push_back(new RangeParam<int>("Max. Luma", Param::RANGE, &maxLuma, 16, 240, 2));
     filterParams.push_back(new RangeParam<int>("Min. Chrom. Red", Param::RANGE, &minCr, 0, 255, 2));

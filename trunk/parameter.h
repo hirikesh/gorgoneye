@@ -55,14 +55,15 @@ protected:
 class ImageModeParam : public Param
 {
 public:
-    ImageModeParam(const std::string&, cv::Mat*);
-    ImageModeParam(const std::string&, bool* en, cv::Mat*);
+    ImageModeParam(const std::string&, cv::Mat*, cv::Mat**);
+    ImageModeParam(const std::string&, bool* en, cv::Mat*, cv::Mat**);
     bool* getPtrEnabled();
+    cv::Mat** getDstImgPtr();
 private:
     bool ignore_enabled;
     bool* enabled;
     cv::Mat* image;
-    cv::Mat* dstImg;
+    cv::Mat** dstImg;
 };
 
 #endif // PARAMETER_H

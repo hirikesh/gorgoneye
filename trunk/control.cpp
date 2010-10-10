@@ -50,10 +50,6 @@ void Control::initGUI()
     ui->auxLayout->insertWidget(0, filterList);
     ui->auxLayout->insertWidget(1, trackerList);
 
-    for (unsigned int i = 0; i < trackers.size(); i++) {
-        createTrackerGUI(trackers[i]);
-    }
-
 #if(USE_OPENGL)
     ui->viewLayout->insertWidget(0, opengl);
 #else
@@ -85,69 +81,4 @@ void Control::procFrame()
     cv::rectangle(model->getStore()->faceImg, e, cv::Scalar(200,0,0), 2);
     imshow("Display", *model->getDispImg());
 #endif
-}
-
-void Control::setParam(bool* const param, bool value)
-{
-   *param = value;
-}
-
-void Control::setImage(Mat* const img, bool value)
-{
-    if (value)
-    {
-        model->getStore()->dispImg = img;
-    }
-}
-
-void Control::createTrackerGUI(BaseTracker* tracker)
-{
-    // Tracker Level
-    QVBoxLayout* trackerLayout = new QVBoxLayout();
-    QGridLayout* trackerTitle = new QGridLayout();
-    ui->paramsLayout->addLayout(trackerLayout);
-    ui->paramsLayout->setAlignment(trackerLayout, Qt::AlignTop);
-    trackerLayout->addLayout(trackerTitle);
-
-    QWidget* normImgMode = new GUIRadioButton(new ImageModeParam("Tracking Environment", tracker->getDispImg()));
-    connect(normImgMode, SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
-    static_cast<GUIRadioButton*>(normImgMode)->setChecked(true);
-    trackerTitle->addWidget(normImgMode, 1, 0, 1, 2);
-    QAbstractButton* normImgButton = qobject_cast<QAbstractButton*>(normImgMode);
-    imgModeGroup->addButton(normImgButton); // add to global radio button group
-
-    string title = "Enable " + tracker->name() + " Tracking";
-
-    GUICheckBox *trackerEnable = new GUICheckBox(title, tracker->getEnabled());
-
-    trackerTitle->addWidget(trackerEnable, 0, 0);
-    QComboBox* detectorSelection = new GUITrackerComboBox(tracker);
-    trackerTitle->addWidget(detectorSelection, 0, 1);
-    vector<BaseDetector*> detectors = tracker->getDetectors();
-    for (unsigned int i = 0; i < detectors.size(); i++)
-    {
-        detectorSelection->addItem(detectors[i]->name().c_str());
-        if (detectors[i]->hasParams()) createDetectorGUI(detectors[i], trackerTitle);
-    }
-    detectorSelection->setCurrentIndex(tracker->getCurrDetectorType());
-}
-
-void Control::createDetectorGUI(BaseDetector* detector, QGridLayout* mode)
-{
-    // Detector Level
-    vector<Param*> params = detector->getImageModes();
-    vector<QWidget*> gparams(params.size());
-
-    for (unsigned int i = 0; i < params.size(); i++)
-    {
-        if (params[i]->getType() == Param::IMG_MODE)
-        {
-            gparams[i] = new GUIRadioButton(static_cast<ImageModeParam*>(params[i])); // create widget
-            mode->addWidget(gparams[i], mode->rowCount(), 0, 1, 2); // add to title layout
-            connect(gparams[i], SIGNAL(valueChanged(cv::Mat* const, bool)), this, SLOT(setImage(cv::Mat* const, bool)));
-            connect(gparams[i], SIGNAL(enableChanged(bool* const, bool)), this, SLOT(setParam(bool* const, bool)));
-            QAbstractButton* imgModeButton = qobject_cast<QAbstractButton*>(gparams[i]);
-            imgModeGroup->addButton(imgModeButton); // add to global radio button group
-        }
-    }
 }
