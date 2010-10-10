@@ -15,6 +15,7 @@
 #include "ui/guitreewidgetitem.h"
 #include "parameter.h"
 #include "guitrackerdiag.h"
+#include "guiparam.h"
 #include "model.h"
 
 GUITrackerDiag::GUITrackerDiag(const std::string& title, Model* m, QWidget *parent) :
@@ -32,6 +33,8 @@ GUITrackerDiag::GUITrackerDiag(const std::string& title, Model* m, QWidget *pare
 
 void GUITrackerDiag::initTreeList()
 {
+    trackerTree->setColumnCount(2);
+
     int firstColumn = 0;
     BaseTracker* currTracker;
     for(unsigned int i = 0; i < trackers->size(); i++)
@@ -40,6 +43,7 @@ void GUITrackerDiag::initTreeList()
         GUITreeWidgetItem* currTrackerItem = new GUITreeWidgetItem(trackerTree, currTracker->getImageModes());
         std::string trackerEntry = "Enable " + currTracker->name() + " Tracking";
         currTrackerItem->setText(firstColumn, trackerEntry.c_str());
+
         if (currTracker->isEnabled())
         {
             currTrackerItem->setCheckState(firstColumn, Qt::Checked);
@@ -58,13 +62,27 @@ void GUITrackerDiag::initTreeList()
                 currDetectorItem->setText(firstColumn, trackerItemEntry.c_str());
             }
         }
+        GUITrackerComboBox* detectorSelection = new GUITrackerComboBox(currTracker);
+        for (unsigned int i = 0; i < detectors.size(); i++)
+        {
+            detectorSelection->addItem(detectors[i]->name().c_str());
+        }
+        detectorSelection->setCurrentIndex(currTracker->getCurrDetectorType());
+        trackerTree->setItemWidget(currTrackerItem, 1, detectorSelection);
+
     }
+    // When user chooses different tracker; destroy top-level item associated with tracker, it's parameter dialogs? and re-create it.
+    //delete trackerTree->takeTopLevelItem(0);
 }
 
 void GUITrackerDiag::init()
 {
+
     trackerTree->header()->hide();
+    trackerTree->header()->resizeSection(0, 200);
+    trackerTree->header()->resizeSection(1, 100);
     trackerTree->expandAll();
+    trackerTree->setMinimumWidth(350);
 
     mainLayout->addWidget(listTitle, 0, 0);
     mainLayout->addWidget(paramTitle, 0, 1);
