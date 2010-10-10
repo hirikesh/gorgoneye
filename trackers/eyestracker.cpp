@@ -9,10 +9,10 @@
 
 EyesTracker::EyesTracker(Store* st) : BaseTracker(st, "Eyes")
 {
-    haarDetector = new HaarDetector(HAAR, HAAR_CC_EYES, 1.2, 1, NULL, cv::Size(32,24));
-    featureDetector = new FeatureDetector(FEAT, 0, 180, 0, 255, 0, 255, 0, 255, 0, 255);
-    hybridDetector = new HybridDetector(HYBR, haarDetector, featureDetector);
-    testDetector = new TestDetector(TEST);
+    haarDetector = new HaarDetector(st, HAAR, HAAR_CC_EYES, 1.2, 1, NULL, cv::Size(32,24));
+    featureDetector = new FeatureDetector(st, FEAT, 0, 180, 0, 255, 0, 255, 0, 255, 0, 255);
+    hybridDetector = new HybridDetector(st, HYBR, haarDetector, featureDetector);
+    testDetector = new TestDetector(st, TEST);
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
     detectors.push_back(hybridDetector);

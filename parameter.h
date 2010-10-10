@@ -62,6 +62,7 @@ private:
     bool ignore_enabled;
     bool* enabled;
     cv::Mat* image;
+    cv::Mat* dstImg;
 };
 
 #endif // PARAMETER_H

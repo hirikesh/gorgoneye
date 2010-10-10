@@ -21,7 +21,7 @@
 class HaarDetector : public BaseDetector
 {
 public:
-    HaarDetector(const int type, std::string td, double sf, int mn, bool fg, cv::Size ms);
+    HaarDetector(Store* st, const int type, std::string td, double sf, int mn, bool fg, cv::Size ms);
 
     bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
 

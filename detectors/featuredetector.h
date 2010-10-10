@@ -11,7 +11,7 @@
 class FeatureDetector : public BaseDetector
 {
 public:
-    FeatureDetector(const int type,
+    FeatureDetector(Store *st, const int type,
                     int minh, int maxh,
                     int mins, int maxs,
                     int minv, int maxv,

@@ -74,10 +74,14 @@ void GUITrackerDiag::init()
     scrollArea->setWidgetResizable(true);
     scrollArea->setMinimumHeight(300);
 
+    trackerTree->setSelectionMode(QAbstractItemView::SingleSelection);
+    trackerTree->setSelectionBehavior(QAbstractItemView::SelectRows);
+
     QObject::connect(trackerTree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
                      this, SLOT(trackerItemToggled(QTreeWidgetItem*, int)));
     QObject::connect(trackerTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
                      this, SLOT(changeParamBox(QTreeWidgetItem*,QTreeWidgetItem*)));
+
 }
 
 void GUITrackerDiag::trackerItemToggled(QTreeWidgetItem * item, int index)

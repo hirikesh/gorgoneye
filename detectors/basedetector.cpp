@@ -1,4 +1,5 @@
 #include <cv.h>
+#include "store.h"
 #include "basedetector.h"
 
 using std::string;
@@ -6,7 +7,7 @@ using std::vector;
 using cv::Mat;
 using cv::Rect;
 
-BaseDetector::BaseDetector(const int& id, const string& s) :
+BaseDetector::BaseDetector(Store* st, const int& id, const string& s) :
     _type(id),
     _name(s)
 {

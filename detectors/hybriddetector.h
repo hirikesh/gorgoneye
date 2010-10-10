@@ -14,7 +14,7 @@
 class HybridDetector : public BaseDetector
 {
 public:
-    HybridDetector(const int type, BaseDetector* slowdet, BaseDetector* fastdet);
+    HybridDetector(Store* st, const int type, BaseDetector* slowdet, BaseDetector* fastdet);
 
     bool locate(const cv::Mat &srcImg, cv::Rect &srcRoi);
 
