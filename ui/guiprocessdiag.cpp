@@ -21,7 +21,8 @@ GUIProcessDiag::GUIProcessDiag(const std::string& title, Model* m, QWidget *pare
     mainLayout(new QGridLayout(this)),
     listTitle(new QLabel(title.c_str())),
     processList(new QListWidget()),
-    buttonLayout(new QHBoxLayout()),
+    buttonLayout(new QGridLayout()),
+//    buttonLayout(new QHBoxLayout()),
     pbAdd(new QPushButton("+")),
     pbRemove(new QPushButton("-")),
     pbMoveUp(new QPushButton("Up")),
@@ -58,10 +59,14 @@ void GUIProcessDiag::init()
     mainLayout->addLayout(buttonLayout, 2, 0);
     mainLayout->addWidget(scrollArea, 0, 1, 3, 1);
 
-    buttonLayout->addWidget(pbAdd);
-    buttonLayout->addWidget(pbRemove);
-    buttonLayout->addWidget(pbMoveUp);
-    buttonLayout->addWidget(pbMoveDown);
+    buttonLayout->addWidget(pbAdd, 0, 0);
+    buttonLayout->addWidget(pbRemove, 0, 1);
+    buttonLayout->addWidget(pbMoveUp, 1, 0);
+    buttonLayout->addWidget(pbMoveDown, 1, 1);
+//    buttonLayout->addWidget(pbAdd);
+//    buttonLayout->addWidget(pbRemove);
+//    buttonLayout->addWidget(pbMoveUp);
+//    buttonLayout->addWidget(pbMoveDown);
 
     scrollArea->setWidgetResizable(true);
     scrollArea->setMinimumHeight(200);

@@ -42,7 +42,8 @@ private:
     QLabel* listTitle;
     QListWidget* processList;
 
-    QHBoxLayout* buttonLayout;
+    QGridLayout* buttonLayout;
+//    QHBoxLayout* buttonLayout;
     QPushButton* pbAdd;
     QPushButton* pbRemove;
     QPushButton* pbMoveUp;
