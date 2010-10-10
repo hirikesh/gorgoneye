@@ -9,6 +9,7 @@ class QLabel;
 class QScrollArea;
 class QTreeWidget;
 class QTreeWidgetItem;
+class QButtonGroup;
 class BaseTracker;
 class GUIParamDiag;
 class Model;
@@ -35,6 +36,7 @@ private:
     QLabel* paramTitle;
     QTreeWidget* trackerTree;
     QScrollArea* scrollArea;
+    QButtonGroup* buttonGroup;
     GUIParamDiag* paramDialog;
     GUITreeWidgetItem* initItemAdded;
     std::vector<BaseTracker*>* trackers;

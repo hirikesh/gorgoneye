@@ -6,6 +6,7 @@
 #include <QListWidget>
 #include <QPushButton>
 #include <QGroupBox>
+#include <QButtonGroup>
 #include <QDebug>
 #include <QScrollArea>
 
@@ -167,7 +168,7 @@ void GUIProcessDiag::changeParamBox(QListWidgetItem* currItem, QListWidgetItem* 
 
         BaseFilter* currFilter = filters->at(currIndex);
         //delete paramDialog;
-        paramDialog = new GUIParamDiag(currFilter->params());
+        paramDialog = new GUIParamDiag(currFilter->params(), new QButtonGroup());
         scrollArea->setWidget(paramDialog);
     }
 }
