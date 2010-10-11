@@ -5,24 +5,22 @@
 
 using namespace cv;
 
-EqualiseFilter::EqualiseFilter(const std::string& name, Store* st) :
-        BaseFilter(name, st)
+EqualiseFilter::EqualiseFilter(Store* st) :
+        BaseFilter(st, "Equalisation")
 {
     _params.push_back(new ModeParam("Apply Alternative Equalisation (HSV)", &useHSV, false));
 }
 
-void EqualiseFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk)
+void EqualiseFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk)
 {
     if (!enabled) return;
 
-    _filter(srcImg, dstMsk);
+    _filter(srcImg);
 
-    if (dstImg.data)
-        dstImg = equalisedImg;
-
+    _store(dstImg, dstMsk);
 }
 
-void EqualiseFilter::_filter(const cv::Mat& srcImg, cv::Mat& dstMsk)
+void EqualiseFilter::_filter(const cv::Mat& srcImg)
 {
 
     // Alias
@@ -75,6 +73,11 @@ void EqualiseFilter::_filter(const cv::Mat& srcImg, cv::Mat& dstMsk)
     }
 }
 
+void EqualiseFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
+{
+    if (dstImg.data)
+        dstImg = equalisedImg;
+}
 
 void EqualiseFilter::_visualise()
 {

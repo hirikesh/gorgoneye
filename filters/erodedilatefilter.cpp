@@ -7,8 +7,8 @@ using cv::Mat;
 using cv::Size;
 using cv::Scalar;
 
-ErodeDilateFilter::ErodeDilateFilter(const std::string& nm, Store* st, int ml) :
-    BaseFilter(nm, st),
+ErodeDilateFilter::ErodeDilateFilter(Store* st, int ml) :
+    BaseFilter(st, "Erode-Dilate"),
     visMorph(false),
     morphLevel(ml)
 {
@@ -21,47 +21,52 @@ void ErodeDilateFilter::setParams(int ml)
     morphLevel = ml;
 }
 
-void ErodeDilateFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk)
+//3CH input (image), 3CH output (morphed image), nothing
+//1CH input (image), 1CH mask (binary), nothing
+
+void ErodeDilateFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk)
 {
     // Stop here if disabled
     if(!enabled) return;
 
     // Erode and dilate
-    if(srcImg.data)
-        _filter(srcImg, dstImg);
-    else
-        _filter(srcMsk, dstMsk);
+    _filter(srcImg);
 
-    // Visualise
-    if(dstImg.data || visMorph)
-        _visualise();
+    // Store result
+    _store(dstImg, dstMsk);
 
-    // Store the result
-    if(dstImg.data)
-        dstImg = visMorphImg;
+    // Visualise on request
+    _visualise();
 }
 
 
 //void ErodeDilateFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 
 
-void ErodeDilateFilter::_filter(const cv::Mat& src, cv::Mat& dst)
+void ErodeDilateFilter::_filter(const cv::Mat& src)
 {
     // Perform erosion operations
     morphologyEx(src, morphImg, cv::MORPH_CLOSE, Mat(), cv::Point(-1,-1), morphLevel);
 
     // Perform dilation operations
     morphologyEx(morphImg, morphImg, cv::MORPH_OPEN, Mat(), cv::Point(-1,-1), morphLevel);
+}
 
-    // Apply result
-    dst = morphImg;
+void ErodeDilateFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
+{
+    // Store erosion and dilation result
+    if(dstImg.data)
+        dstImg = morphImg;
 }
 
 void ErodeDilateFilter::_visualise()
 {
-    if(morphImg.type() == CV_8UC1)
-        cvtColor(morphImg, visMorphImg, CV_GRAY2BGR);
-    else
-        visMorphImg = morphImg;
+    if(visMorph)
+    {
+        if(morphImg.type() == CV_8UC1)
+            cvtColor(morphImg, visMorphImg, CV_GRAY2BGR);
+        else
+            visMorphImg = morphImg;
+    }
 }
 

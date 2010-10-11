@@ -7,9 +7,9 @@
 */
 #include "basefilter.h"
 
-BaseFilter::BaseFilter(const std::string& nm, Store* st) :
-    filterName(nm),
+BaseFilter::BaseFilter(Store* st, const std::string& nm) :
     imageStore(st),
+    filterName(nm),
     enabled(false)
 {
 }

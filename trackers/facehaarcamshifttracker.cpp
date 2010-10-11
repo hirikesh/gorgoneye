@@ -13,13 +13,15 @@ FaceHaarCAMShiftTracker::FaceHaarCAMShiftTracker(Store* st) : BaseTracker(st, "H
     haarDetector = new HaarDetector(st, HAAR_CC_FACE, 1.2, 3, NULL, cv::Size(64,72));
     detectors.push_back(haarDetector);
 
-    ycbcrFilter = new YCbCrFilter("YCbCr", st, 0, 256, 133, 174, 77, 128);
+    hsvFilter = new HSVFilter(st, 0, 32, 40, 128, 24, 80);
+    hsvFilter->enable();
+    filters.push_back(hsvFilter);
+
+    ycbcrFilter = new YCbCrFilter(st, 0, 256, 133, 174, 77, 128);
     ycbcrFilter->enable();
     filters.push_back(ycbcrFilter);
-    hsvFilter = new HSVFilter("HSV", st, 0, 32, 40, 128, 24, 80);
-    hsvFilter->enable();
-    filters.push_back((BaseFilter*)hsvFilter);
-    erodeDilateFilter = new ErodeDilateFilter("Erode-Dilate", st, 2);
+
+    erodeDilateFilter = new ErodeDilateFilter(st, 2);
     erodeDilateFilter->enable();
     filters.push_back(erodeDilateFilter);
 
@@ -55,13 +57,13 @@ void FaceHaarCAMShiftTracker::track()
     else
     {
         // Filtering
-        cv::Mat ignoreImg;
-        ycbcrFilter->filter(tmpSceneImg, ignoreImg, ignoreImg, tmpSceneMsk);
-        hsvFilter->filter(tmpSceneImg, ignoreImg, tmpSceneMsk, tmpSceneMsk);
-        erodeDilateFilter->filter(ignoreImg, ignoreImg, tmpSceneMsk, tmpSceneMsk);
+        cv::Mat hueImg(tmpSceneImg.size(), CV_8UC1);
+        hsvFilter->filter(tmpSceneImg, hueImg, tmpSceneMsk);
+        ycbcrFilter->filter(tmpSceneImg, store->ignore, tmpSceneMsk);
+        erodeDilateFilter->filter(tmpSceneMsk, tmpSceneMsk, store->ignore);
 
 //        double t = (double)cv::getTickCount();
-        located = camShiftDetector->locate(hsvFilter->hueChannel, tmpSceneMsk, tmpFaceRoi);
+        located = camShiftDetector->locate(hueImg, tmpSceneMsk, tmpFaceRoi);
 //        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //        qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
     }

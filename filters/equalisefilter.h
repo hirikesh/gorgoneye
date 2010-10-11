@@ -10,11 +10,12 @@ class Store;
 class EqualiseFilter : public BaseFilter
 {
 public:
-    EqualiseFilter(const std::string& nm, Store* st);
-    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk);
+    EqualiseFilter(Store* st);
+    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk);
 
 private:
-    void _filter(const cv::Mat& src, cv::Mat& dst);
+    void _filter(const cv::Mat& src);
+    void _store(cv::Mat &dstImg, cv::Mat &dstMsk);
     void _visualise();
 
     bool useHSV;
