@@ -13,7 +13,7 @@ GrayscaleFilter::GrayscaleFilter(const std::string& nm, Store* st, int mng, int 
     minGray(mng), maxGray(mxg)
 {
     _images.push_back(new ImageModeParam("Grayscale visual", &visGray, &visGrayImg, &imageStore->dispImg));
-    _params.push_back(new ImageModeParam("Grayscale mask", &visMask, &visMaskImg, &imageStore->dispImg));
+    _images.push_back(new ImageModeParam("Grayscale mask", &visMask, &visMaskImg, &imageStore->dispImg));
     _params.push_back(new RangeParam<int>("Min. Gray", Param::RANGE, &minGray, 0, 256, 2));
     _params.push_back(new RangeParam<int>("Max. Gray", Param::RANGE, &maxGray, 0, 256, 2));
 }

@@ -16,7 +16,7 @@ HSVFilter::HSVFilter(const std::string& nm, Store* st, int mnh, int mxh, int mns
     minVal(mnv), maxVal(mxv)
 {
     _images.push_back(new ImageModeParam("Hue visual", &visHue, &visHueImg, &imageStore->dispImg));
-    _params.push_back(new ImageModeParam("HSV mask", &visMask, &visMaskImg, &imageStore->dispImg));
+    _images.push_back(new ImageModeParam("HSV mask", &visMask, &visMaskImg, &imageStore->dispImg));
     _params.push_back(new RangeParam<int>("Min. Hue", Param::RANGE, &minHue, 0, 181, 2));
     _params.push_back(new RangeParam<int>("Max. Hue", Param::RANGE, &maxHue, 0, 181, 2));
     _params.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSat, 0, 256, 2));
