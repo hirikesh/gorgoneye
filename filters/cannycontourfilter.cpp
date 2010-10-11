@@ -179,7 +179,7 @@ void CannyContourFilter::_filter(const cv::Mat &src)
 
 void CannyContourFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
 {
-    dstImg = testImg2;
+    testImg2.copyTo(dstImg);
 }
 
 void CannyContourFilter::_visualise()

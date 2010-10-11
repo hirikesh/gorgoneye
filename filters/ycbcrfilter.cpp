@@ -2,7 +2,6 @@
 #include "ycbcrfilter.h"
 #include "parameter.h"
 #include "store.h"
-#include <QDebug>
 
 using cv::Mat;
 using cv::Size;
@@ -97,17 +96,17 @@ void YCbCrFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
         if(dstImg.type() == CV_8UC1)
         {
             if(dstCr)
-                dstImg = crChannel;
+                crChannel.copyTo(dstImg);
             else
-                dstImg = cbChannel;
+                cbChannel.copyTo(dstImg);
         }
         else
         {
             _visualise3ch();
             if(dstCr)
-                dstImg = visCrImg;
+                visCrImg.copyTo(dstImg);
             else
-                dstImg = visCbImg;
+                visCbImg.copyTo(dstImg);
         }
     }
 

@@ -56,7 +56,7 @@ void ErodeDilateFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
 {
     // Store erosion and dilation result
     if(dstImg.data)
-        dstImg = morphImg;
+        morphImg.copyTo(dstImg);
 }
 
 void ErodeDilateFilter::_visualise()
