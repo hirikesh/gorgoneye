@@ -42,6 +42,7 @@ SOURCES += main.cpp \
     filters/ycbcrfilter.cpp \
     filters/erodedilatefilter.cpp \
     filters/equalisefilter.cpp \
+    filters/cannycontourfilter.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
     detectors/camshiftdetector.cpp \
@@ -73,6 +74,7 @@ HEADERS += \
     filters/ycbcrfilter.h \
     filters/erodedilatefilter.h \
     filters/equalisefilter.h \
+    filters/cannycontourfilter.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
     detectors/camshiftdetector.h \
