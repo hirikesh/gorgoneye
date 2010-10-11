@@ -6,15 +6,15 @@
 
 using namespace cv;
 
-TestDetector::TestDetector(Store *st, const int type) :
-    BaseDetector(st, type, "Test")
+TestDetector::TestDetector(Store *st) :
+    BaseDetector(st, "Test")
 {
     _params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &minSobel, 0, 255, 1));
     _params.push_back(new RangeParam<int>("Min. Sobel", Param::RANGE, &maxSobel, 0, 255, 1));
-    imageModes.push_back(new ImageModeParam("Sobel image mode", &sobelImg, &st->dispImg));
-    imageModes.push_back(new ImageModeParam("Test image mode", &testImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Sobel image mode", &sobelImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Test image mode", &testImg, &st->dispImg));
     minSobel = 45;
-    maxSobel = 255;
+    maxSobel = 256;
 }
 
 

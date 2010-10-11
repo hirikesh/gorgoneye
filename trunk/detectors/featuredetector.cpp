@@ -5,13 +5,13 @@
 
 using namespace cv;
 
-FeatureDetector::FeatureDetector(Store* st, const int type,
+FeatureDetector::FeatureDetector(Store* st,
                                  int minh, int maxh,
                                  int mins, int maxs,
                                  int minv, int maxv,
                                  int mincb, int maxcb,
                                  int mincr, int maxcr) :
-    BaseDetector(st, type, "CAMShift"),
+    BaseDetector(st, "CAMShift"),
     histCalibrate(true),
     minHue(minh),
     maxHue(maxh),
@@ -38,10 +38,10 @@ FeatureDetector::FeatureDetector(Store* st, const int type,
     _params.push_back(new RangeParam<int>("Max. Cb", Param::RANGE, &maxChromaBlue, 0, 255, 5));
     _params.push_back(new RangeParam<int>("Min. Cr", Param::RANGE, &minChromaRed, 0, 255, 5));
     _params.push_back(new RangeParam<int>("Max. Cr", Param::RANGE, &maxChromaRed, 0, 255, 5));
-    imageModes.push_back(new ImageModeParam("Back Projected Image", &enBackProjImg, &backProjVisImg, &st->dispImg));
-    imageModes.push_back(new ImageModeParam("Hue Visualisation Image", &enHueVisImg, &hueVisImg, &st->dispImg));
-    imageModes.push_back(new ImageModeParam("Cr Component Image", &enChromaRedVisImg, &chromaRedVisImg, &st->dispImg));
-    imageModes.push_back(new ImageModeParam("Cb Component Image", &enChromaBlueVisImg, &chromaBlueVisImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Back Projected Image", &enBackProjImg, &backProjVisImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Hue Visualisation Image", &enHueVisImg, &hueVisImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Cr Component Image", &enChromaRedVisImg, &chromaRedVisImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Cb Component Image", &enChromaBlueVisImg, &chromaBlueVisImg, &st->dispImg));
 }
 
 bool FeatureDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)

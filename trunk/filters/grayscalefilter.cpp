@@ -12,14 +12,10 @@ GrayscaleFilter::GrayscaleFilter(const std::string& nm, Store* st, int mng, int 
     visGray(false),
     minGray(mng), maxGray(mxg)
 {
-    filterParams.push_back(new ImageModeParam("Grayscale visual", &visGray, &visGrayImg, &imageStore->dispImg));
-    filterParams.push_back(new RangeParam<int>("Min. Gray", Param::RANGE, &minGray, 0, 256, 2));
-    filterParams.push_back(new RangeParam<int>("Max. Gray", Param::RANGE, &maxGray, 0, 256, 2));
-}
-
-bool GrayscaleFilter::hasParams() const
-{
-    return true;
+    _images.push_back(new ImageModeParam("Grayscale visual", &visGray, &visGrayImg, &imageStore->dispImg));
+    _params.push_back(new ImageModeParam("Grayscale mask", &visMask, &visMaskImg, &imageStore->dispImg));
+    _params.push_back(new RangeParam<int>("Min. Gray", Param::RANGE, &minGray, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Max. Gray", Param::RANGE, &maxGray, 0, 256, 2));
 }
 
 void GrayscaleFilter::setParams(int mng, int mxg)
@@ -34,11 +30,18 @@ void GrayscaleFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::M
     if(!enabled) return;
 
     // Convert and threshold
-    _filter(srcImg, dstMsk);
+    Mat tmpMsk;
+    _filter(srcImg, tmpMsk);
+
+    // View mask if asked
+    if(visMask)
+        cvtColor(tmpMsk, visMaskImg, CV_GRAY2BGR);
 
     // Combine if requested
     if(srcMsk.data)
-        bitwise_and(srcMsk, dstMsk, dstMsk);
+        bitwise_and(srcMsk, tmpMsk, dstMsk);
+    else
+        dstMsk = tmpMsk;
 
     // Convert back
     if(dstImg.data || visGray)

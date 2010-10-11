@@ -6,7 +6,7 @@
 
 FaceHaarTracker::FaceHaarTracker(Store* st) : BaseTracker(st, "Haar Face")
 {
-    haarDetector = new HaarDetector(st, HAAR, HAAR_CC_FACE, 1.2, 3, NULL, cv::Size(64,72));
+    haarDetector = new HaarDetector(st, HAAR_CC_FACE, 1.2, 3, NULL, cv::Size(64,72));
     detectors.push_back(haarDetector);
 
     BaseTracker::initImageModes();
@@ -28,9 +28,9 @@ void FaceHaarTracker::track()
                           store->faceRoi.height / 2);
 
 //    double t = (double)cv::getTickCount();
-    bool located = currDetector->locate(tmpSceneImg, tmpSceneMsk, tmpFaceRoi);
+    bool located = haarDetector->locate(tmpSceneImg, tmpSceneMsk, tmpFaceRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//    qDebug() << currDetector->getName().c_str() << "speed:" << 1000*t << "ms";
+//    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
 
     if(located) {
         // Postprocessing
@@ -42,9 +42,4 @@ void FaceHaarTracker::track()
     }
     // Updating store bool after attempting to ensures ROIs are valid
     store->faceLocated = located;
-}
-
-cv::Mat* FaceHaarTracker::getDispImg()
-{
-    return &store->sceneImg;
 }

@@ -17,6 +17,7 @@ Model::Model(int device) :
     store(Store()),
     faceHaarTracker(new FaceHaarTracker(&store)),
     faceCAMShiftTracker(new FaceCAMShiftTracker(&store)),
+    faceHaarCAMShiftTracker(new FaceHaarCAMShiftTracker(&store)),
     faceTracker(new FaceTracker(&store)),
     eyesTracker(new EyesTracker(&store))
 {
@@ -51,21 +52,24 @@ Model::Model(int device) :
     filters.push_back(new ErodeDilateFilter("Erode-Dilate Filter", &store));
 
     // Instantiate all trackers
-    faceHaarTracker->setDetector(FaceHaarTracker::HAAR);
-    faceHaarTracker->enable();
+//    faceHaarTracker->setDetector(FaceHaarTracker::HAAR);
+    faceHaarTracker->disable();
     trackers.push_back(faceHaarTracker);
 
-    faceCAMShiftTracker->setDetector(FaceCAMShiftTracker::CAMS);
+//    faceCAMShiftTracker->setDetector(FaceCAMShiftTracker::CAMS);
     faceCAMShiftTracker->disable();
     trackers.push_back(faceCAMShiftTracker);
 
-    faceTracker->setDetector(FaceTracker::HYBR);
-    faceTracker->disable();
-    trackers.push_back(faceTracker);
+    faceHaarCAMShiftTracker->enable();
+    trackers.push_back(faceHaarCAMShiftTracker);
 
-    eyesTracker->setDetector(EyesTracker::HAAR);
-    eyesTracker->disable();
-    trackers.push_back(eyesTracker);
+//    faceTracker->setDetector(FaceTracker::HYBR);
+//    faceTracker->disable();
+//    trackers.push_back(faceTracker);
+
+//    eyesTracker->setDetector(EyesTracker::HAAR);
+//    eyesTracker->disable();
+//    trackers.push_back(eyesTracker);
 
     // Initialisation of store vars
     store.dispImg = &store.sceneImg;
@@ -125,6 +129,10 @@ Mat* Model::getDispImg()
 
 void Model::preProcess()
 {
+    // need clear the mask images every loop or they will propagate over time
+    store.sceneMsk = Mat();
+
+    // run each filter in turn
     for (unsigned int i = 0; i < filters.size(); i++)
     {
         BaseFilter* currFilter = filters[i];

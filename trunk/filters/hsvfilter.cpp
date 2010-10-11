@@ -2,6 +2,7 @@
 #include "hsvfilter.h"
 #include "parameter.h"
 #include "store.h"
+#include <QDebug>
 
 using cv::Mat;
 using cv::Size;
@@ -14,18 +15,14 @@ HSVFilter::HSVFilter(const std::string& nm, Store* st, int mnh, int mxh, int mns
     minSat(mns), maxSat(mxs),
     minVal(mnv), maxVal(mxv)
 {
-    filterParams.push_back(new ImageModeParam("Hue visual", &visHue, &visHueImg, &imageStore->dispImg));
-    filterParams.push_back(new RangeParam<int>("Min. Hue", Param::RANGE, &minHue, 0, 181, 2));
-    filterParams.push_back(new RangeParam<int>("Max. Hue", Param::RANGE, &maxHue, 0, 181, 2));
-    filterParams.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSat, 0, 256, 2));
-    filterParams.push_back(new RangeParam<int>("Max. Saturation", Param::RANGE, &maxSat, 0, 256, 2));
-    filterParams.push_back(new RangeParam<int>("Min. Value", Param::RANGE, &minVal, 0, 256, 2));
-    filterParams.push_back(new RangeParam<int>("Max. Value", Param::RANGE, &maxVal, 0, 256, 2));
-}
-
-bool HSVFilter::hasParams() const
-{
-    return true;
+    _images.push_back(new ImageModeParam("Hue visual", &visHue, &visHueImg, &imageStore->dispImg));
+    _params.push_back(new ImageModeParam("HSV mask", &visMask, &visMaskImg, &imageStore->dispImg));
+    _params.push_back(new RangeParam<int>("Min. Hue", Param::RANGE, &minHue, 0, 181, 2));
+    _params.push_back(new RangeParam<int>("Max. Hue", Param::RANGE, &maxHue, 0, 181, 2));
+    _params.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSat, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Max. Saturation", Param::RANGE, &maxSat, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Min. Value", Param::RANGE, &minVal, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Max. Value", Param::RANGE, &maxVal, 0, 256, 2));
 }
 
 void HSVFilter::setParams(int mnh, int mxh, int mns, int mxs, int mnv, int mxv)
@@ -44,11 +41,18 @@ void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& sr
     if(!enabled) return;
 
     // Convert and threshold
-    _filter(srcImg, dstMsk);
+    Mat tmpMsk;
+    _filter(srcImg, tmpMsk);
+
+    // View mask if asked
+    if(visMask)
+        cvtColor(tmpMsk, visMaskImg, CV_GRAY2BGR);
 
     // Combine if requested
     if(srcMsk.data)
-        bitwise_and(srcMsk, dstMsk, dstMsk);
+        bitwise_and(srcMsk, tmpMsk, dstMsk);
+    else
+        dstMsk = tmpMsk;
 
     // Convert back
     if(dstImg.data || visHue)
@@ -63,22 +67,22 @@ void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& sr
 //void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 
 
-void HSVFilter::_filter(const cv::Mat &srcImg, cv::Mat &dstMsk)
+void HSVFilter::_filter(const cv::Mat &src, cv::Mat &dst)
 {
     // Alias
-    Size srcImgSize = srcImg.size();
+    Size srcImgSize = src.size();
 
     // Prepare images to process
     hsvImg = Mat(srcImgSize, CV_8UC3);
 
     // Do colour conversion
-    cvtColor(srcImg, hsvImg, CV_BGR2HSV);
+    cvtColor(src, hsvImg, CV_BGR2HSV);
 
     // Apply thresholds
     inRange(hsvImg,
             Scalar(minHue, minSat, minVal),
             Scalar(maxHue, maxSat, maxVal),
-            dstMsk);
+            dst);
 
     // Populate invidivual channels
     hueChannel = Mat(srcImgSize, CV_8UC1);

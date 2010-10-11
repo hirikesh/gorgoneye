@@ -1,21 +1,22 @@
-#ifndef FACECAMSHIFTTRACKER_H
-#define FACECAMSHIFTTRACKER_H
+#ifndef FACEHAARCAMSHIFTTRACKER_H
+#define FACEHAARCAMSHIFTTRACKER_H
 
 #include "basetracker.h"
 #include "filters/hsvfilter.h"
 
-class FaceCAMShiftTracker : public BaseTracker
+class FaceHaarCAMShiftTracker : public BaseTracker
 {
 public:
-    FaceCAMShiftTracker(Store* st);
+    FaceHaarCAMShiftTracker(Store* st);
 
     void track();
 
 private:
+    BaseDetector* haarDetector;
     BaseFilter* ycbcrFilter;
     HSVFilter* hsvFilter; // need access to hue channel
     BaseFilter* erodeDilateFilter;
     BaseDetector* camShiftDetector;
 };
 
-#endif // FACECAMSHIFTTRACKER_H
+#endif // FACEHAARCAMSHIFTTRACKER_H

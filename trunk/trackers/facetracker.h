@@ -16,9 +16,9 @@ public:
 
     void track();
 
-    enum type { HAAR, FEAT, HYBR };
+//    enum type { HAAR, FEAT, HYBR };
 
-    cv::Mat* getDispImg();
+//    cv::Mat* getDispImg();
 
 private:
     BaseDetector* haarDetector;

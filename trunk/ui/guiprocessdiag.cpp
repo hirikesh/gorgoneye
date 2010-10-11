@@ -57,13 +57,13 @@ void GUIProcessDiag::init()
     mainLayout->addWidget(paramTitle, 0, 1);
     mainLayout->addWidget(scrollArea, 1, 1, 2, 1);
 
-    buttonLayout->addWidget(pbAdd, 0, 0);
-    buttonLayout->addWidget(pbRemove, 0, 1);
-    buttonLayout->addWidget(pbMoveUp, 1, 0);
-    buttonLayout->addWidget(pbMoveDown, 1, 1);
+    buttonLayout->addWidget(pbMoveUp, 0, 0);
+    buttonLayout->addWidget(pbMoveDown, 0, 1);
+    buttonLayout->addWidget(pbAdd, 1, 0);
+    buttonLayout->addWidget(pbRemove, 1, 1);
 
     scrollArea->setWidgetResizable(true);
-    scrollArea->setMinimumHeight(200);
+//    scrollArea->setMinimumHeight(200);
 
     // create event handlers
     QObject::connect(pbAdd, SIGNAL(clicked()), this, SLOT(addProcessItem()));

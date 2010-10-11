@@ -6,6 +6,7 @@
 #include <vector>
 #include "trackers/facehaartracker.h"
 #include "trackers/facecamshifttracker.h"
+#include "trackers/facehaarcamshifttracker.h"
 #include "trackers/facetracker.h"
 #include "trackers/eyestracker.h"
 #include "filters/basefilter.h"
@@ -32,6 +33,7 @@ private:
 
     BaseTracker* faceHaarTracker;
     BaseTracker* faceCAMShiftTracker;
+    BaseTracker* faceHaarCAMShiftTracker;
     BaseTracker* faceTracker;
     BaseTracker* eyesTracker;
 

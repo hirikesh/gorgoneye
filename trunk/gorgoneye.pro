@@ -36,56 +36,57 @@ SOURCES += main.cpp \
     model.cpp \
     store.cpp \
     parameter.cpp \
-    trackers/basetracker.cpp \
-    trackers/facetracker.cpp \
-    trackers/eyestracker.cpp \
     filters/basefilter.cpp \
     filters/grayscalefilter.cpp \
     filters/hsvfilter.cpp \
     filters/ycbcrfilter.cpp \
+    filters/erodedilatefilter.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
+    detectors/camshiftdetector.cpp \
     detectors/featuredetector.cpp \
     detectors/hybriddetector.cpp \
     detectors/testdetector.cpp \
+    trackers/basetracker.cpp \
+    trackers/facetracker.cpp \
+    trackers/eyestracker.cpp \
+    trackers/facehaartracker.cpp \
+    trackers/facecamshifttracker.cpp \
+    trackers/facehaarcamshifttracker.cpp \
     ui/glview.cpp \
     ui/guiparam.cpp \
     ui/guiprocessdiag.cpp \
     ui/guiparamdiag.cpp \
     ui/guitrackerdiag.cpp \
-    ui/guitreewidgetitem.cpp \
-    filters/erodedilatefilter.cpp \
-    trackers/facehaartracker.cpp \
-    trackers/facecamshifttracker.cpp \
-    detectors/camshiftdetector.cpp
+    ui/guitreewidgetitem.cpp
 
 HEADERS += \
     control.h\
     model.h \
     store.h \
     parameter.h \
-    trackers/basetracker.h \
-    trackers/facetracker.h \
-    trackers/eyestracker.h \
     filters/basefilter.h \
     filters/grayscalefilter.h \
     filters/hsvfilter.h \
     filters/ycbcrfilter.h \
+    filters/erodedilatefilter.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
+    detectors/camshiftdetector.h \
     detectors/featuredetector.h \
     detectors/hybriddetector.h \
     detectors/testdetector.h \
+    trackers/basetracker.h \
+    trackers/facetracker.h \
+    trackers/eyestracker.h \
+    trackers/facehaartracker.h \
+    trackers/facecamshifttracker.h \
+    trackers/facehaarcamshifttracker.h \
     ui/glview.h \
     ui/guiparam.h \
     ui/guiprocessdiag.h \
     ui/guiparamdiag.h \
     ui/guitrackerdiag.h \
-    ui/guitreewidgetitem.h \
-    filters/erodedilatefilter.h \
-    trackers/facehaartracker.h \
-    trackers/facecamshifttracker.h \
-    detectors/camshiftdetector.h
-
+    ui/guitreewidgetitem.h
 
 FORMS += ui/control.ui

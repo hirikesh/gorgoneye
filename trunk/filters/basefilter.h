@@ -25,8 +25,8 @@ public:
     void enable();
     void disable();
 
-    virtual bool hasParams() const = 0;
     std::vector<Param*> params() const;
+    std::vector<Param*> images() const;
 
     virtual void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk) = 0;
 //    virtual void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi) = 0;
@@ -38,7 +38,9 @@ protected:
     const std::string filterName;
     Store* imageStore;
     bool enabled;
-    std::vector<Param*> filterParams;
+
+    std::vector<Param*> _params;
+    std::vector<Param*> _images;
 };
 
 #endif // BASEFILTER_H

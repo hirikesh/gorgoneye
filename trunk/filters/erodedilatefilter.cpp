@@ -12,13 +12,8 @@ ErodeDilateFilter::ErodeDilateFilter(const std::string& nm, Store* st, int ml) :
     visMorph(false),
     morphLevel(ml)
 {
-    filterParams.push_back(new ImageModeParam("Morphology visual", &visMorph, &visMorphImg, &imageStore->dispImg));
-    filterParams.push_back(new RangeParam<int>("Morphology Depth", Param::RANGE, &morphLevel, 0, 12, 1));
-}
-
-bool ErodeDilateFilter::hasParams() const
-{
-    return true;
+    _images.push_back(new ImageModeParam("Morphology visual", &visMorph, &visMorphImg, &imageStore->dispImg));
+    _params.push_back(new RangeParam<int>("Morphology Depth", Param::RANGE, &morphLevel, 0, 12, 1));
 }
 
 void ErodeDilateFilter::setParams(int ml)
