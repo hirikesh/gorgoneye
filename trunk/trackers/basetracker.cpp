@@ -2,7 +2,6 @@
 #include "store.h"
 #include "detectors/basedetector.h"
 #include "parameter.h"
-#include <QDebug>
 
 BaseTracker::BaseTracker(Store* st, const std::string& s) :
     store(st),

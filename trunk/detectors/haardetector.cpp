@@ -19,7 +19,7 @@ HaarDetector::HaarDetector(Store *st, const int type, string td, double sf, int 
     _params.push_back(new ModeParam("Enable Canny Pruning", &flags, false));
 }
 
-bool HaarDetector::locate(const Mat& srcImg, Rect& srcRoi)
+bool HaarDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)
 {
     vector<Rect> rois;
     cClassifier.detectMultiScale(srcImg,

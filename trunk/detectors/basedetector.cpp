@@ -13,7 +13,7 @@ BaseDetector::BaseDetector(Store* st, const int& id, const string& s) :
 {
 }
 
-bool BaseDetector::locate(const Mat& srcImg, Rect& srcRoi)
+bool BaseDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)
 {
     srcRoi = Rect(0, 0, srcImg.cols, srcImg.rows);
     return true;

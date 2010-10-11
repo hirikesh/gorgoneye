@@ -15,8 +15,10 @@ using std::string;
 Model::Model(int device) :
     capture(VideoCapture(device)),
     store(Store()),
-    faceTracker(FaceTracker(&store)),
-    eyesTracker(EyesTracker(&store))
+    faceHaarTracker(new FaceHaarTracker(&store)),
+    faceCAMShiftTracker(new FaceCAMShiftTracker(&store)),
+    faceTracker(new FaceTracker(&store)),
+    eyesTracker(new EyesTracker(&store))
 {
 #ifdef __linux__
 //    capture.set(CV_CAP_PROP_BRIGHTNESS, 0.004);
@@ -35,20 +37,35 @@ Model::Model(int device) :
         if(prop > 0)
             qDebug() << "Property supported:" << props[i].c_str() << '=' << prop;
     }
-    //
+
+    // Initialise Masks and ROIs
+    Mat tmpImg;
+    capture >> tmpImg;
+    store.sceneMsk = cv::Mat(tmpImg.size(), CV_8UC1, cv::Scalar(255));
+    store.faceRoi = cv::Rect(cv::Point(0,0), tmpImg.size());
+
+    // Add runtime filters
     filters.push_back(new GrayscaleFilter("Grayscale Filter", &store));
     filters.push_back(new HSVFilter("HSV Filter", &store));
     filters.push_back(new YCbCrFilter("YCrCb Filter", &store));
     filters.push_back(new ErodeDilateFilter("Erode-Dilate Filter", &store));
 
     // Instantiate all trackers
-    faceTracker.setDetector(FaceTracker::HYBR);
-    faceTracker.enable();
-    trackers.push_back(&faceTracker);
+    faceHaarTracker->setDetector(FaceHaarTracker::HAAR);
+    faceHaarTracker->enable();
+    trackers.push_back(faceHaarTracker);
 
-    eyesTracker.setDetector(EyesTracker::HAAR);
-    eyesTracker.disable();
-    trackers.push_back(&eyesTracker);
+    faceCAMShiftTracker->setDetector(FaceCAMShiftTracker::CAMS);
+    faceCAMShiftTracker->disable();
+    trackers.push_back(faceCAMShiftTracker);
+
+    faceTracker->setDetector(FaceTracker::HYBR);
+    faceTracker->disable();
+    trackers.push_back(faceTracker);
+
+    eyesTracker->setDetector(EyesTracker::HAAR);
+    eyesTracker->disable();
+    trackers.push_back(eyesTracker);
 
     // Initialisation of store vars
     store.dispImg = &store.sceneImg;
@@ -59,21 +76,25 @@ void Model::update()
     capture >> store.sceneImg;
 
     preProcess();
+
+    for(unsigned int i = 0; i < trackers.size(); i++)
+        trackers[i]->track();
+
     // Track face
-    faceTracker.track();
+//    faceTracker->track();
 
     // Update face ROI even if tracker failed
-    store.faceImg = store.sceneImg(store.faceRoi).clone();
+//    store.faceImg = store.sceneImg(store.faceRoi).clone();
 
     // Track eyes only if face succeeded
-    if(store.faceLocated)
-        eyesTracker.track();
+//    if(store.faceLocated)
+//        eyesTracker->track();
 
     // Update eyes ROI even if tracker failed
-    store.eyesImg = store.faceImg(store.eyesRoi).clone();
+//    store.eyesImg = store.faceImg(store.eyesRoi).clone();
 
 //    if(store.eyesLocated)
-//        gazeTracker.track();
+//        gazeTracker->track();
     postProcess();
 }
 

@@ -9,12 +9,12 @@ HybridDetector::HybridDetector(Store* st, const int type, BaseDetector* slowdet,
 {
 }
 
-bool HybridDetector::locate(const cv::Mat &srcImg, cv::Rect &srcRoi)
+bool HybridDetector::locate(const cv::Mat &srcImg, const cv::Mat& srcMsk, cv::Rect &srcRoi)
 {
     if(useFastDetector) {
-        useFastDetector = fastDetector->locate(srcImg, srcRoi);
+        useFastDetector = fastDetector->locate(srcImg, srcMsk, srcRoi);
     } else {
-        useFastDetector = slowDetector->locate(srcImg, srcRoi);
+        useFastDetector = slowDetector->locate(srcImg, srcMsk, srcRoi);
     }
     return useFastDetector;
 }

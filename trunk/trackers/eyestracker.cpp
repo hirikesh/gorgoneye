@@ -17,6 +17,7 @@ EyesTracker::EyesTracker(Store* st) : BaseTracker(st, "Eyes")
     detectors.push_back(featureDetector);
     detectors.push_back(hybridDetector);
     detectors.push_back(testDetector);
+
     BaseTracker::initImageModes();
 }
 
@@ -41,12 +42,12 @@ void EyesTracker::track()
 //    tmpEyesRoi = store->eyesRoi;
 
 //    double t = (double)cv::getTickCount();
-    bool located = currDetector->locate(store->faceImg(reducedFaceRoi), store->eyesRoi);
+    bool located = currDetector->locate(store->faceImg(reducedFaceRoi), store->faceMsk(reducedFaceRoi), store->eyesRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << currDetector->getName().c_str() << "speed:" << 1000*t << "ms";
 
     if(located) {
-        testDetector->locate(store->faceImg(reducedFaceRoi), store->eyesRoi);
+        testDetector->locate(store->faceImg(reducedFaceRoi), store->faceMsk(reducedFaceRoi), store->eyesRoi);
 
         // Post processing
         // Shift eyes ROI by quadROI

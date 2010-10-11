@@ -18,7 +18,7 @@ TestDetector::TestDetector(Store *st, const int type) :
 }
 
 
-bool TestDetector::locate(const Mat& srcImg, Rect& srcRoi)
+bool TestDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)
 {
 //    Mat yImg(srcImg.size(), CV_8UC1);
 //    Mat yccImg[] = {yImg, Mat(), Mat()};

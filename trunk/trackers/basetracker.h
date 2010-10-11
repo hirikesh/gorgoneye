@@ -7,6 +7,7 @@
 #ifndef TRACKER_H
 #define TRACKER_H
 
+#include "filters/basefilter.h"
 #include "detectors/basedetector.h"
 #include <vector>
 #include <string>
@@ -39,6 +40,7 @@ protected:
     const std::string _name;
     bool enabled;
 
+    std::vector<BaseFilter*> filters;
     std::vector<BaseDetector*> detectors;
     std::vector<Param*> imageModes;
     BaseDetector* currDetector;

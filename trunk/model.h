@@ -4,6 +4,8 @@
 #include <cv.h>
 #include <highgui.h>
 #include <vector>
+#include "trackers/facehaartracker.h"
+#include "trackers/facecamshifttracker.h"
 #include "trackers/facetracker.h"
 #include "trackers/eyestracker.h"
 #include "filters/basefilter.h"
@@ -23,16 +25,18 @@ public:
     std::vector<BaseTracker*>* getPtrTrackers();
     std::vector<BaseFilter*>* getPtrFilters();
     cv::Mat* getDispImg();
+
 private:
     cv::VideoCapture capture;
     Store store;
-    FaceTracker faceTracker;
-    EyesTracker eyesTracker;
+
+    BaseTracker* faceHaarTracker;
+    BaseTracker* faceCAMShiftTracker;
+    BaseTracker* faceTracker;
+    BaseTracker* eyesTracker;
+
     std::vector<BaseFilter*> filters;
     std::vector<BaseTracker*> trackers;
-    // Eye eyeTracker, Nose noseTracker, etc.
-    // or possibly an array of pointers to Trackers?
-    // eg. vector<Tracker*> trackers;
 };
 
 #endif // MODEL_H
