@@ -19,8 +19,9 @@ Model::Model(int device) :
     faceHaarTracker(new FaceHaarTracker(&store)),
     faceCAMShiftTracker(new FaceCAMShiftTracker(&store)),
     faceHaarCAMShiftTracker(new FaceHaarCAMShiftTracker(&store)),
-    faceTracker(new FaceTracker(&store)),
-    eyesTracker(new EyesTracker(&store))
+    eyesHaarTracker(new EyesHaarTracker(&store))
+//    faceTracker(new FaceTracker(&store)),
+//    eyesTracker(new EyesTracker(&store))
 {
 #ifdef __linux__
 //    capture.set(CV_CAP_PROP_BRIGHTNESS, 0.004);
@@ -54,16 +55,17 @@ Model::Model(int device) :
     filters.push_back(new EqualiseFilter(&store));
 
     // Instantiate all trackers
-//    faceHaarTracker->setDetector(FaceHaarTracker::HAAR);
     faceHaarTracker->disable();
     trackers.push_back(faceHaarTracker);
 
-//    faceCAMShiftTracker->setDetector(FaceCAMShiftTracker::CAMS);
     faceCAMShiftTracker->disable();
     trackers.push_back(faceCAMShiftTracker);
 
     faceHaarCAMShiftTracker->enable();
     trackers.push_back(faceHaarCAMShiftTracker);
+
+    eyesHaarTracker->enable();
+    trackers.push_back(eyesHaarTracker);
 
 //    faceTracker->setDetector(FaceTracker::HYBR);
 //    faceTracker->disable();
@@ -80,27 +82,34 @@ Model::Model(int device) :
 void Model::update()
 {
     capture >> store.sceneImg;
-
     preProcess();
 
-    for(unsigned int i = 0; i < trackers.size(); i++)
-        trackers[i]->track();
+//    for(unsigned int i = 0; i < trackers.size(); i++)
+//        trackers[i]->track();
 
     // Track face
 //    faceTracker->track();
+    faceHaarTracker->track();
+    faceCAMShiftTracker->track();
+    faceHaarCAMShiftTracker->track();
 
-    // Update face ROI even if tracker failed
-//    store.faceImg = store.sceneImg(store.faceRoi).clone();
+    // Update face ROI even if tracker failed.
+    store.faceImg = store.sceneImg(store.faceRoi).clone();
 
-    // Track eyes only if face succeeded
-//    if(store.faceLocated)
-//        eyesTracker->track();
+    // Attempt to track eyes even if face failed or
+    // was disabled.
+//    eyesTracker->track();
+    eyesHaarTracker->track();
 
-    // Update eyes ROI even if tracker failed
-//    store.eyesImg = store.faceImg(store.eyesRoi).clone();
+    // Update eyes ROI only if tracker succeeded.
+    // A successful face track could render the old
+    // eye ROI invalid.
+    if(store.eyesLocated)
+        store.eyesImg = store.faceImg(store.eyesRoi).clone();
 
 //    if(store.eyesLocated)
 //        gazeTracker->track();
+
     postProcess();
 }
 
@@ -143,6 +152,7 @@ void Model::preProcess()
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << "Preproc. speed:" << 1000*t << "ms";
 //        qDebug() << "filters running: " << filters.size();
+
     //    Colour Space Conversion: BGR -> YCbCr
     //    static Size srcImgSize = store.sceneImg.size();
     //    static Mat cYCrCbImg(srcImgSize, CV_8UC3);

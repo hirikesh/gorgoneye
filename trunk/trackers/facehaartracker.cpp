@@ -18,7 +18,7 @@ void FaceHaarTracker::track()
 
     // Preprocessing
     // Smooth and downsample sceneImg
-    cv::Mat tmpSceneImg, tmpSceneMsk;
+    cv::Mat tmpSceneImg;
     cv::pyrDown(store->sceneImg, tmpSceneImg);
 
     cv::Rect tmpFaceRoi;
@@ -28,7 +28,7 @@ void FaceHaarTracker::track()
                           store->faceRoi.height / 2);
 
 //    double t = (double)cv::getTickCount();
-    bool located = haarDetector->locate(tmpSceneImg, tmpSceneMsk, tmpFaceRoi);
+    bool located = haarDetector->locate(tmpSceneImg, store->ignore, tmpFaceRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
 

@@ -54,6 +54,7 @@ SOURCES += main.cpp \
     trackers/facehaartracker.cpp \
     trackers/facecamshifttracker.cpp \
     trackers/facehaarcamshifttracker.cpp \
+    trackers/eyeshaartracker.cpp \
     ui/glview.cpp \
     ui/guiparam.cpp \
     ui/guiprocessdiag.cpp \
@@ -84,6 +85,7 @@ HEADERS += \
     trackers/facehaartracker.h \
     trackers/facecamshifttracker.h \
     trackers/facehaarcamshifttracker.h \
+    trackers/eyeshaartracker.h \
     ui/glview.h \
     ui/guiparam.h \
     ui/guiprocessdiag.h \
