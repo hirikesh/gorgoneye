@@ -7,6 +7,7 @@
 #include "filters/ycbcrfilter.h"
 #include "filters/erodedilatefilter.h"
 #include "filters/equalisefilter.h"
+#include "filters/cannycontourfilter.h"
 
 using cv::VideoCapture;
 using cv::Mat;
@@ -35,17 +36,16 @@ Model::Model(int device) :
                       "Mode", "Brightness", "Contrast", "Saturation",
                       "Hue", "Gain", "Exposure", "RGB colour", "White Balancing",
                       "Rectification"};
-    for(int i=0; i<19; i++) {
+    for(int i=0; i<19; i++)
+    {
         double prop = capture.get(i);
         if(prop > 0)
             qDebug() << "Property supported:" << props[i].c_str() << '=' << prop;
     }
 
-    // Initialise Masks and ROIs
-    Mat tmpImg;
-    capture >> tmpImg;
-    store.sceneMsk = cv::Mat(tmpImg.size(), CV_8UC1, cv::Scalar(255));
-    store.faceRoi = cv::Rect(cv::Point(0,0), tmpImg.size());
+    // Initialise face ROI
+    capture >> store.sceneImg;
+    store.faceRoi = cv::Rect(0, 0, store.sceneImg.cols, store.sceneImg.rows);
 
     // Add runtime filters
     filters.push_back(new GrayscaleFilter(&store));
@@ -53,6 +53,7 @@ Model::Model(int device) :
     filters.push_back(new YCbCrFilter(&store));
     filters.push_back(new ErodeDilateFilter(&store));
     filters.push_back(new EqualiseFilter(&store));
+    filters.push_back(new CannyContourFilter(&store));
 
     // Instantiate all trackers
     faceHaarTracker->disable();
@@ -84,28 +85,28 @@ void Model::update()
     capture >> store.sceneImg;
     preProcess();
 
-//    for(unsigned int i = 0; i < trackers.size(); i++)
-//        trackers[i]->track();
-
     // Track face
 //    faceTracker->track();
     faceHaarTracker->track();
     faceCAMShiftTracker->track();
     faceHaarCAMShiftTracker->track();
 
-    // Update face ROI even if tracker failed.
-    store.faceImg = store.sceneImg(store.faceRoi).clone();
+    // Update face image even if face tracker
+    // failed or was disabled.
+    store.faceImg = store.sceneImg(store.faceRoi);
+
+//    preProcess();
 
     // Attempt to track eyes even if face failed or
     // was disabled.
 //    eyesTracker->track();
     eyesHaarTracker->track();
 
-    // Update eyes ROI only if tracker succeeded.
+    // Update eyes image only if tracker succeeds.
     // A successful face track could render the old
     // eye ROI invalid.
     if(store.eyesLocated)
-        store.eyesImg = store.faceImg(store.eyesRoi).clone();
+        store.eyesImg = store.faceImg(store.eyesRoi);
 
 //    if(store.eyesLocated)
 //        gazeTracker->track();
@@ -140,14 +141,12 @@ Mat* Model::getDispImg()
 
 void Model::preProcess()
 {
-    // need clear the mask images every loop or they will propagate over time
-    store.sceneMsk = Mat();
-
     // run each filter in turn
 //    double t = (double)cv::getTickCount();
     for (unsigned int i = 0; i < filters.size(); i++)
     {
         filters[i]->filter(store.sceneImg, store.sceneImg, store.sceneMsk);
+//        filters[i]->filter(store.faceImg, store.faceImg, store.faceMsk);
     }
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << "Preproc. speed:" << 1000*t << "ms";
@@ -183,4 +182,8 @@ void Model::preProcess()
 
 void Model::postProcess()
 {
+    // Reset masks for next update
+    store.sceneMsk = Mat();
+    store.faceMsk = Mat();
+    store.eyesMsk = Mat();
 }

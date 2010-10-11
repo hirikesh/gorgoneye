@@ -44,7 +44,7 @@ bool CAMShiftDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi
 
     // Calculate Back Projection ------------------
     double maxVal = 0;
-    minMaxLoc(hist, 0, &maxVal, 0, 0);
+    minMaxLoc(hist, NULL, &maxVal);
     double scaleHist = maxVal ? 255.0/maxVal : 0;
 
     calcBackProject(&srcImg,                 // array of source images
