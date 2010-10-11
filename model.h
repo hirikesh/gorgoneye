@@ -7,8 +7,9 @@
 #include "trackers/facehaartracker.h"
 #include "trackers/facecamshifttracker.h"
 #include "trackers/facehaarcamshifttracker.h"
-#include "trackers/facetracker.h"
-#include "trackers/eyestracker.h"
+#include "trackers/eyeshaartracker.h"
+//#include "trackers/facetracker.h"
+//#include "trackers/eyestracker.h"
 #include "filters/basefilter.h"
 #include "store.h"
 
@@ -34,8 +35,11 @@ private:
     BaseTracker* faceHaarTracker;
     BaseTracker* faceCAMShiftTracker;
     BaseTracker* faceHaarCAMShiftTracker;
-    BaseTracker* faceTracker;
-    BaseTracker* eyesTracker;
+
+    BaseTracker* eyesHaarTracker;
+
+//    BaseTracker* faceTracker;
+//    BaseTracker* eyesTracker;
 
     std::vector<BaseFilter*> filters;
     std::vector<BaseTracker*> trackers;

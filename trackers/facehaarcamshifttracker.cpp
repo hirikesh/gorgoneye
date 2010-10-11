@@ -50,7 +50,7 @@ void FaceHaarCAMShiftTracker::track()
     if(!store->faceLocated)
     {
 //        double t = (double)cv::getTickCount();
-        located = haarDetector->locate(tmpSceneImg, tmpSceneMsk, tmpFaceRoi);
+        located = haarDetector->locate(tmpSceneImg, store->ignore, tmpFaceRoi);
 //        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //        qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
     }
