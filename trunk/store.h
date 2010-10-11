@@ -20,6 +20,9 @@ public:
     cv::Mat faceMsk;
     cv::Mat eyesMsk;
 
+    // Convenience image
+    cv::Mat ignore;
+
     // Image to display
     cv::Mat* dispImg;
 

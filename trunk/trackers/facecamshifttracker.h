@@ -2,7 +2,6 @@
 #define FACECAMSHIFTTRACKER_H
 
 #include "basetracker.h"
-#include "filters/hsvfilter.h"
 
 class FaceCAMShiftTracker : public BaseTracker
 {
@@ -13,7 +12,7 @@ public:
 
 private:
     BaseFilter* ycbcrFilter;
-    HSVFilter* hsvFilter; // need access to hue channel
+    BaseFilter* hsvFilter;
     BaseFilter* erodeDilateFilter;
     BaseDetector* camShiftDetector;
 };

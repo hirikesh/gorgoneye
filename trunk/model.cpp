@@ -47,11 +47,11 @@ Model::Model(int device) :
     store.faceRoi = cv::Rect(cv::Point(0,0), tmpImg.size());
 
     // Add runtime filters
-    filters.push_back(new GrayscaleFilter("Grayscale Filter", &store));
-    filters.push_back(new HSVFilter("HSV Filter", &store));
-    filters.push_back(new YCbCrFilter("YCrCb Filter", &store));
-    filters.push_back(new ErodeDilateFilter("Erode-Dilate Filter", &store));
-    filters.push_back(new EqualiseFilter("Equalisation Filter", &store));
+    filters.push_back(new GrayscaleFilter(&store));
+    filters.push_back(new HSVFilter(&store));
+    filters.push_back(new YCbCrFilter(&store));
+    filters.push_back(new ErodeDilateFilter(&store));
+    filters.push_back(new EqualiseFilter(&store));
 
     // Instantiate all trackers
 //    faceHaarTracker->setDetector(FaceHaarTracker::HAAR);
@@ -135,11 +135,13 @@ void Model::preProcess()
     store.sceneMsk = Mat();
 
     // run each filter in turn
+//    double t = (double)cv::getTickCount();
     for (unsigned int i = 0; i < filters.size(); i++)
     {
-        BaseFilter* currFilter = filters[i];
-        currFilter->filter(store.sceneImg, store.sceneImg, store.sceneMsk, store.sceneMsk);
+        filters[i]->filter(store.sceneImg, store.sceneImg, store.sceneMsk);
     }
+//    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+//    qDebug() << "Preproc. speed:" << 1000*t << "ms";
 //        qDebug() << "filters running: " << filters.size();
     //    Colour Space Conversion: BGR -> YCbCr
     //    static Size srcImgSize = store.sceneImg.size();

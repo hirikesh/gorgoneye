@@ -8,8 +8,8 @@ using cv::Mat;
 using cv::Size;
 using cv::Scalar;
 
-HSVFilter::HSVFilter(const std::string& nm, Store* st, int mnh, int mxh, int mns, int mxs, int mnv, int mxv) :
-    BaseFilter(nm, st),
+HSVFilter::HSVFilter(Store* st, int mnh, int mxh, int mns, int mxs, int mnv, int mxv) :
+    BaseFilter(st, "HSV"),
     visHue(false),
     minHue(mnh), maxHue(mxh),
     minSat(mns), maxSat(mxs),
@@ -35,45 +35,36 @@ void HSVFilter::setParams(int mnh, int mxh, int mns, int mxs, int mnv, int mxv)
     maxVal = mxv;
 }
 
-void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk)
+//3CH input (image), 3CH output (hue), 1CH mask (binary)
+//3CH input (image), 1CH output (hue), 1CH mask (binary)
+//3CH input (image), nothing, 1CH mask (binary)
+
+void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk)
 {
     // Stop here if disabled
     if(!enabled) return;
 
     // Convert and threshold
-    Mat tmpMsk;
-    _filter(srcImg, tmpMsk);
+    _filter(srcImg);
 
-    // View mask if asked
-    if(visMask)
-        cvtColor(tmpMsk, visMaskImg, CV_GRAY2BGR);
+    // Store results
+    _store(dstImg, dstMsk);
 
-    // Combine if requested
-    if(srcMsk.data)
-        bitwise_and(srcMsk, tmpMsk, dstMsk);
-    else
-        dstMsk = tmpMsk;
-
-    // Convert back
-    if(dstImg.data || visHue)
-        _visualise();
-
-    // Store the result
-    if(dstImg.data)
-        dstImg = visHueImg;
+    // Visualise on request
+    _visualise();
 }
 
 
 //void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 
 
-void HSVFilter::_filter(const cv::Mat &src, cv::Mat &dst)
+void HSVFilter::_filter(const cv::Mat &src)
 {
     // Alias
-    Size srcImgSize = src.size();
+    Size size = src.size();
 
     // Prepare images to process
-    hsvImg = Mat(srcImgSize, CV_8UC3);
+    hsvImg = Mat(size, CV_8UC3);
 
     // Do colour conversion
     cvtColor(src, hsvImg, CV_BGR2HSV);
@@ -82,19 +73,51 @@ void HSVFilter::_filter(const cv::Mat &src, cv::Mat &dst)
     inRange(hsvImg,
             Scalar(minHue, minSat, minVal),
             Scalar(maxHue, maxSat, maxVal),
-            dst);
+            maskImg);
 
     // Populate invidivual channels
-    hueChannel = Mat(srcImgSize, CV_8UC1);
-    satChannel = Mat(srcImgSize, CV_8UC1);
-    valChannel = Mat(srcImgSize, CV_8UC1);
+    hueChannel = Mat(size, CV_8UC1);
+    satChannel = Mat(size, CV_8UC1);
+    valChannel = Mat(size, CV_8UC1);
     Mat hsvChannels[] = {hueChannel, satChannel, valChannel};
 
     // Extract HSV channels
     split(hsvImg, hsvChannels);
 }
 
+void HSVFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
+{
+    // Store conversion result
+    if(dstImg.data)
+    {
+        if(dstImg.type() == CV_8UC1)
+            dstImg = hueChannel;
+        else
+        {
+            _visualise3ch();
+            dstImg = visHueImg;
+        }
+    }
+
+    // Store thresholding result
+    if(dstMsk.data)
+        bitwise_and(dstMsk, maskImg, dstMsk);
+    else
+        dstMsk = maskImg;
+}
+
 void HSVFilter::_visualise()
+{
+    // Visualise hue on request
+    if(visHue)
+        _visualise3ch();
+
+    // Visualise mask on request
+    if(visMask)
+        cvtColor(maskImg, visMaskImg, CV_GRAY2BGR);
+}
+
+void HSVFilter::_visualise3ch()
 {
     // Prepare individual channels
     Mat neutralChannel(hsvImg.size(), CV_8UC1, Scalar(255));

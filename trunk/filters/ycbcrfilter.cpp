@@ -2,106 +2,134 @@
 #include "ycbcrfilter.h"
 #include "parameter.h"
 #include "store.h"
+#include <QDebug>
 
 using cv::Mat;
 using cv::Size;
 using cv::Scalar;
 
-YCbCrFilter::YCbCrFilter(const std::string &nm, Store *st, int mny, int mxy, int mnr, int mxr, int mnb, int mxb) :
-    BaseFilter(nm, st),
-    dstCr(true),
+YCbCrFilter::YCbCrFilter(Store *st, int mny, int mxy, int mnr, int mxr, int mnb, int mxb, int dcr) :
+    BaseFilter(st, "YCbCr"),
     visCr(false), visCb(false),
-    minLuma(mny), maxLuma(mxy),
+    minY(mny), maxY(mxy),
     minCr(mnr), maxCr(mxr),
-    minCb(mnb), maxCb(mxb)
+    minCb(mnb), maxCb(mxb),
+    dstCr(dcr)
 {
-    _params.push_back((new ModeParam("Chrom. Red | Chrom. Blue", &dstCr, true)));
+    _params.push_back(new RangeParam<int>("Chrom. Blue | Chrom. Red", Param::RANGE, &dstCr, 0, 1, 1));
     _images.push_back(new ImageModeParam("Chrominance Red visual", &visCr, &visCrImg, &imageStore->dispImg));
     _images.push_back(new ImageModeParam("Chrominance Blue visual", &visCb, &visCbImg, &imageStore->dispImg));
     _images.push_back(new ImageModeParam("YCbCr mask", &visMask, &visMaskImg, &imageStore->dispImg));
-    _params.push_back(new RangeParam<int>("Min. Luma", Param::RANGE, &minLuma, 0, 256, 2));
-    _params.push_back(new RangeParam<int>("Max. Luma", Param::RANGE, &maxLuma, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Min. Luma", Param::RANGE, &minY, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Max. Luma", Param::RANGE, &maxY, 0, 256, 2));
     _params.push_back(new RangeParam<int>("Min. Chrom. Red", Param::RANGE, &minCr, 0, 256, 2));
     _params.push_back(new RangeParam<int>("Max. Chrom. Red", Param::RANGE, &maxCr, 0, 256, 2));
     _params.push_back(new RangeParam<int>("Min. Chrom. Blue", Param::RANGE, &minCb, 0, 256, 2));
     _params.push_back(new RangeParam<int>("Max. Chrom. Blue", Param::RANGE, &maxCb, 0, 256, 2));
 }
 
-void YCbCrFilter::setParams(int mny, int mxy, int mnr, int mxr, int mnb, int mxb)
+void YCbCrFilter::setParams(int mny, int mxy, int mnr, int mxr, int mnb, int mxb, int dcr)
 {
-    minLuma = mny;
-    maxLuma = mxy;
+    minY = mny;
+    maxY = mxy;
     minCr = mnr;
     maxCr = mxr;
     minCb = mnb;
     maxCb = mxb;
+    dstCr = dcr;
 }
 
-void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk)
+//3CH input (image), 3CH output (cr or cb), 1CH mask (binary)
+//3CH input (image), 1CH output (cb or cb), 1CH mask (binary)
+//3CH input (image), nothing, 1CH mask (binary)
+
+void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk)
 {
     // Stop here if disabled
     if(!enabled) return;
 
     // Convert and threshold
-    Mat tmpMsk;
-    _filter(srcImg, tmpMsk);
+    _filter(srcImg);
 
-    // View mask if asked
-    if(visMask)
-        cvtColor(tmpMsk, visMaskImg, CV_GRAY2BGR);
+    // Store results
+    _store(dstImg, dstMsk);
 
-    // Combine if requested
-    if(srcMsk.data)
-        bitwise_and(srcMsk, tmpMsk, dstMsk);
-    else
-        dstMsk = tmpMsk;
-
-    // Convert back
-    if(dstImg.data || visCr || visCb)
-        _visualise();
-
-    // Store the result
-    if(dstImg.data)
-    {
-        if(dstCr)
-            dstImg = visCrImg;
-        else
-            dstImg = visCbImg;
-    }
+    // Visualise on request
+    _visualise();
 }
 
 
 //void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 
 
-void YCbCrFilter::_filter(const cv::Mat &src, cv::Mat &dst)
+void YCbCrFilter::_filter(const cv::Mat &src)
 {
     // Alias
-    Size srcImgSize = src.size();
+    Size size = src.size();
 
     // Prepare images to process
-    yccImg = Mat(srcImgSize, CV_8UC3);
+    yccImg = Mat(size, CV_8UC3);
 
     // Do colour conversion
     cvtColor(src, yccImg, CV_BGR2YCrCb);
 
     // Apply thresholds
     inRange(yccImg,
-            Scalar(minLuma, minCr, minCb),
-            Scalar(maxLuma, maxCr, maxCb),
-            dst);
+            Scalar(minY, minCr, minCb),
+            Scalar(maxY, maxCr, maxCb),
+            maskImg);
 
     // Populate individual channels
-    lumaChannel = Mat(srcImgSize, CV_8UC1);
-    crChannel = Mat(srcImgSize, CV_8UC1);
-    cbChannel = Mat(srcImgSize, CV_8UC1);
-    Mat yccChannels[] = {lumaChannel, crChannel, cbChannel};
+    yChannel = Mat(size, CV_8UC1);
+    crChannel = Mat(size, CV_8UC1);
+    cbChannel = Mat(size, CV_8UC1);
+    Mat yccChannels[] = {yChannel, crChannel, cbChannel};
 
     // Extract YCC channels
     split(yccImg, yccChannels);
 }
 
+void YCbCrFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
+{
+    // Store the conversion result
+    if(dstImg.data)
+    {
+        if(dstImg.type() == CV_8UC1)
+        {
+            if(dstCr)
+                dstImg = crChannel;
+            else
+                dstImg = cbChannel;
+        }
+        else
+        {
+            _visualise3ch();
+            if(dstCr)
+                dstImg = visCrImg;
+            else
+                dstImg = visCbImg;
+        }
+    }
+
+    // Store thresholding result
+    if(dstMsk.data)
+        bitwise_and(dstMsk, maskImg, dstMsk);
+    else
+        dstMsk = maskImg;
+}
+
 void YCbCrFilter::_visualise()
+{
+    // Visualise hue on request
+    if(visCr || visCb)
+        _visualise3ch();
+
+    // Visualise mask on request
+    if(visMask)
+        cvtColor(maskImg, visMaskImg, CV_GRAY2BGR);
+}
+
+void YCbCrFilter::_visualise3ch()
 {
     // Prepare individual channels
     Mat neutralChannel(yccImg.size(), CV_8UC1, Scalar(128));

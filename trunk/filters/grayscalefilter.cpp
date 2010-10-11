@@ -7,8 +7,8 @@ using cv::Mat;
 using cv::Size;
 using cv::Scalar;
 
-GrayscaleFilter::GrayscaleFilter(const std::string& nm, Store* st, int mng, int mxg) :
-    BaseFilter(nm, st),
+GrayscaleFilter::GrayscaleFilter(Store* st, int mng, int mxg) :
+    BaseFilter(st, "Grayscale"),
     visGray(false),
     minGray(mng), maxGray(mxg)
 {
@@ -24,39 +24,30 @@ void GrayscaleFilter::setParams(int mng, int mxg)
     maxGray = mxg;
 }
 
-void GrayscaleFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk)
+//3CH input (image), 3CH output (gray), 1CH mask (binary)
+//3CH input (image), 1CH output (gray), 1CH mask (binary)
+//3CH input (image), nothing, 1CH mask (binary)
+
+void GrayscaleFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk)
 {
     // Stop here if disabled
     if(!enabled) return;
 
     // Convert and threshold
-    Mat tmpMsk;
-    _filter(srcImg, tmpMsk);
+    _filter(srcImg);
 
-    // View mask if asked
-    if(visMask)
-        cvtColor(tmpMsk, visMaskImg, CV_GRAY2BGR);
+    // Store results
+    _store(dstImg, dstMsk);
 
-    // Combine if requested
-    if(srcMsk.data)
-        bitwise_and(srcMsk, tmpMsk, dstMsk);
-    else
-        dstMsk = tmpMsk;
-
-    // Convert back
-    if(dstImg.data || visGray)
-        _visualise();
-
-    // Store the result
-    if(dstImg.data)
-        dstImg = visGrayImg;
+    // Visualise on request
+    _visualise();
 }
 
 
 //void GrayscaleFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 
 
-void GrayscaleFilter::_filter(const cv::Mat& src, cv::Mat& dst)
+void GrayscaleFilter::_filter(const cv::Mat& src)
 {
     // Prepare images to process
     grayChannel = Mat(src.size(), CV_8UC1);
@@ -65,10 +56,34 @@ void GrayscaleFilter::_filter(const cv::Mat& src, cv::Mat& dst)
     cvtColor(src, grayChannel, CV_BGR2GRAY);
 
     // Apply thresholds
-    inRange(grayChannel, Scalar(minGray), Scalar(maxGray), dst);
+    inRange(grayChannel, Scalar(minGray), Scalar(maxGray), maskImg);
+}
+
+void GrayscaleFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
+{
+    // Store conversion result
+    if(dstImg.data)
+    {
+        if(dstImg.type() == CV_8UC1)
+            dstImg = grayChannel;
+        else
+            cvtColor(grayChannel, dstImg, CV_GRAY2BGR);
+    }
+
+    // Store thresholding result
+    if(dstMsk.data)
+        bitwise_and(dstMsk, maskImg, dstMsk);
+    else
+        dstMsk = maskImg;
 }
 
 void GrayscaleFilter::_visualise()
 {
-    cvtColor(grayChannel, visGrayImg, CV_GRAY2BGR);
+    // Visualise gray on request
+    if(visGray)
+        cvtColor(grayChannel, visGrayImg, CV_GRAY2BGR);
+
+    // Visualise mask on request
+    if(visMask)
+        cvtColor(maskImg, visMaskImg, CV_GRAY2BGR);
 }
