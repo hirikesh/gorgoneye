@@ -27,7 +27,10 @@ void ErodeDilateFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv:
     if(!enabled) return;
 
     // Erode and dilate
-    _filter(srcMsk, dstMsk);
+    if(srcImg.data)
+        _filter(srcImg, dstImg);
+    else
+        _filter(srcMsk, dstMsk);
 
     // Visualise
     if(dstImg.data || visMorph)
@@ -56,6 +59,9 @@ void ErodeDilateFilter::_filter(const cv::Mat& src, cv::Mat& dst)
 
 void ErodeDilateFilter::_visualise()
 {
-    cvtColor(morphImg, visMorphImg, CV_GRAY2BGR);
+    if(morphImg.type() == CV_8UC1)
+        cvtColor(morphImg, visMorphImg, CV_GRAY2BGR);
+    else
+        visMorphImg = morphImg;
 }
 
