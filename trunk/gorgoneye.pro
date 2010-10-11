@@ -41,6 +41,7 @@ SOURCES += main.cpp \
     filters/hsvfilter.cpp \
     filters/ycbcrfilter.cpp \
     filters/erodedilatefilter.cpp \
+    filters/equalisefilter.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
     detectors/camshiftdetector.cpp \
@@ -70,6 +71,7 @@ HEADERS += \
     filters/hsvfilter.h \
     filters/ycbcrfilter.h \
     filters/erodedilatefilter.h \
+    filters/equalisefilter.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
     detectors/camshiftdetector.h \

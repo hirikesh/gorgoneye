@@ -6,6 +6,7 @@
 #include "filters/hsvfilter.h"
 #include "filters/ycbcrfilter.h"
 #include "filters/erodedilatefilter.h"
+#include "filters/equalisefilter.h"
 
 using cv::VideoCapture;
 using cv::Mat;
@@ -50,6 +51,7 @@ Model::Model(int device) :
     filters.push_back(new HSVFilter("HSV Filter", &store));
     filters.push_back(new YCbCrFilter("YCrCb Filter", &store));
     filters.push_back(new ErodeDilateFilter("Erode-Dilate Filter", &store));
+    filters.push_back(new EqualiseFilter("Equalisation Filter", &store));
 
     // Instantiate all trackers
 //    faceHaarTracker->setDetector(FaceHaarTracker::HAAR);
