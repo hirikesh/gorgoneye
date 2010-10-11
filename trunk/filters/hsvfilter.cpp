@@ -91,11 +91,11 @@ void HSVFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
     if(dstImg.data)
     {
         if(dstImg.type() == CV_8UC1)
-            dstImg = hueChannel;
+            hueChannel.copyTo(dstImg);
         else
         {
             _visualise3ch();
-            dstImg = visHueImg;
+            visHueImg.copyTo(dstImg);
         }
     }
 
