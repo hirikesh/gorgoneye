@@ -7,7 +7,7 @@
 class CAMShiftDetector : public BaseDetector
 {
 public:
-    CAMShiftDetector(Store *st, const int type);
+    CAMShiftDetector(Store *st);
 
     bool locate(const cv::Mat& srcImg, const cv::Mat& srcMsk, cv::Rect& srcRoi);
 

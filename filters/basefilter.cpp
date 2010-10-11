@@ -16,7 +16,12 @@ BaseFilter::BaseFilter(const std::string& nm, Store* st) :
 
 std::vector<Param*> BaseFilter::params() const
 {
-    return filterParams;
+    return _params;
+}
+
+std::vector<Param*> BaseFilter::images() const
+{
+    return _images;
 }
 
 const std::string BaseFilter::name() const

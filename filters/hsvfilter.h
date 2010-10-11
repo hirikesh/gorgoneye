@@ -15,9 +15,7 @@ class HSVFilter : public BaseFilter
 public:
     HSVFilter(const std::string& nm, Store* st, int mnh = 0, int mxh = 181, int mns = 0, int mxs = 256, int mnv = 0, int mxv = 256);
 
-    bool hasParams() const;
     void setParams(int, int, int, int, int, int);
-
     void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& srcMsk, cv::Mat& dstMsk);
 //    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi);
 
@@ -27,13 +25,18 @@ public:
 
 private:
     bool visHue;
+    bool visMask;
 
-    int minHue, maxHue;
-    int minSat, maxSat;
-    int minVal, maxVal;
+    int minHue;
+    int maxHue;
+    int minSat;
+    int maxSat;
+    int minVal;
+    int maxVal;
 
     cv::Mat hsvImg;
     cv::Mat visHueImg;
+    cv::Mat visMaskImg;
 
     void _filter(const cv::Mat &src, cv::Mat &dst);
     void _visualise();

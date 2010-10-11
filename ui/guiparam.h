@@ -83,17 +83,17 @@ private:
     cv::Mat** dispImg;
 };
 
-class GUITrackerComboBox : public QComboBox
-{
-    Q_OBJECT
-public:
-    explicit GUITrackerComboBox(BaseTracker* trkr);
-signals:
-    void itemSelected(int);
-private slots:
-    void setDetector(int);
-private:
-    BaseTracker* tracker;
-};
+//class GUITrackerComboBox : public QComboBox
+//{
+//    Q_OBJECT
+//public:
+//    explicit GUITrackerComboBox(BaseTracker* trkr);
+//signals:
+//    void itemSelected(int);
+//private slots:
+//    void setDetector(int);
+//private:
+//    BaseTracker* tracker;
+//};
 
 #endif // GUIPARAM_H

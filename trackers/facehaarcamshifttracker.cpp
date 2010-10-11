@@ -1,16 +1,18 @@
 #include <cv.h>
 #include <QDebug>
-#include "facecamshifttracker.h"
+#include "facehaarcamshifttracker.h"
 #include "filters/ycbcrfilter.h"
 #include "filters/hsvfilter.h"
 #include "filters/erodedilatefilter.h"
+#include "detectors/haardetector.h"
 #include "detectors/camshiftdetector.h"
 #include "store.h"
 
-class Mat;
-
-FaceCAMShiftTracker::FaceCAMShiftTracker(Store* st) : BaseTracker(st, "CAMShift Face")
+FaceHaarCAMShiftTracker::FaceHaarCAMShiftTracker(Store* st) : BaseTracker(st, "Haar-CAMShift Face")
 {
+    haarDetector = new HaarDetector(st, HAAR_CC_FACE, 1.2, 3, NULL, cv::Size(64,72));
+    detectors.push_back(haarDetector);
+
     ycbcrFilter = new YCbCrFilter("YCbCr", st, 0, 256, 133, 174, 77, 128);
     ycbcrFilter->enable();
     filters.push_back(ycbcrFilter);
@@ -27,7 +29,7 @@ FaceCAMShiftTracker::FaceCAMShiftTracker(Store* st) : BaseTracker(st, "CAMShift 
     BaseTracker::initImageModes();
 }
 
-void FaceCAMShiftTracker::track()
+void FaceHaarCAMShiftTracker::track()
 {
     if(!enabled) return;
 
@@ -42,16 +44,27 @@ void FaceCAMShiftTracker::track()
                           store->faceRoi.width / 2,
                           store->faceRoi.height / 2);
 
-    // Filtering
-    cv::Mat ignoreImg;
-    ycbcrFilter->filter(tmpSceneImg, ignoreImg, ignoreImg, tmpSceneMsk);
-    hsvFilter->filter(tmpSceneImg, ignoreImg, tmpSceneMsk, tmpSceneMsk);
-    erodeDilateFilter->filter(ignoreImg, ignoreImg, tmpSceneMsk, tmpSceneMsk);
+    bool located;
+    if(!store->faceLocated)
+    {
+//        double t = (double)cv::getTickCount();
+        located = haarDetector->locate(tmpSceneImg, tmpSceneMsk, tmpFaceRoi);
+//        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+//        qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
+    }
+    else
+    {
+        // Filtering
+        cv::Mat ignoreImg;
+        ycbcrFilter->filter(tmpSceneImg, ignoreImg, ignoreImg, tmpSceneMsk);
+        hsvFilter->filter(tmpSceneImg, ignoreImg, tmpSceneMsk, tmpSceneMsk);
+        erodeDilateFilter->filter(ignoreImg, ignoreImg, tmpSceneMsk, tmpSceneMsk);
 
-//    double t = (double)cv::getTickCount();
-    bool located = camShiftDetector->locate(hsvFilter->hueChannel, tmpSceneMsk, tmpFaceRoi);
-//    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//    qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
+//        double t = (double)cv::getTickCount();
+        located = camShiftDetector->locate(hsvFilter->hueChannel, tmpSceneMsk, tmpFaceRoi);
+//        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+//        qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
+    }
 
     if(located) {
         // Postprocessing

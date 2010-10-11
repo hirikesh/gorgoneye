@@ -5,12 +5,12 @@
 
 using namespace cv;
 
-CAMShiftDetector::CAMShiftDetector(Store* st, const int type) :
-      BaseDetector(st, type, "CAMShift"),
+CAMShiftDetector::CAMShiftDetector(Store* st) :
+      BaseDetector(st, "CAMShift"),
       enBackProjImg(false),
       histCalibrate(true)
 {
-    imageModes.push_back(new ImageModeParam("Back Projected Image", &enBackProjImg, &backProjVisImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Back Projected Image", &enBackProjImg, &backProjVisImg, &st->dispImg));
 }
 
 bool CAMShiftDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)

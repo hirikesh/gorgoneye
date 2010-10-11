@@ -22,15 +22,14 @@ public:
     BaseTracker(Store* st, const std::string&);
 
     virtual void track() = 0;
-    void setDetector(int type);
-    int getCurrDetectorType();
+//    void setDetector(int type);
+//    int getCurrDetectorType();
+    std::vector<BaseFilter*> getFilters();
     std::vector<BaseDetector*> getDetectors();
     void enable();
     void disable();
     bool isEnabled();
-    bool* getEnabled();
     const std::string name() const;
-    virtual cv::Mat* getDispImg() = 0;
     std::vector<Param*> getImageModes();
 
 protected:
@@ -43,7 +42,7 @@ protected:
     std::vector<BaseFilter*> filters;
     std::vector<BaseDetector*> detectors;
     std::vector<Param*> imageModes;
-    BaseDetector* currDetector;
+//    BaseDetector* currDetector;
 };
 
 #endif // TRACKER_H

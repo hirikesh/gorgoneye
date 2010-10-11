@@ -15,20 +15,16 @@ YCbCrFilter::YCbCrFilter(const std::string &nm, Store *st, int mny, int mxy, int
     minCr(mnr), maxCr(mxr),
     minCb(mnb), maxCb(mxb)
 {
-    filterParams.push_back((new ModeParam("Chrom. Red | Chrom. Blue", &dstCr, true)));
-    filterParams.push_back(new ImageModeParam("Chrominance Red visual", &visCr, &visCrImg, &imageStore->dispImg));
-    filterParams.push_back(new ImageModeParam("Chrominance Blue visual", &visCb, &visCbImg, &imageStore->dispImg));
-    filterParams.push_back(new RangeParam<int>("Min. Luma", Param::RANGE, &minLuma, 0, 256, 2));
-    filterParams.push_back(new RangeParam<int>("Max. Luma", Param::RANGE, &maxLuma, 0, 256, 2));
-    filterParams.push_back(new RangeParam<int>("Min. Chrom. Red", Param::RANGE, &minCr, 0, 256, 2));
-    filterParams.push_back(new RangeParam<int>("Max. Chrom. Red", Param::RANGE, &maxCr, 0, 256, 2));
-    filterParams.push_back(new RangeParam<int>("Min. Chrom. Blue", Param::RANGE, &minCb, 0, 256, 2));
-    filterParams.push_back(new RangeParam<int>("Max. Chrom. Blue", Param::RANGE, &maxCb, 0, 256, 2));
-}
-
-bool YCbCrFilter::hasParams() const
-{
-    return true;
+    _params.push_back((new ModeParam("Chrom. Red | Chrom. Blue", &dstCr, true)));
+    _images.push_back(new ImageModeParam("Chrominance Red visual", &visCr, &visCrImg, &imageStore->dispImg));
+    _images.push_back(new ImageModeParam("Chrominance Blue visual", &visCb, &visCbImg, &imageStore->dispImg));
+    _params.push_back(new ImageModeParam("YCbCr mask", &visMask, &visMaskImg, &imageStore->dispImg));
+    _params.push_back(new RangeParam<int>("Min. Luma", Param::RANGE, &minLuma, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Max. Luma", Param::RANGE, &maxLuma, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Min. Chrom. Red", Param::RANGE, &minCr, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Max. Chrom. Red", Param::RANGE, &maxCr, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Min. Chrom. Blue", Param::RANGE, &minCb, 0, 256, 2));
+    _params.push_back(new RangeParam<int>("Max. Chrom. Blue", Param::RANGE, &maxCb, 0, 256, 2));
 }
 
 void YCbCrFilter::setParams(int mny, int mxy, int mnr, int mxr, int mnb, int mxb)
@@ -47,11 +43,18 @@ void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& 
     if(!enabled) return;
 
     // Convert and threshold
-    _filter(srcImg, dstMsk);
+    Mat tmpMsk;
+    _filter(srcImg, tmpMsk);
+
+    // View mask if asked
+    if(visMask)
+        cvtColor(tmpMsk, visMaskImg, CV_GRAY2BGR);
 
     // Combine if requested
     if(srcMsk.data)
-        bitwise_and(srcMsk, dstMsk, dstMsk);
+        bitwise_and(srcMsk, tmpMsk, dstMsk);
+    else
+        dstMsk = tmpMsk;
 
     // Convert back
     if(dstImg.data || visCr || visCb)
@@ -71,22 +74,22 @@ void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Mat& 
 //void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 
 
-void YCbCrFilter::_filter(const cv::Mat &srcImg, cv::Mat &dstMsk)
+void YCbCrFilter::_filter(const cv::Mat &src, cv::Mat &dst)
 {
     // Alias
-    Size srcImgSize = srcImg.size();
+    Size srcImgSize = src.size();
 
     // Prepare images to process
     yccImg = Mat(srcImgSize, CV_8UC3);
 
     // Do colour conversion
-    cvtColor(srcImg, yccImg, CV_BGR2YCrCb);
+    cvtColor(src, yccImg, CV_BGR2YCrCb);
 
     // Apply thresholds
     inRange(yccImg,
             Scalar(minLuma, minCr, minCb),
             Scalar(maxLuma, maxCr, maxCb),
-            dstMsk);
+            dst);
 
     // Populate individual channels
     lumaChannel = Mat(srcImgSize, CV_8UC1);

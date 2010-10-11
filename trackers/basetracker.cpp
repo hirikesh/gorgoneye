@@ -10,14 +10,19 @@ BaseTracker::BaseTracker(Store* st, const std::string& s) :
 {
 }
 
-void BaseTracker::setDetector(int type)
-{
-    currDetector = detectors[type];
-}
+//void BaseTracker::setDetector(int type)
+//{
+//    currDetector = detectors[type];
+//}
 
-int BaseTracker::getCurrDetectorType()
+//int BaseTracker::getCurrDetectorType()
+//{
+//    return currDetector->type();
+//}
+
+std::vector<BaseFilter*> BaseTracker::getFilters()
 {
-    return currDetector->type();
+    return filters;
 }
 
 std::vector<BaseDetector*> BaseTracker::getDetectors()
@@ -35,10 +40,10 @@ void BaseTracker::disable()
     enabled = false;
 }
 
-bool* BaseTracker::getEnabled()
-{
-    return &enabled;
-}
+//bool* BaseTracker::getEnabled()
+//{
+//    return &enabled;
+//}
 
 bool BaseTracker::isEnabled()
 {
@@ -57,10 +62,17 @@ std::vector<Param*> BaseTracker::getImageModes()
 
 void BaseTracker::initImageModes()
 {
+    imageModes.push_back(new ImageModeParam("Scene Image", &store->sceneImg, &store->dispImg));
+
+    for (unsigned int i = 0; i < filters.size(); i++)
+    {
+        std::vector<Param*> vec = filters[i]->images();
+        imageModes.insert(imageModes.end(), vec.begin(), vec.end());
+    }
+
     for (unsigned int i = 0; i < detectors.size(); i++)
     {
-        BaseDetector* currDetector = detectors[i];
-        std::vector<Param*> vec = currDetector->getImageModes();
-        imageModes.insert(imageModes.begin(), vec.begin(), vec.end());
+        std::vector<Param*> vec = detectors[i]->images();
+        imageModes.insert(imageModes.end(), vec.begin(), vec.end());
     }
-    imageModes.insert(imageModes.begin(), new ImageModeParam("Scene Image", &store->sceneImg, &store->dispImg));}
+}

@@ -1,10 +1,11 @@
 #include <cv.h>
 #include "haardetector.h"
 #include "parameter.h"
+
 using namespace cv;
 
-HaarDetector::HaarDetector(Store *st, const int type, string td, double sf, int mn, bool fg, Size ms) :
-    BaseDetector(st, type, "Haar"),
+HaarDetector::HaarDetector(Store *st, string td, double sf, int mn, bool fg, Size ms) :
+    BaseDetector(st, "Haar"),
     cClassifier(td),
     scaleFactor(sf),
     minNeighbours(mn),
@@ -22,6 +23,7 @@ HaarDetector::HaarDetector(Store *st, const int type, string td, double sf, int 
 bool HaarDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)
 {
     vector<Rect> rois;
+
     cClassifier.detectMultiScale(srcImg,
                                  rois,
                                  scaleFactor,

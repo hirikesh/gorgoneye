@@ -114,14 +114,14 @@ void GUIRadioButton::setParamValues(bool state)
     }
 }
 
-GUITrackerComboBox::GUITrackerComboBox(BaseTracker* trkr) :
-        QComboBox(),
-        tracker(trkr)
-{
-    connect(this, SIGNAL(activated(int)), this, SLOT(setDetector(int)));
-}
+//GUITrackerComboBox::GUITrackerComboBox(BaseTracker* trkr) :
+//        QComboBox(),
+//        tracker(trkr)
+//{
+//    connect(this, SIGNAL(activated(int)), this, SLOT(setDetector(int)));
+//}
 
-void GUITrackerComboBox::setDetector(int type)
-{
-    tracker->setDetector(type);
-}
+//void GUITrackerComboBox::setDetector(int type)
+//{
+//    tracker->setDetector(type);
+//}

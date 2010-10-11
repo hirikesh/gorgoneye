@@ -10,10 +10,6 @@ public:
 
     void track();
 
-    enum type { HAAR };
-
-    cv::Mat* getDispImg();
-
 private:
     BaseDetector* haarDetector;
 };

@@ -1,8 +1,8 @@
 #include <cv.h>
 #include "hybriddetector.h"
 
-HybridDetector::HybridDetector(Store* st, const int type, BaseDetector* slowdet, BaseDetector* fastdet) :
-    BaseDetector(st, type, slowdet->name() + "-" + fastdet->name()),
+HybridDetector::HybridDetector(Store* st, BaseDetector* slowdet, BaseDetector* fastdet) :
+    BaseDetector(st, slowdet->name() + "-" + fastdet->name()),
     slowDetector(slowdet),
     fastDetector(fastdet),
     useFastDetector(false)

@@ -15,13 +15,13 @@
 #endif
 
 #define HAAR_CC_FACE HAAR_CC_DIR"haarcascade_frontalface_default.xml"
-#define HAAR_CC_EYES HAAR_CC_DIR"haarcascade_eye.xml"
+#define HAAR_CC_EYES HAAR_CC_DIR"haarcascade_lefteye_2splits.xml"
 
 
 class HaarDetector : public BaseDetector
 {
 public:
-    HaarDetector(Store* st, const int type, std::string td, double sf, int mn, bool fg, cv::Size ms);
+    HaarDetector(Store* st, std::string td, double sf = 1.2, int mn = 3, bool fg = NULL, cv::Size ms = cv::Size(24,24));
 
     bool locate(const cv::Mat& srcImg, const cv::Mat& srcMsk, cv::Rect& srcRoi);
 

@@ -9,10 +9,10 @@
 
 EyesTracker::EyesTracker(Store* st) : BaseTracker(st, "Eyes")
 {
-    haarDetector = new HaarDetector(st, HAAR, HAAR_CC_EYES, 1.2, 1, NULL, cv::Size(32,24));
-    featureDetector = new FeatureDetector(st, FEAT, 0, 180, 0, 255, 0, 255, 0, 255, 0, 255);
-    hybridDetector = new HybridDetector(st, HYBR, haarDetector, featureDetector);
-    testDetector = new TestDetector(st, TEST);
+    haarDetector = new HaarDetector(st, HAAR_CC_EYES, 1.2, 1, NULL, cv::Size(32,24));
+    featureDetector = new FeatureDetector(st, 0, 180, 0, 255, 0, 255, 0, 255, 0, 255);
+    hybridDetector = new HybridDetector(st, haarDetector, featureDetector);
+    testDetector = new TestDetector(st);
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
     detectors.push_back(hybridDetector);
@@ -42,9 +42,9 @@ void EyesTracker::track()
 //    tmpEyesRoi = store->eyesRoi;
 
 //    double t = (double)cv::getTickCount();
-    bool located = currDetector->locate(store->faceImg(reducedFaceRoi), store->faceMsk(reducedFaceRoi), store->eyesRoi);
+    bool located = haarDetector->locate(store->faceImg(reducedFaceRoi), store->faceMsk(reducedFaceRoi), store->eyesRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//    qDebug() << currDetector->getName().c_str() << "speed:" << 1000*t << "ms";
+//    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
 
     if(located) {
         testDetector->locate(store->faceImg(reducedFaceRoi), store->faceMsk(reducedFaceRoi), store->eyesRoi);
@@ -61,7 +61,7 @@ void EyesTracker::track()
     store->eyesLocated = located;
 }
 
-cv::Mat* EyesTracker::getDispImg()
-{
-    return &store->faceImg;
-}
+//cv::Mat* EyesTracker::getDispImg()
+//{
+//    return &store->faceImg;
+//}

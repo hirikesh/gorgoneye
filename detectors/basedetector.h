@@ -23,22 +23,17 @@ namespace cv
 class BaseDetector
 {
 public:
-    BaseDetector(Store *st, const int&, const std::string&);
+    BaseDetector(Store *st, const std::string&);
 
     virtual bool locate(const cv::Mat& srcImg, const cv::Mat& srcMsk, cv::Rect& srcRoi);
-    const int type() const;
     const std::string name() const;
-    std::vector<Param*> params();
-    std::vector<Param*> getImageModes();
-    std::vector<Param*>* getPtrParams();
-
-    bool hasParams();
+    std::vector<Param*> params() const;
+    std::vector<Param*> images() const;
 
 protected:
-    const int _type;
     const std::string _name;
     std::vector<Param*> _params;
-    std::vector<Param*> imageModes;
+    std::vector<Param*> _images;
 };
 
 #endif // DETECTOR_H

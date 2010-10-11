@@ -11,6 +11,7 @@ class QScrollArea;
 class QTreeWidget;
 class QTreeWidgetItem;
 class QButtonGroup;
+class BaseFilter;
 class BaseTracker;
 class GUIParamDiag;
 class Model;

@@ -7,7 +7,7 @@
 class TestDetector : public BaseDetector
 {
 public:
-    TestDetector(Store *st, const int type);
+    TestDetector(Store *st);
 
     bool locate(const cv::Mat& srcImg, const cv::Mat& srcMsk, cv::Rect& srcRoi);
 
