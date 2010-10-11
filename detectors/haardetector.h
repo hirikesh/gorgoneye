@@ -23,7 +23,7 @@ class HaarDetector : public BaseDetector
 public:
     HaarDetector(Store* st, const int type, std::string td, double sf, int mn, bool fg, cv::Size ms);
 
-    bool locate(const cv::Mat& srcImg, cv::Rect& srcRoi);
+    bool locate(const cv::Mat& srcImg, const cv::Mat& srcMsk, cv::Rect& srcRoi);
 
 private:
     cv::CascadeClassifier cClassifier;

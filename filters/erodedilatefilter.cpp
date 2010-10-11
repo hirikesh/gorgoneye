@@ -7,13 +7,13 @@ using cv::Mat;
 using cv::Size;
 using cv::Scalar;
 
-ErodeDilateFilter::ErodeDilateFilter(const std::string& nm, Store* st) :
+ErodeDilateFilter::ErodeDilateFilter(const std::string& nm, Store* st, int ml) :
     BaseFilter(nm, st),
     visMorph(false),
-    morphLevel(2)
+    morphLevel(ml)
 {
-    filterParams.push_back(new ImageModeParam("Morphology visual", &visMorph, &visMorphImg, &st->dispImg));
-    filterParams.push_back(new RangeParam<int>("Morphology Depth", Param::RANGE, &morphLevel, 0, 7, 1));
+    filterParams.push_back(new ImageModeParam("Morphology visual", &visMorph, &visMorphImg, &imageStore->dispImg));
+    filterParams.push_back(new RangeParam<int>("Morphology Depth", Param::RANGE, &morphLevel, 0, 12, 1));
 }
 
 bool ErodeDilateFilter::hasParams() const
@@ -49,18 +49,11 @@ void ErodeDilateFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv:
 
 void ErodeDilateFilter::_filter(const cv::Mat& src, cv::Mat& dst)
 {
-    // Prepare images to process
-//    morphImg = src;
-
     // Perform erosion operations
     morphologyEx(src, morphImg, cv::MORPH_CLOSE, Mat(), cv::Point(-1,-1), morphLevel);
-//    for(unsigned int morphCount = 0; morphCount < morphLevel; morphCount++)
-//        morphologyEx(morphImg, morphImg, MORPH_CLOSE, Mat());
 
     // Perform dilation operations
     morphologyEx(morphImg, morphImg, cv::MORPH_OPEN, Mat(), cv::Point(-1,-1), morphLevel);
-//    for(unsigned int morphCount = 0; morphCount < morphLevel; morphCount++)
-//        morphologyEx(morphImg, morphImg, MORPH_OPEN, Mat());
 
     // Apply result
     dst = morphImg;

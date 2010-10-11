@@ -15,6 +15,7 @@ FaceTracker::FaceTracker(Store* st) : BaseTracker(st, "Face")
     detectors.push_back(haarDetector);
     detectors.push_back(featureDetector);
     detectors.push_back(hybridDetector);
+
     BaseTracker::initImageModes();
 }
 
@@ -24,7 +25,7 @@ void FaceTracker::track()
 
     // Preprocessing
     // Smooth and downsample sceneImg
-    cv::Mat tmpSceneImg;
+    cv::Mat tmpSceneImg, tmpSceneMsk;
     cv::pyrDown(store->sceneImg, tmpSceneImg);
 
     cv::Rect tmpFaceRoi;
@@ -34,7 +35,8 @@ void FaceTracker::track()
                           store->faceRoi.height / 2);
 
 //    double t = (double)cv::getTickCount();
-    bool located = currDetector->locate(tmpSceneImg, tmpFaceRoi);
+    qDebug() << tmpSceneMsk.data;
+    bool located = currDetector->locate(tmpSceneImg, tmpSceneMsk, tmpFaceRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << currDetector->getName().c_str() << "speed:" << 1000*t << "ms";
 

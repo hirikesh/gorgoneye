@@ -6,7 +6,7 @@
 class ErodeDilateFilter : public BaseFilter
 {
 public:
-    ErodeDilateFilter(const std::string& nm, Store* st);
+    ErodeDilateFilter(const std::string& nm, Store* st, int ml = 2);
 
     bool hasParams() const;
     void setParams(int);

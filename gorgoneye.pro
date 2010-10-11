@@ -54,7 +54,10 @@ SOURCES += main.cpp \
     ui/guiparamdiag.cpp \
     ui/guitrackerdiag.cpp \
     ui/guitreewidgetitem.cpp \
-    filters/erodedilatefilter.cpp
+    filters/erodedilatefilter.cpp \
+    trackers/facehaartracker.cpp \
+    trackers/facecamshifttracker.cpp \
+    detectors/camshiftdetector.cpp
 
 HEADERS += \
     control.h\
@@ -79,7 +82,10 @@ HEADERS += \
     ui/guiparamdiag.h \
     ui/guitrackerdiag.h \
     ui/guitreewidgetitem.h \
-    filters/erodedilatefilter.h
+    filters/erodedilatefilter.h \
+    trackers/facehaartracker.h \
+    trackers/facecamshifttracker.h \
+    detectors/camshiftdetector.h
 
 
 FORMS += ui/control.ui

@@ -23,7 +23,7 @@ FeatureDetector::FeatureDetector(Store* st, const int type,
     maxChromaBlue(maxcb),
     minChromaRed(mincr),
     maxChromaRed(maxcr),
-    enBackProjImg(true),
+    enBackProjImg(false),
     enHueVisImg(false),
     enChromaRedVisImg(false),
     enChromaBlueVisImg(false)
@@ -44,7 +44,7 @@ FeatureDetector::FeatureDetector(Store* st, const int type,
     imageModes.push_back(new ImageModeParam("Cb Component Image", &enChromaBlueVisImg, &chromaBlueVisImg, &st->dispImg));
 }
 
-bool FeatureDetector::locate(const Mat& srcImg, Rect& srcRoi)
+bool FeatureDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)
 {
     Size srcImgSize = srcImg.size();
 
