@@ -47,7 +47,7 @@ std::vector<Param*> BaseTracker::getImageModes()
 
 void BaseTracker::initImageModes()
 {
-    imageModes.push_back(new ImageModeParam("Scene Image", &store->sceneImg, &store->dispImg));
+    imageModes.push_back(new ImageModeParam("Scene Image", &store->ignore, &store->dispImg));
 
     for (unsigned int i = 0; i < filters.size(); i++)
     {

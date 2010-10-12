@@ -25,9 +25,8 @@ public:
     cv::Rect eyesRoi; // relative to faceImg
     cv::Rect gazeRoi; // relative to screen
 
-    // Images to display
+    // Image to overlay
     cv::Mat* dispImg;
-    cv::Mat* dispVisImg;
 
     // Multipurpose unitialised image
     // MUST NOT BE ALTERED

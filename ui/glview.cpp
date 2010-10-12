@@ -1,14 +1,17 @@
+#include "store.h"
 #include "glview.h"
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <QDebug>
 
-GLView::GLView(std::vector<bool*> ivr, QWidget *parent) :
+//GLView::GLView(std::vector<bool*> ivr, QWidget *parent) :
+GLView::GLView(Store *st, QWidget *parent) :
     QGLWidget(parent),
-    faceROI(new QRect(-1, -1, 0, 0)),
-    eyesROI(new QRect(-1, -1, 0, 0))
+    store(st)
+//    faceROI(new QRect(-1, -1, 0, 0)),
+//    eyesROI(new QRect(-1, -1, 0, 0))
 {
-    isValidRoi = ivr;
+//    isValidRoi = ivr;
 }
 
 GLView::~GLView()
@@ -68,11 +71,13 @@ void GLView::paintGL()
     }
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    if(*isValidRoi[0]) drawROIs(faceROI);
-    if(*isValidRoi[1]) drawROIs(eyesROI);
+//    if(*isValidRoi[0]) drawROIs(faceROI);
+//    if(*isValidRoi[1]) drawROIs(eyesROI);
+    drawRois();
 }
 
-void GLView::loadGLTextures(const cv::Mat& image)
+//void GLView::loadGLTextures(const cv::Mat& image)
+void GLView::loadGLTextures()
 {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -82,38 +87,83 @@ void GLView::loadGLTextures(const cv::Mat& image)
     if(npotCapable) {
 //        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
 //        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.cols, image.rows, GL_BGR, GL_UNSIGNED_BYTE, image.data);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+
+        // Draw scene first
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                     store->sceneImg.cols, store->sceneImg.rows,
+                     0, GL_BGR, GL_UNSIGNED_BYTE, store->sceneImg.data);
+
+        // Draw visualisations over scene if requested
+        if(store->dispImg->data) {
+            if(store->dispImg->size() == store->faceImg.size())
+                glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                store->faceRoi.x, store->faceRoi.y,
+                                store->dispImg->cols, store->dispImg->rows,
+                                GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
+            else if(store->dispImg->size() == store->eyesImg.size())
+                glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                store->faceRoi.x + store->eyesRoi.x,
+                                store->faceRoi.y + store->eyesRoi.y,
+                                store->dispImg->cols, store->dispImg->rows,
+                                GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
+            else
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                             store->dispImg->cols, store->dispImg->rows,
+                             0, GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
+        }
+
     } else {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 512, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 32, image.cols, image.rows, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 512, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
+//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 32, image.cols, image.rows, GL_BGR, GL_UNSIGNED_BYTE, image.data);
     }
 }
 
-void GLView::setFaceROI(int x, int y, int w, int h)
+//void GLView::setFaceROI(int x, int y, int w, int h)
+//{
+//    faceROI->setX(x);
+//    faceROI->setY(480-y-h);
+//    faceROI->setWidth(w);
+//    faceROI->setHeight(h);
+//}
+
+//void GLView::setEyesROI(int x, int y, int w, int h)
+//{
+//    eyesROI->setX(x);
+//    eyesROI->setY(480-y-h);
+//    eyesROI->setWidth(w);
+//    eyesROI->setHeight(h);
+//}
+
+void GLView::drawRois()
 {
-    faceROI->setX(x);
-    faceROI->setY(480-y-h);
-    faceROI->setWidth(w);
-    faceROI->setHeight(h);
+    int tlx = store->faceRoi.tl().x;
+    int tly = 480-store->faceRoi.tl().y;
+    int brx = store->faceRoi.br().x;
+    int bry = 480-store->faceRoi.br().y;
+    if(store->faceLocated)
+        drawRoi(tlx, tly, brx, bry);
+
+    if(store->eyesLocated)
+        drawRoi(tlx + store->eyesRoi.tl().x,
+                tly - store->eyesRoi.tl().y,
+                tlx + store->eyesRoi.br().x,
+                tly - store->eyesRoi.br().y);
 }
 
-void GLView::setEyesROI(int x, int y, int w, int h)
+//void GLView::drawROIs(QRect* ROI)
+void GLView::drawRoi(int tlx, int tly, int brx, int bry)
 {
-    eyesROI->setX(x);
-    eyesROI->setY(480-y-h);
-    eyesROI->setWidth(w);
-    eyesROI->setHeight(h);
-}
-
-void GLView::drawROIs(QRect* ROI)
-{
-    glLineWidth(2.0);
+//    glLineWidth(1.0);
     glBegin(GL_LINE_LOOP);
     glColor3f(0.0f, 1.0f, 0.5f);
-    glVertex2i(ROI->left(), ROI->top());
-    glVertex2i(ROI->right(), ROI->top());
-    glVertex2i(ROI->right(), ROI->bottom());
-    glVertex2i(ROI->left(), ROI->bottom());
+//    glVertex2i(ROI->left(), ROI->top());
+//    glVertex2i(ROI->right(), ROI->top());
+    glVertex2i(tlx, tly);
+    glVertex2i(brx, tly);
+    glVertex2i(brx, bry);
+    glVertex2i(tlx, bry);
+//    glVertex2i(ROI->right(), ROI->bottom());
+//    glVertex2i(ROI->left(), ROI->bottom());
     glEnd();
     glColor3f(0.0f, 0.0f, 0.0f);
 }

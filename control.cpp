@@ -27,10 +27,11 @@ Control::Control(QWidget *parent) :
     model(new Model(0)),
     imgModeGroup(new QButtonGroup())
 {
-    vector<bool*> is_valid_roi;
-    is_valid_roi.push_back(&model->getStore()->faceLocated);
-    is_valid_roi.push_back(&model->getStore()->eyesLocated);
-    opengl = new GLView(is_valid_roi);
+//    vector<bool*> is_valid_roi;
+//    is_valid_roi.push_back(&model->getStore()->faceLocated);
+//    is_valid_roi.push_back(&model->getStore()->eyesLocated);
+//    opengl = new GLView(is_valid_roi);
+    opengl = new GLView(model->getStore());
 
     initGUI();
 }
@@ -68,13 +69,14 @@ void Control::procFrame()
 {
     model->update();
 
-    cv::Rect f = model->getStore()->faceRoi;
-    cv::Rect e = model->getStore()->eyesRoi + f.tl();
+//    cv::Rect f = model->getStore()->faceRoi;
+//    cv::Rect e = model->getStore()->eyesRoi + f.tl();
 
 #if(USE_OPENGL)
-    opengl->setFaceROI(f.x, f.y, f.width, f.height);
-    opengl->setEyesROI(e.x, e.y, e.width, e.height);
-    opengl->loadGLTextures(*model->getDispImg());
+//    opengl->setFaceROI(f.x, f.y, f.width, f.height);
+//    opengl->setEyesROI(e.x, e.y, e.width, e.height);
+//    opengl->loadGLTextures(*model->getDispImg());
+    opengl->loadGLTextures();
     opengl->updateGL();
 #else
     cv::rectangle(model->getStore()->sceneImg, f, cv::Scalar(0,200,0), 2);
