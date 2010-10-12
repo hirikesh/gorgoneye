@@ -119,8 +119,6 @@ void Model::update()
         gazeTracker->track();
     }
 
-    preProcess();
-
     postProcess();
 }
 
