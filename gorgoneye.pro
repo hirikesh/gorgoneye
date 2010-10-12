@@ -43,15 +43,15 @@ SOURCES += main.cpp \
     filters/erodedilatefilter.cpp \
     filters/equalisefilter.cpp \
     filters/cannycontourfilter.cpp \
+    filters/cannyedgefilter.cpp \
+    filters/sobelfilter.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
     detectors/camshiftdetector.cpp \
-    detectors/featuredetector.cpp \
-    detectors/hybriddetector.cpp \
-    detectors/testdetector.cpp \
     trackers/basetracker.cpp \
     trackers/facetracker.cpp \
     trackers/eyestracker.cpp \
+    trackers/gazetracker.cpp \
     trackers/facehaartracker.cpp \
     trackers/facecamshifttracker.cpp \
     trackers/facehaarcamshifttracker.cpp \
@@ -75,15 +75,15 @@ HEADERS += \
     filters/erodedilatefilter.h \
     filters/equalisefilter.h \
     filters/cannycontourfilter.h \
+    filters/cannyedgefilter.h \
+    filters/sobelfilter.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
     detectors/camshiftdetector.h \
-    detectors/featuredetector.h \
-    detectors/hybriddetector.h \
-    detectors/testdetector.h \
     trackers/basetracker.h \
     trackers/facetracker.h \
     trackers/eyestracker.h \
+    trackers/gazetracker.h \
     trackers/facehaartracker.h \
     trackers/facecamshifttracker.h \
     trackers/facehaarcamshifttracker.h \

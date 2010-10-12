@@ -16,9 +16,9 @@ YCbCrFilter::YCbCrFilter(Store *st, int mny, int mxy, int mnr, int mxr, int mnb,
     dstCr(dcr)
 {
     _params.push_back(new RangeParam<int>("Chrom. Blue | Chrom. Red", Param::RANGE, &dstCr, 0, 1, 1));
-    _images.push_back(new ImageModeParam("Chrominance Red visual", &visCr, &visCrImg, &imageStore->dispImg));
-    _images.push_back(new ImageModeParam("Chrominance Blue visual", &visCb, &visCbImg, &imageStore->dispImg));
-    _images.push_back(new ImageModeParam("YCbCr mask", &visMask, &visMaskImg, &imageStore->dispImg));
+    _images.push_back(new ImageModeParam("Chrominance Red visual", &visCr, &visCrImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Chrominance Blue visual", &visCb, &visCbImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("YCbCr mask", &visMask, &visMaskImg, &st->dispImg));
     _params.push_back(new RangeParam<int>("Min. Luma", Param::RANGE, &minY, 0, 256, 2));
     _params.push_back(new RangeParam<int>("Max. Luma", Param::RANGE, &maxY, 0, 256, 2));
     _params.push_back(new RangeParam<int>("Min. Chrom. Red", Param::RANGE, &minCr, 0, 256, 2));
@@ -66,17 +66,8 @@ void YCbCrFilter::_filter(const cv::Mat &src)
     // Alias
     Size size = src.size();
 
-    // Prepare images to process
-    yccImg = Mat(size, CV_8UC3);
-
     // Do colour conversion
     cvtColor(src, yccImg, CV_BGR2YCrCb);
-
-    // Apply thresholds
-    inRange(yccImg,
-            Scalar(minY, minCr, minCb),
-            Scalar(maxY, maxCr, maxCb),
-            maskImg);
 
     // Populate individual channels
     yChannel = Mat(size, CV_8UC1);
@@ -86,6 +77,12 @@ void YCbCrFilter::_filter(const cv::Mat &src)
 
     // Extract YCC channels
     split(yccImg, yccChannels);
+
+    // Apply thresholds
+    inRange(yccImg,
+            Scalar(minY, minCr, minCb),
+            Scalar(maxY, maxCr, maxCb),
+            maskImg);
 }
 
 void YCbCrFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
@@ -112,8 +109,6 @@ void YCbCrFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
 
     // Store thresholding result
     if(dstMsk.data)
-        bitwise_and(dstMsk, maskImg, dstMsk);
-    else
         dstMsk = maskImg;
 }
 

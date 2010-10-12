@@ -11,7 +11,7 @@ class Mat;
 
 FaceCAMShiftTracker::FaceCAMShiftTracker(Store* st) : BaseTracker(st, "CAMShift Face")
 {
-    hsvFilter = new HSVFilter(st, 0, 32, 40, 128, 24, 80);
+    hsvFilter = new HSVFilter(st, 150, 30, 32, 256, 32, 224);
     hsvFilter->enable();
     filters.push_back(hsvFilter);
 
@@ -46,8 +46,13 @@ void FaceCAMShiftTracker::track()
 
     // Filtering
     cv::Mat hueImg(tmpSceneImg.size(), CV_8UC1);
-    hsvFilter->filter(tmpSceneImg, hueImg, tmpSceneMsk);
-    ycbcrFilter->filter(tmpSceneImg, store->ignore, tmpSceneMsk);
+    cv::Mat hsvMsk(tmpSceneImg.size(), CV_8UC1);
+    cv::Mat yccMsk(tmpSceneImg.size(), CV_8UC1);
+
+    hsvFilter->filter(tmpSceneImg, hueImg, hsvMsk);
+    ycbcrFilter->filter(tmpSceneImg, store->ignore, yccMsk);
+    bitwise_and(hsvMsk, yccMsk, tmpSceneMsk);
+
     erodeDilateFilter->filter(tmpSceneMsk, tmpSceneMsk, store->ignore);
 
 //    double t = (double)cv::getTickCount();

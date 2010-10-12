@@ -12,8 +12,8 @@ GrayscaleFilter::GrayscaleFilter(Store* st, int mng, int mxg) :
     visGray(false),
     minGray(mng), maxGray(mxg)
 {
-    _images.push_back(new ImageModeParam("Grayscale visual", &visGray, &visGrayImg, &imageStore->dispImg));
-    _images.push_back(new ImageModeParam("Grayscale mask", &visMask, &visMaskImg, &imageStore->dispImg));
+    _images.push_back(new ImageModeParam("Grayscale visual", &visGray, &visGrayImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Grayscale mask", &visMask, &visMaskImg, &st->dispImg));
     _params.push_back(new RangeParam<int>("Min. Gray", Param::RANGE, &minGray, 0, 256, 2));
     _params.push_back(new RangeParam<int>("Max. Gray", Param::RANGE, &maxGray, 0, 256, 2));
 }
@@ -49,9 +49,6 @@ void GrayscaleFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& ds
 
 void GrayscaleFilter::_filter(const cv::Mat& src)
 {
-    // Prepare images to process
-    grayChannel = Mat(src.size(), CV_8UC1);
-
     // Do colour conversion
     cvtColor(src, grayChannel, CV_BGR2GRAY);
 
@@ -65,15 +62,13 @@ void GrayscaleFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
     if(dstImg.data)
     {
         if(dstImg.type() == CV_8UC1)
-            dstImg = grayChannel;
+            grayChannel.copyTo(dstImg);
         else
             cvtColor(grayChannel, dstImg, CV_GRAY2BGR);
     }
 
     // Store thresholding result
     if(dstMsk.data)
-        bitwise_and(dstMsk, maskImg, dstMsk);
-    else
         dstMsk = maskImg;
 }
 

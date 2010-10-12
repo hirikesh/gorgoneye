@@ -10,15 +10,8 @@ public:
 
     void track();
 
-//    enum type { HAAR, FEAT, HYBR, TEST };
-
-//    cv::Mat* getDispImg();
-
 private:
-    BaseDetector* haarDetector;
-    BaseDetector* featureDetector;
-    BaseDetector* hybridDetector;
-    BaseDetector* testDetector;
+    BaseDetector* someDetector;
 };
 
 #endif // EYES_H

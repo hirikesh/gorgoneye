@@ -12,7 +12,7 @@ ErodeDilateFilter::ErodeDilateFilter(Store* st, int ml) :
     visMorph(false),
     morphLevel(ml)
 {
-    _images.push_back(new ImageModeParam("Morphology visual", &visMorph, &visMorphImg, &imageStore->dispImg));
+    _images.push_back(new ImageModeParam("Morphology visual", &visMorph, &visMorphImg, &st->dispImg));
     _params.push_back(new RangeParam<int>("Morphology Depth", Param::RANGE, &morphLevel, 0, 12, 1));
 }
 
@@ -61,6 +61,7 @@ void ErodeDilateFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
 
 void ErodeDilateFilter::_visualise()
 {
+    // Visualise morphed image on request
     if(visMorph)
     {
         if(morphImg.type() == CV_8UC1)

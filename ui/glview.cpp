@@ -80,8 +80,9 @@ void GLView::loadGLTextures(const cv::Mat& image)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     if(npotCapable) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.cols, image.rows, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
+//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.cols, image.rows, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
     } else {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 512, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 32, image.cols, image.rows, GL_BGR, GL_UNSIGNED_BYTE, image.data);
