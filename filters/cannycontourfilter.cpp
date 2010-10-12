@@ -11,6 +11,10 @@ CannyContourFilter::CannyContourFilter(Store* st, double tl, double th, int dt) 
     BaseFilter(st, "Canny-Contour-Fit"),
     threshLow(tl), threshHigh(th), distThresh(dt)
 {
+    _images.push_back(new ImageModeParam("Canny edges", &testImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("Canny contours", &testImg2, &st->dispImg));
+    _images.push_back(new ImageModeParam("Ellipse fit #1", &testImg3, &st->dispImg));
+    _images.push_back(new ImageModeParam("Canny-contour fit", &testImg4, &st->dispImg));
     _params.push_back(new RangeParam<double>("Canny threshold low", Param::RANGE_DBL, &threshLow, 0, 1200 , 5));
     _params.push_back(new RangeParam<double>("Canny threshold high", Param::RANGE_DBL, &threshHigh, 0, 1200, 5));
     _params.push_back(new RangeParam<int>("Distance threshold", Param::RANGE, &distThresh, 0, 255, 1));
@@ -99,7 +103,7 @@ void CannyContourFilter::_filter(const cv::Mat &src)
 
     // showme
     ellipse(testImg3, elip, cv::Scalar(0,0,255), 1);
-return;
+
     cv::Mat fastMaskImg(src.size(), CV_8UC1, cv::Scalar(0));
     ellipse(fastMaskImg, elip, cv::Scalar(255), -1);
 
@@ -135,7 +139,7 @@ return;
 
     // showme
     cvtColor(maskImg, testImg4, CV_GRAY2BGR);
-
+return;
     // FIT FINAL ELLISPE USING CANNY AGAIN
     cv::Mat edges2;
     Sobel(maskImg, edges2, 1, 1, 1, 1);
@@ -178,7 +182,7 @@ return;
 
 void CannyContourFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
 {
-    testImg.copyTo(dstImg);
+//    testImg.copyTo(dstImg);
 }
 
 void CannyContourFilter::_visualise()

@@ -8,7 +8,6 @@
 #include "filters/ycbcrfilter.h"
 #include "filters/erodedilatefilter.h"
 #include "filters/equalisefilter.h"
-#include "filters/cannycontourfilter.h"
 #include "filters/cannyedgefilter.h"
 #include "filters/sobelfilter.h"
 
@@ -60,7 +59,6 @@ Model::Model(int device) :
     filters.push_back(new HSVFilter(&store));
     filters.push_back(new YCbCrFilter(&store));
     filters.push_back(new ErodeDilateFilter(&store));
-    filters.push_back(new CannyContourFilter(&store));
     filters.push_back(new CannyEdgeFilter(&store));
     filters.push_back(new SobelFilter(&store));
 
@@ -95,6 +93,7 @@ void Model::update()
     preProcess();
 
     // Track face
+    faceTracker->track();
     faceHaarTracker->track();
     faceCAMShiftTracker->track();
     faceHaarCAMShiftTracker->track();
@@ -107,6 +106,7 @@ void Model::update()
 
     // Attempt to track eyes even if face failed or
     // was disabled.
+    eyesTracker->track();
     eyesHaarTracker->track();
 
     // Update eyes image only if tracker succeeds.
