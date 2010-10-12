@@ -10,16 +10,6 @@ BaseTracker::BaseTracker(Store* st, const std::string& s) :
 {
 }
 
-//void BaseTracker::setDetector(int type)
-//{
-//    currDetector = detectors[type];
-//}
-
-//int BaseTracker::getCurrDetectorType()
-//{
-//    return currDetector->type();
-//}
-
 std::vector<BaseFilter*> BaseTracker::getFilters()
 {
     return filters;
@@ -39,11 +29,6 @@ void BaseTracker::disable()
 {
     enabled = false;
 }
-
-//bool* BaseTracker::getEnabled()
-//{
-//    return &enabled;
-//}
 
 bool BaseTracker::isEnabled()
 {
