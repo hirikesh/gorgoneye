@@ -22,8 +22,6 @@ public:
     BaseTracker(Store* st, const std::string&);
 
     virtual void track() = 0;
-//    void setDetector(int type);
-//    int getCurrDetectorType();
     std::vector<BaseFilter*> getFilters();
     std::vector<BaseDetector*> getDetectors();
     void enable();
@@ -42,7 +40,6 @@ protected:
     std::vector<BaseFilter*> filters;
     std::vector<BaseDetector*> detectors;
     std::vector<Param*> imageModes;
-//    BaseDetector* currDetector;
 };
 
 #endif // TRACKER_H

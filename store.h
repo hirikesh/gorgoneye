@@ -20,16 +20,18 @@ public:
     cv::Mat faceMsk;
     cv::Mat eyesMsk;
 
-    // Convenience image
-    cv::Mat ignore;
-
-    // Image to display
-    cv::Mat* dispImg;
-
     // Tracked region of interests
     cv::Rect faceRoi; // relative to sceneImg
     cv::Rect eyesRoi; // relative to faceImg
     cv::Rect gazeRoi; // relative to screen
+
+    // Images to display
+    cv::Mat* dispImg;
+    cv::Mat* dispVisImg;
+
+    // Multipurpose unitialised image
+    // MUST NOT BE ALTERED
+    cv::Mat ignore;
 
     // Status flags
     bool faceLocated;
