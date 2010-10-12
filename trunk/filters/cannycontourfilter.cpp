@@ -52,8 +52,7 @@ void CannyContourFilter::_filter(const cv::Mat &src)
 
     // showme
     testImg2 = src.clone();
-    drawContours(testImg2, contours, -1, Scalar(0,0,255), 1);
-    return;
+    drawContours(testImg2, contours, -1, Scalar(255,0,0), 1);
 
     // ATTEMPT TO FIT POLYGON TO FACIAL CONTOUR
     // depends on reliability of canny detector.
@@ -100,7 +99,7 @@ void CannyContourFilter::_filter(const cv::Mat &src)
 
     // showme
     ellipse(testImg3, elip, cv::Scalar(0,0,255), 1);
-
+return;
     cv::Mat fastMaskImg(src.size(), CV_8UC1, cv::Scalar(0));
     ellipse(fastMaskImg, elip, cv::Scalar(255), -1);
 
@@ -179,7 +178,7 @@ void CannyContourFilter::_filter(const cv::Mat &src)
 
 void CannyContourFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
 {
-    testImg2.copyTo(dstImg);
+    testImg.copyTo(dstImg);
 }
 
 void CannyContourFilter::_visualise()

@@ -4,29 +4,28 @@
 #include <cv.h>
 #include <highgui.h>
 #include <vector>
-#include "trackers/facehaartracker.h"
-#include "trackers/facecamshifttracker.h"
-#include "trackers/facehaarcamshifttracker.h"
-#include "trackers/eyeshaartracker.h"
-//#include "trackers/facetracker.h"
-//#include "trackers/eyestracker.h"
-#include "filters/basefilter.h"
 #include "store.h"
 
 class BaseTracker;
+class BaseFilter;
 
 class Model
 {
 public:
     Model(int device);
+
+    void update(); // instructs model to grab new frame and process it, thereby updating Store.
     void preProcess();
     void postProcess();
-    void update(); // instructs model to grab new frame and process it, thereby updating Store.
+
     Store* getStore();
+    cv::Mat* getDispImg();
+
+    std::vector<BaseFilter*> getFilters();
+    std::vector<BaseFilter*>* getPtrFilters();
+
     std::vector<BaseTracker*> getTrackers();
     std::vector<BaseTracker*>* getPtrTrackers();
-    std::vector<BaseFilter*>* getPtrFilters();
-    cv::Mat* getDispImg();
 
 private:
     cv::VideoCapture capture;
@@ -38,8 +37,9 @@ private:
 
     BaseTracker* eyesHaarTracker;
 
-//    BaseTracker* faceTracker;
-//    BaseTracker* eyesTracker;
+    BaseTracker* faceTracker;
+    BaseTracker* eyesTracker;
+    BaseTracker* gazeTracker;
 
     std::vector<BaseFilter*> filters;
     std::vector<BaseTracker*> trackers;

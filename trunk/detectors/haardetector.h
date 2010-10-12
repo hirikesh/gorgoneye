@@ -15,7 +15,7 @@
 #endif
 
 #define HAAR_CC_FACE HAAR_CC_DIR"haarcascade_frontalface_default.xml"
-#define HAAR_CC_EYES HAAR_CC_DIR"haarcascade_lefteye_2splits.xml"
+#define HAAR_CC_EYES HAAR_CC_DIR"haarcascade_righteye_2splits.xml"
 
 
 class HaarDetector : public BaseDetector

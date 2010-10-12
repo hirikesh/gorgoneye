@@ -2,7 +2,6 @@
 #include "hsvfilter.h"
 #include "parameter.h"
 #include "store.h"
-#include <QDebug>
 
 using cv::Mat;
 using cv::Size;
@@ -15,8 +14,8 @@ HSVFilter::HSVFilter(Store* st, int mnh, int mxh, int mns, int mxs, int mnv, int
     minSat(mns), maxSat(mxs),
     minVal(mnv), maxVal(mxv)
 {
-    _images.push_back(new ImageModeParam("Hue visual", &visHue, &visHueImg, &imageStore->dispImg));
-    _images.push_back(new ImageModeParam("HSV mask", &visMask, &visMaskImg, &imageStore->dispImg));
+    _images.push_back(new ImageModeParam("Hue visual", &visHue, &visHueImg, &st->dispImg));
+    _images.push_back(new ImageModeParam("HSV mask", &visMask, &visMaskImg, &st->dispImg));
     _params.push_back(new RangeParam<int>("Min. Hue", Param::RANGE, &minHue, 0, 181, 2));
     _params.push_back(new RangeParam<int>("Max. Hue", Param::RANGE, &maxHue, 0, 181, 2));
     _params.push_back(new RangeParam<int>("Min. Saturation", Param::RANGE, &minSat, 0, 256, 2));
@@ -63,17 +62,8 @@ void HSVFilter::_filter(const cv::Mat &src)
     // Alias
     Size size = src.size();
 
-    // Prepare images to process
-    hsvImg = Mat(size, CV_8UC3);
-
     // Do colour conversion
     cvtColor(src, hsvImg, CV_BGR2HSV);
-
-    // Apply thresholds
-    inRange(hsvImg,
-            Scalar(minHue, minSat, minVal),
-            Scalar(maxHue, maxSat, maxVal),
-            maskImg);
 
     // Populate invidivual channels
     hueChannel = Mat(size, CV_8UC1);
@@ -83,6 +73,29 @@ void HSVFilter::_filter(const cv::Mat &src)
 
     // Extract HSV channels
     split(hsvImg, hsvChannels);
+
+    // Apply thresholds
+    if(minHue <= maxHue)
+        inRange(hsvImg,
+                Scalar(minHue, minSat, minVal),
+                Scalar(maxHue, maxSat, maxVal),
+                maskImg);
+    else
+    {
+        // Threshold saturation and value only
+        inRange(hsvImg,
+                Scalar(0, minSat, minVal),
+                Scalar(181, maxSat, maxVal),
+                maskImg);
+
+        // Threshold lower and upper hues via inversion
+        Mat tmpMaskImg;
+        inRange(hueChannel, Scalar(maxHue), Scalar(minHue), tmpMaskImg);
+        bitwise_not(tmpMaskImg, tmpMaskImg);
+
+        // Merge the two masks
+        bitwise_and(maskImg, tmpMaskImg, maskImg);
+    }
 }
 
 void HSVFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
@@ -101,8 +114,6 @@ void HSVFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
 
     // Store thresholding result
     if(dstMsk.data)
-        bitwise_and(dstMsk, maskImg, dstMsk);
-    else
         dstMsk = maskImg;
 }
 
