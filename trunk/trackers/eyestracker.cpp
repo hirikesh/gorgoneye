@@ -1,14 +1,14 @@
 #include <cv.h>
 #include <QDebug>
 #include "eyestracker.h"
-#include "filters/cannycontourfilter.h"
+#include "filters/ycbcrfilter.h"
 #include "store.h"
 
 EyesTracker::EyesTracker(Store* st) : BaseTracker(st, "Eyes-test")
 {
-    cannyContourFilter = new CannyContourFilter(st);
-    cannyContourFilter->enable();
-    filters.push_back(cannyContourFilter);
+    ycbcrFilter = new YCbCrFilter(st);
+    ycbcrFilter->enable();
+    filters.push_back(ycbcrFilter);
 
     BaseTracker::initImageModes();
 }
@@ -20,10 +20,10 @@ void EyesTracker::track()
     // Preprocessing
 
     // Filtering
-    cannyContourFilter->filter(store->faceImg, store->ignore, store->ignore);
+    ycbcrFilter->filter(store->faceImg, store->ignore, store->ignore);
 
 //    double t = (double)cv::getTickCount();
-//    bool located = someDetector->locate(store->faceImg, store->faceMsk, store->eyesRoi);
+//    located = someDetector->locate(store->faceImg, store->faceMsk, store->eyesRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
 

@@ -3,10 +3,6 @@
 #include "parameter.h"
 #include "store.h"
 
-using cv::Mat;
-using cv::Size;
-using cv::Scalar;
-
 CannyEdgeFilter::CannyEdgeFilter(Store* st, double tl, double th) :
     BaseFilter(st, "Canny Edge"),
     visCanny(false),
@@ -41,7 +37,7 @@ void CannyEdgeFilter::filter(const cv::Mat &srcImg, cv::Mat &dstImg, cv::Mat &ds
 void CannyEdgeFilter::_filter(const cv::Mat &src)
 {
     // Prepare input
-    Mat grayChannel;
+    cv::Mat grayChannel;
 
     // Find Canny edges
     cvtColor(src, grayChannel, CV_BGR2GRAY);

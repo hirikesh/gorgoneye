@@ -12,6 +12,7 @@ public:
 
 private:
     BaseFilter* cannyEdgeFilter;
+    BaseFilter* grayscaleFilter;
 };
 
 #endif // GAZETRACKER_H

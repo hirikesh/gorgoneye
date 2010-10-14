@@ -2,7 +2,6 @@
 #include "sobelfilter.h"
 #include "parameter.h"
 #include "store.h"
-#include <QDebug>
 
 SobelFilter::SobelFilter(Store *st) :
     BaseFilter(st, "Sobel"),

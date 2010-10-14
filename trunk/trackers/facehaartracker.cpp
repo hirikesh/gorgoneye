@@ -28,7 +28,7 @@ void FaceHaarTracker::track()
                           store->faceRoi.height / 2);
 
 //    double t = (double)cv::getTickCount();
-    bool located = haarDetector->locate(tmpSceneImg, store->ignore, tmpFaceRoi);
+    located = haarDetector->locate(tmpSceneImg, store->ignore, tmpFaceRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
 

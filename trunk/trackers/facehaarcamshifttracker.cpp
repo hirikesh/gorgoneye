@@ -13,15 +13,15 @@ FaceHaarCAMShiftTracker::FaceHaarCAMShiftTracker(Store* st) : BaseTracker(st, "H
     haarDetector = new HaarDetector(st, HAAR_CC_FACE, 1.2, 3, NULL, cv::Size(64,72));
     detectors.push_back(haarDetector);
 
-    hsvFilter = new HSVFilter(st, 150, 30, 32, 256, 32, 224);
+    hsvFilter = new HSVFilter(st, MIN_HUE, MAX_HUE, MIN_SAT, MAX_SAT, MIN_VAL, MAX_VAL);
     hsvFilter->enable();
     filters.push_back(hsvFilter);
 
-    ycbcrFilter = new YCbCrFilter(st, 0, 256, 133, 174, 77, 128);
+    ycbcrFilter = new YCbCrFilter(st, MIN_LUM, MAX_LUM, MIN_CR, MAX_CR, MIN_CB, MAX_CB);
     ycbcrFilter->enable();
     filters.push_back(ycbcrFilter);
 
-    erodeDilateFilter = new ErodeDilateFilter(st, 1);
+    erodeDilateFilter = new ErodeDilateFilter(st, ERODE_DILATE_DEPTH);
     erodeDilateFilter->enable();
     filters.push_back(erodeDilateFilter);
 
@@ -46,7 +46,6 @@ void FaceHaarCAMShiftTracker::track()
                           store->faceRoi.width / 2,
                           store->faceRoi.height / 2);
 
-    bool located;
     if(!store->faceLocated)
     {
 //        double t = (double)cv::getTickCount();

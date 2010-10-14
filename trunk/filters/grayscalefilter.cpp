@@ -3,10 +3,6 @@
 #include "parameter.h"
 #include "store.h"
 
-using cv::Mat;
-using cv::Size;
-using cv::Scalar;
-
 GrayscaleFilter::GrayscaleFilter(Store* st, int mng, int mxg) :
     BaseFilter(st, "Grayscale"),
     visGray(false),
@@ -53,7 +49,7 @@ void GrayscaleFilter::_filter(const cv::Mat& src)
     cvtColor(src, grayChannel, CV_BGR2GRAY);
 
     // Apply thresholds
-    inRange(grayChannel, Scalar(minGray), Scalar(maxGray), maskImg);
+    inRange(grayChannel, cv::Scalar(minGray), cv::Scalar(maxGray), maskImg);
 }
 
 void GrayscaleFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)

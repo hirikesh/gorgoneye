@@ -17,6 +17,8 @@ public:
     void track();
 
 private:
+    BaseFilter* cannyContourFilter;
+
     BaseDetector* someDetector;
 };
 

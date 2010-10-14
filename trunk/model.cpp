@@ -14,6 +14,7 @@
 #include "trackers/facehaartracker.h"
 #include "trackers/facecamshifttracker.h"
 #include "trackers/facehaarcamshifttracker.h"
+#include "trackers/facehaarcamshiftactracker.h"
 #include "trackers/eyeshaartracker.h"
 
 #include "trackers/facetracker.h"
@@ -33,6 +34,7 @@ Model::Model(int device) :
     faceHaarTracker(new FaceHaarTracker(&store)),
     faceCAMShiftTracker(new FaceCAMShiftTracker(&store)),
     faceHaarCAMShiftTracker(new FaceHaarCAMShiftTracker(&store)),
+    faceHaarCAMShiftACTracker(new FaceHaarCAMShiftACTracker(&store)),
     eyesHaarTracker(new EyesHaarTracker(&store)),
 
     // Work-in-progress trackers
@@ -65,12 +67,14 @@ Model::Model(int device) :
     // Instantiate completed trackers
     faceHaarTracker->disable();
     faceCAMShiftTracker->disable();
-    faceHaarCAMShiftTracker->enable();
+    faceHaarCAMShiftTracker->disable();
+    faceHaarCAMShiftACTracker->enable();
     eyesHaarTracker->enable();
 
     trackers.push_back(faceHaarTracker);
     trackers.push_back(faceCAMShiftTracker);
     trackers.push_back(faceHaarCAMShiftTracker);
+    trackers.push_back(faceHaarCAMShiftACTracker);
     trackers.push_back(eyesHaarTracker);
 
     // Instantiate work-in-progress trackers
@@ -93,10 +97,11 @@ void Model::update()
     preProcess();
 
     // Track face
-    faceTracker->track();
     faceHaarTracker->track();
     faceCAMShiftTracker->track();
     faceHaarCAMShiftTracker->track();
+    faceHaarCAMShiftACTracker->track();
+    faceTracker->track();
 
     // Update face image even if face tracker
     // failed or was disabled.
@@ -106,8 +111,8 @@ void Model::update()
 
     // Attempt to track eyes even if face failed or
     // was disabled.
-    eyesTracker->track();
     eyesHaarTracker->track();
+    eyesTracker->track();
 
     // Update eyes image only if tracker succeeds.
     // A successful face track could render the old
