@@ -22,6 +22,10 @@ public:
     void filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk);
 //    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi);
 
+    cv::Mat hueChannel;
+    cv::Mat satChannel;
+    cv::Mat valChannel;
+
 private:
     bool visHue;
     bool visMask;
@@ -34,9 +38,9 @@ private:
     int maxVal;
 
     cv::Mat hsvImg;
-    cv::Mat hueChannel;
-    cv::Mat satChannel;
-    cv::Mat valChannel;
+//    cv::Mat hueChannel;
+//    cv::Mat satChannel;
+//    cv::Mat valChannel;
     cv::Mat visHueImg;
 
     cv::Mat maskImg;

@@ -1,4 +1,5 @@
 #include <cv.h>
+#include <highgui.h>
 #include <QDebug>
 #include "eyeshaartracker.h"
 #include "detectors/haardetector.h"
@@ -24,7 +25,7 @@ void EyesHaarTracker::track()
                               store->faceRoi.height / 2);
 
 //    double t = (double)cv::getTickCount();
-    bool located = haarDetector->locate(store->faceImg(reducedFaceRoi), store->ignore, store->eyesRoi);
+    located = haarDetector->locate(store->faceImg(reducedFaceRoi), store->ignore, store->eyesRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
 

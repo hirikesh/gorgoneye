@@ -4,7 +4,6 @@
 #include "store.h"
 
 using cv::Mat;
-using cv::Size;
 using cv::Scalar;
 
 YCbCrFilter::YCbCrFilter(Store *st, int mny, int mxy, int mnr, int mxr, int mnb, int mxb, int dcr) :
@@ -64,7 +63,7 @@ void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk
 void YCbCrFilter::_filter(const cv::Mat &src)
 {
     // Alias
-    Size size = src.size();
+    cv::Size size = src.size();
 
     // Do colour conversion
     cvtColor(src, yccImg, CV_BGR2YCrCb);

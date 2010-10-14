@@ -3,10 +3,6 @@
 #include "parameter.h"
 #include "store.h"
 
-using cv::Mat;
-using cv::Size;
-using cv::Scalar;
-
 ErodeDilateFilter::ErodeDilateFilter(Store* st, int ml) :
     BaseFilter(st, "Erode-Dilate"),
     visMorph(false),
@@ -46,10 +42,10 @@ void ErodeDilateFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& 
 void ErodeDilateFilter::_filter(const cv::Mat& src)
 {
     // Perform erosion operations
-    morphologyEx(src, morphImg, cv::MORPH_CLOSE, Mat(), cv::Point(-1,-1), morphLevel);
+    morphologyEx(src, morphImg, cv::MORPH_CLOSE, cv::Mat(), cv::Point(-1,-1), morphLevel);
 
     // Perform dilation operations
-    morphologyEx(morphImg, morphImg, cv::MORPH_OPEN, Mat(), cv::Point(-1,-1), morphLevel);
+    morphologyEx(morphImg, morphImg, cv::MORPH_OPEN, cv::Mat(), cv::Point(-1,-1), morphLevel);
 }
 
 void ErodeDilateFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)

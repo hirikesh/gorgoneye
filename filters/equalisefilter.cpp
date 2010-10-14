@@ -2,7 +2,6 @@
 #include "parameter.h"
 #include "equalisefilter.h"
 
-
 using namespace cv;
 
 EqualiseFilter::EqualiseFilter(Store* st) :
@@ -20,24 +19,24 @@ void EqualiseFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dst
     _store(dstImg, dstMsk);
 }
 
-void EqualiseFilter::_filter(const cv::Mat& srcImg)
+void EqualiseFilter::_filter(const cv::Mat& src)
 {
 
     // Alias
-    Size srcImgSize = srcImg.size();
+    Size size = src.size();
 
     if (useHSV)
     {
          // Prepare images to process
-        Mat hsvImg = Mat(srcImgSize, CV_8UC3);
+        Mat hsvImg = Mat(size, CV_8UC3);
 
         // Do colour conversion
-        cvtColor(srcImg, hsvImg, CV_BGR2HSV);
+        cvtColor(src, hsvImg, CV_BGR2HSV);
 
         // Populate individual channels
-        Mat hueChannel = Mat(srcImgSize, CV_8UC1);
-        Mat satChannel = Mat(srcImgSize, CV_8UC1);
-        Mat valChannel = Mat(srcImgSize, CV_8UC1);
+        Mat hueChannel = Mat(size, CV_8UC1);
+        Mat satChannel = Mat(size, CV_8UC1);
+        Mat valChannel = Mat(size, CV_8UC1);
         Mat hsvChannels[] = {hueChannel, satChannel, valChannel};
         // Extract HSV channels
         split(hsvImg, hsvChannels);
@@ -51,15 +50,15 @@ void EqualiseFilter::_filter(const cv::Mat& srcImg)
     else
     {
         // Prepare images to process
-        Mat yccImg = Mat(srcImgSize, CV_8UC3);
+        Mat yccImg = Mat(size, CV_8UC3);
 
         // Do colour conversion
-        cvtColor(srcImg, yccImg, CV_BGR2YCrCb);
+        cvtColor(src, yccImg, CV_BGR2YCrCb);
 
         // Populate individual channels
-        Mat lumaChannel = Mat(srcImgSize, CV_8UC1);
-        Mat crChannel = Mat(srcImgSize, CV_8UC1);
-        Mat cbChannel = Mat(srcImgSize, CV_8UC1);
+        Mat lumaChannel = Mat(size, CV_8UC1);
+        Mat crChannel = Mat(size, CV_8UC1);
+        Mat cbChannel = Mat(size, CV_8UC1);
         Mat yccChannels[] = {lumaChannel, crChannel, cbChannel};
 
         // Extract YCC channels

@@ -19,9 +19,13 @@ public:
                 int mnb = 0, int mxb = 256,
                 int dcr = 1);
 
-    void setParams(int, int, int, int, int, int, int);
+    void setParams(int, int, int, int, int, int, int dcr = 1);
     void filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk);
 //    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi);
+
+    cv::Mat yChannel;
+    cv::Mat crChannel;
+    cv::Mat cbChannel;
 
 private:
     bool visCr;
@@ -37,9 +41,9 @@ private:
     int dstCr;
 
     cv::Mat yccImg;
-    cv::Mat yChannel;
-    cv::Mat crChannel;
-    cv::Mat cbChannel;
+//    cv::Mat yChannel;
+//    cv::Mat crChannel;
+//    cv::Mat cbChannel;
     cv::Mat visCrImg;
     cv::Mat visCbImg;
 

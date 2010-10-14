@@ -11,7 +11,7 @@ public:
     void track();
 
 private:
-    BaseFilter* cannyContourFilter;
+    BaseFilter* ycbcrFilter;
 
     BaseDetector* someDetector;
 };

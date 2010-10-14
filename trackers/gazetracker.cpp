@@ -2,6 +2,7 @@
 #include <QDebug>
 #include "gazetracker.h"
 #include "filters/cannyedgefilter.h"
+#include "filters/grayscalefilter.h"
 // insert gaze detection algorithm header here!
 #include "store.h"
 
@@ -12,6 +13,10 @@ GazeTracker::GazeTracker(Store* st) :
     cannyEdgeFilter->enable();
     filters.push_back(cannyEdgeFilter);
 
+    grayscaleFilter = new GrayscaleFilter(st);
+    grayscaleFilter->enable();
+    filters.push_back(grayscaleFilter);
+
     BaseTracker::initImageModes();
 }
 
@@ -21,11 +26,16 @@ void GazeTracker::track()
     if(!enabled) return;
 
     // Preprocessing
-    cv::Mat gazeImg(1, 1, CV_8UC3), cleanGazeImg;
-    cannyEdgeFilter->filter(store->eyesImg, gazeImg, store->ignore);
+
+    // Filtering
+    cv::Mat gazeImg;
+    cannyEdgeFilter->filter(store->eyesImg, store->ignore, store->ignore);
+    grayscaleFilter->filter(store->eyesImg, gazeImg, store->ignore);
+
+    gazeImg.convertTo(gazeImg, CV_32FC1, 1./255);
 
 //    double t = (double)cv::getTickCount();
-//    bool located = someDetector->locate(store->faceImg(reducedFaceRoi), store->ignore, store->eyesRoi);
+//    located = someDetector->locate(store->faceImg(reducedFaceRoi), store->ignore, store->eyesRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
 

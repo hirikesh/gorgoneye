@@ -4,7 +4,6 @@
 #include "store.h"
 
 using cv::Mat;
-using cv::Size;
 using cv::Scalar;
 
 HSVFilter::HSVFilter(Store* st, int mnh, int mxh, int mns, int mxs, int mnv, int mxv) :
@@ -60,7 +59,7 @@ void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk)
 void HSVFilter::_filter(const cv::Mat &src)
 {
     // Alias
-    Size size = src.size();
+    cv::Size size = src.size();
 
     // Do colour conversion
     cvtColor(src, hsvImg, CV_BGR2HSV);

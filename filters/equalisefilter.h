@@ -14,11 +14,16 @@ public:
     void filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk);
 
 private:
+    bool useHSV;
+
+    cv::Mat hsvImg;
+    cv::Mat grayImg;
+
     void _filter(const cv::Mat& src);
     void _store(cv::Mat &dstImg, cv::Mat &dstMsk);
     void _visualise();
 
-    bool useHSV;
+
 
     cv::Mat equalisedImg;
 };

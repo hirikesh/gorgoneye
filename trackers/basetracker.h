@@ -36,6 +36,7 @@ protected:
     Store* store;
     const std::string _name;
     bool enabled;
+    bool located;
 
     std::vector<BaseFilter*> filters;
     std::vector<BaseDetector*> detectors;

@@ -99,7 +99,7 @@ void GUITrackerDiag::init()
 
     trackerTree->header()->hide();
 //    trackerTree->header()->resizeSection(0, 190);
-    trackerTree->expandAll();
+//    trackerTree->expandAll();
 //    trackerTree->setMinimumWidth(300);
 
     for (unsigned int i = 0; i < paramDialogs.size(); i++)

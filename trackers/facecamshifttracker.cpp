@@ -11,15 +11,15 @@ class Mat;
 
 FaceCAMShiftTracker::FaceCAMShiftTracker(Store* st) : BaseTracker(st, "CAMShift Face")
 {
-    hsvFilter = new HSVFilter(st, 150, 30, 32, 256, 32, 224);
+    hsvFilter = new HSVFilter(st, MIN_HUE, MAX_HUE, MIN_SAT, MAX_SAT, MIN_VAL, MAX_VAL);
     hsvFilter->enable();
     filters.push_back(hsvFilter);
 
-    ycbcrFilter = new YCbCrFilter(st, 0, 256, 133, 174, 77, 128);
+    ycbcrFilter = new YCbCrFilter(st, MIN_LUM, MAX_LUM, MIN_CR, MAX_CR, MIN_CB, MAX_CB);
     ycbcrFilter->enable();
     filters.push_back(ycbcrFilter);
 
-    erodeDilateFilter = new ErodeDilateFilter(st, 2);
+    erodeDilateFilter = new ErodeDilateFilter(st, ERODE_DILATE_DEPTH);
     erodeDilateFilter->enable();
     filters.push_back(erodeDilateFilter);
 
@@ -56,7 +56,7 @@ void FaceCAMShiftTracker::track()
     erodeDilateFilter->filter(tmpSceneMsk, tmpSceneMsk, store->ignore);
 
 //    double t = (double)cv::getTickCount();
-    bool located = camShiftDetector->locate(hueImg, tmpSceneMsk, tmpFaceRoi);
+    located = camShiftDetector->locate(hueImg, tmpSceneMsk, tmpFaceRoi);
 //    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
 //    qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
 

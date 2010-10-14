@@ -7,16 +7,17 @@ class CannyContourFilter : public BaseFilter
 {
 public:
     CannyContourFilter(Store* st,
-                       double tl = 160, double th = 320,
-                       int dt = 164);
+                       double tl = 80, double th = 160,
+                       double mnd = 0.6, double mxd = 0.65);
 
     void setParams();
     void filter(const cv::Mat &srcImg, cv::Mat &dstImg, cv::Mat &dstMsk);
 
 private:
-    double threshLow;
-    double threshHigh;
-    int distThresh;
+    double minGrad;
+    double maxGrad;
+    double minDist;
+    double maxDist;
 
     cv::Mat testImg;
     cv::Mat testImg2;
@@ -26,6 +27,11 @@ private:
     void _filter(const cv::Mat &src);
     void _store(cv::Mat &dstImg, cv::Mat &dstMsk);
     void _visualise();
+
+
 };
+
+
+bool _predicate(const cv::Point&, const cv::Point&);
 
 #endif // CANNYCONTOURFILTER_H
