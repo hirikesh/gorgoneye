@@ -1,8 +1,8 @@
 #include <cv.h>
 #include <QDebug>
 #include "facehaarcamshifttracker.h"
-#include "filters/ycbcrfilter.h"
 #include "filters/hsvfilter.h"
+#include "filters/ycbcrfilter.h"
 #include "filters/erodedilatefilter.h"
 #include "detectors/haardetector.h"
 #include "detectors/camshiftdetector.h"
@@ -48,10 +48,14 @@ void FaceHaarCAMShiftTracker::track()
 
     if(!store->faceLocated)
     {
-//        double t = (double)cv::getTickCount();
+#if(TIME_FACE_TRACKERS)
+        double t = (double)cv::getTickCount();
+#endif /* TIME_FACE_TRACKERS */
         located = haarDetector->locate(tmpSceneImg, store->ignore, tmpFaceRoi);
-//        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//        qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#if(TIME_FACE_TRACKERS)
+        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+        qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#endif /* TIME_FACE_TRACKERS */
     }
     else
     {
@@ -66,10 +70,14 @@ void FaceHaarCAMShiftTracker::track()
 
         erodeDilateFilter->filter(tmpSceneMsk, tmpSceneMsk, store->ignore);
 
-//        double t = (double)cv::getTickCount();
+#if(TIME_FACE_TRACKERS)
+        double t = (double)cv::getTickCount();
+#endif /* TIME_FACE_TRACKERS */
         located = camShiftDetector->locate(hueImg, tmpSceneMsk, tmpFaceRoi);
-//        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//        qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#if(TIME_FACE_TRACKERS)
+        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+        qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#endif /* TIME_FACE_TRACKERS */
     }
 
     if(located) {

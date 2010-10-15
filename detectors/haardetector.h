@@ -26,11 +26,12 @@ public:
     bool locate(const cv::Mat& srcImg, const cv::Mat& srcMsk, cv::Rect& srcRoi);
 
 private:
-    cv::CascadeClassifier cClassifier;
     double scaleFactor;
     int minNeighbours;
     int flags;
     cv::Size minSize;
+
+    cv::CascadeClassifier cClassifier;
 };
 
 #endif // HAAR_H

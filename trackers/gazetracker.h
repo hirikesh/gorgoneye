@@ -14,6 +14,8 @@ private:
     BaseFilter* cannyEdgeFilter;
     BaseFilter* grayscaleFilter;
     BaseFilter* ycbcrFilter;
+
+    BaseDetector* someDetector;
 };
 
 #endif // GAZETRACKER_H
