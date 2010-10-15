@@ -113,10 +113,18 @@ void FaceHaarCAMShiftACTracker::track()
 
             minhue = minhue - 90 > 0 ? minhue - 90 : minhue + 90;
             maxhue = maxhue - 90 > 0 ? maxhue - 90 : maxhue + 90;
+            qDebug() << "Auto-calibrating...";
+            qDebug() << "Hue:" << minhue << maxhue;
+            qDebug() << "Sat:" << minsat << maxsat;
+            qDebug() << "Val:" << minval << maxval;
+            qDebug() << "Lum:" << miny   << maxy;
+            qDebug() << "C.r:" << mincr  << maxcr;
+            qDebug() << "C.b:" << mincb  << maxcb;
+            qDebug() << "____________";
 
             // Set min. and max. channel thresholds for CAMShift's next run
-            ((HSVFilter*)hsvFilter)->setParams(maxhue, minhue, minsat, maxsat, minval, maxval);
-            ((YCbCrFilter*)ycbcrFilter)->setParams(miny, maxy, mincr, maxcr, mincb, maxcb);
+            ((HSVFilter*)hsvFilter)->setParams(maxhue, minhue+1, minsat, maxsat+1, minval, maxval+1);
+            ((YCbCrFilter*)ycbcrFilter)->setParams(miny, maxy+1, mincr, maxcr+1, mincb, maxcb+1);
         }
     }
     else
