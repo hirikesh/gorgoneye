@@ -1,21 +1,13 @@
 #include <cv.h>
-#include <highgui.h>
-#include <QGroupBox>
-#include <QComboBox>
 #include <QTimer>
-#include <QGridLayout>
 #include <QDesktopWidget>
 #include <QRect>
 #include <QDebug>
 #include "control.h"
 #include "ui_control.h"
-#include "parameter.h"
-#include "ui/guiparam.h"
 #include "ui/glview.h"
 #include "ui/guiprocessdiag.h"
 #include "ui/guitrackerdiag.h"
-#include "ui/guiparamdiag.h"
-#include "detectors/basedetector.h"
 
 using cv::Mat;
 using namespace std;
