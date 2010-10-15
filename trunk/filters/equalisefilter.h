@@ -1,9 +1,7 @@
 #ifndef EQUALISEFILTER_H
 #define EQUALISEFILTER_H
 
-#include <cv.h>
-#include <string>
-#include "filters/basefilter.h"
+#include "basefilter.h"
 
 class Store;
 
@@ -18,14 +16,11 @@ private:
 
     cv::Mat hsvImg;
     cv::Mat grayImg;
+    cv::Mat equalisedImg;
 
     void _filter(const cv::Mat& src);
     void _store(cv::Mat &dstImg, cv::Mat &dstMsk);
     void _visualise();
-
-
-
-    cv::Mat equalisedImg;
 };
 
 #endif // EQUALISEFILTER_H

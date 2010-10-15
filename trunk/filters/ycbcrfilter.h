@@ -3,13 +3,6 @@
 
 #include "basefilter.h"
 
-namespace cv
-{
-    template <class T>
-    class Size_;
-    typedef Size_<int> Size;
-}
-
 class YCbCrFilter : public BaseFilter
 {
 public:
@@ -41,9 +34,6 @@ private:
     int dstCr;
 
     cv::Mat yccImg;
-//    cv::Mat yChannel;
-//    cv::Mat crChannel;
-//    cv::Mat cbChannel;
     cv::Mat visCrImg;
     cv::Mat visCbImg;
 

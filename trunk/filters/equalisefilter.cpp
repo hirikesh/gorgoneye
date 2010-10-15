@@ -1,6 +1,7 @@
 #include <cv.h>
-#include "parameter.h"
 #include "equalisefilter.h"
+#include "parameter.h"
+#include "store.h"
 
 using namespace cv;
 

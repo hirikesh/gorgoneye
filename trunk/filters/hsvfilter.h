@@ -3,13 +3,6 @@
 
 #include "basefilter.h"
 
-namespace cv
-{
-    template <class T>
-    class Size_;
-    typedef Size_<int> Size;
-}
-
 class HSVFilter : public BaseFilter
 {
 public:
@@ -38,9 +31,6 @@ private:
     int maxVal;
 
     cv::Mat hsvImg;
-//    cv::Mat hueChannel;
-//    cv::Mat satChannel;
-//    cv::Mat valChannel;
     cv::Mat visHueImg;
 
     cv::Mat maskImg;
