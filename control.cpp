@@ -4,6 +4,8 @@
 #include <QComboBox>
 #include <QTimer>
 #include <QGridLayout>
+#include <QDesktopWidget>
+#include <QRect>
 #include <QDebug>
 #include "control.h"
 #include "ui_control.h"
@@ -15,8 +17,6 @@
 #include "ui/guiparamdiag.h"
 #include "detectors/basedetector.h"
 
-#define USE_OPENGL 1
-
 using cv::Mat;
 using namespace std;
 
@@ -24,20 +24,24 @@ Control::Control(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GEyeTracker),
     timer(new QTimer(this)),
+    imgModeGroup(new QButtonGroup()),
     model(new Model(0)),
-    imgModeGroup(new QButtonGroup())
+    opengl(new GLView(model->getStore()))
 {
-//    vector<bool*> is_valid_roi;
-//    is_valid_roi.push_back(&model->getStore()->faceLocated);
-//    is_valid_roi.push_back(&model->getStore()->eyesLocated);
-//    opengl = new GLView(is_valid_roi);
-    opengl = new GLView(model->getStore());
+    // START TEST CODE
+    // Determine screen res for full screen training/gaze estimation
+    QDesktopWidget* desktopWidget = QApplication::desktop();
+    QRect screenRes = desktopWidget->screenGeometry();
+    qDebug() << screenRes.width() << screenRes.height();
+    // END TEST CODE
 
+    // Setup gorgoneye tracker and UI
     initGUI();
 }
 
 Control::~Control()
 {
+    delete opengl;
     delete model;
     delete ui;
 }
@@ -45,42 +49,35 @@ Control::~Control()
 void Control::initGUI()
 {
     ui->setupUi(this);
-    vector<BaseTracker*> trackers = model->getTrackers();
+
+    // Setup camera viewport
+    ui->viewLayout->insertWidget(0, opengl);
+
+    // Setup tracker and filter UI
     GUIProcessDiag* filterList = new GUIProcessDiag("Filters:" , model, this);
     GUITrackerDiag* trackerList = new GUITrackerDiag("Trackers:", model, this);
     ui->auxLayout->insertWidget(0, filterList);
     ui->auxLayout->insertWidget(1, trackerList);
 
-#if(USE_OPENGL)
-    ui->viewLayout->insertWidget(0, opengl);
-#else
-    ui->viewFrame->hide();
-    ui->mainLayout->deleteLater();
-#endif
-
-    timer->setInterval(35); // timer expires every N ms
+    // Setup basic camera and tracker control
+    timer->setInterval(CAP_TIMER_MS); // timer expires every N ms
     connect(timer, SIGNAL(timeout()), this, SLOT(procFrame()));
     connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
     connect(ui->stopBtn, SIGNAL(clicked()), timer, SLOT(stop()));
 }
-// Event Handlers
 
+
+// Main Event Handler
 void Control::procFrame()
 {
+    // Update the model:
+    //  Grabs new frame from webcam and does tracking
+    //  Updates 'store' with new results
     model->update();
 
-//    cv::Rect f = model->getStore()->faceRoi;
-//    cv::Rect e = model->getStore()->eyesRoi + f.tl();
-
-#if(USE_OPENGL)
-//    opengl->setFaceROI(f.x, f.y, f.width, f.height);
-//    opengl->setEyesROI(e.x, e.y, e.width, e.height);
-//    opengl->loadGLTextures(*model->getDispImg());
+    // Updates opengl view:
+    //  Grabs updated image and ROI data from 'store'
+    //  Draws results to OpenGL viewport
     opengl->loadGLTextures();
     opengl->updateGL();
-#else
-    cv::rectangle(model->getStore()->sceneImg, f, cv::Scalar(0,200,0), 2);
-    cv::rectangle(model->getStore()->faceImg, e, cv::Scalar(200,0,0), 2);
-    imshow("Display", *model->getDispImg());
-#endif
 }

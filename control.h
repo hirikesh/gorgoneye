@@ -3,10 +3,12 @@
 
 #include <cv.h>
 #include <QWidget>
-#include <QButtonGroup>
 #include "model.h"
 
+#define CAP_TIMER_MS 33
+
 class QGridLayout;
+class QButtonGroup;
 class BaseDetector;
 class GLView;
 
@@ -21,18 +23,19 @@ class Control : public QWidget
 public:
     explicit Control(QWidget *parent = 0);
     ~Control();
-    void createTrackerGUI(BaseTracker*);
-    void createDetectorGUI(BaseDetector*, QGridLayout*);
 
 public slots:
-    void procFrame();   
+    void procFrame();
+
 private:
     void initGUI();
     Ui::GEyeTracker *ui;
+
     QTimer* timer;
+    QButtonGroup* imgModeGroup;
+
     Model* model;
     GLView* opengl;
-    QButtonGroup* imgModeGroup;
 };
 
 #endif // CONTROL_H
