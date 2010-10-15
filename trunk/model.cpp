@@ -132,19 +132,9 @@ Store* Model::getStore()
     return &store;
 }
 
-vector<BaseFilter*> Model::getFilters()
-{
-    return filters;
-}
-
 vector<BaseFilter*>* Model::getPtrFilters()
 {
     return &filters;
-}
-
-vector<BaseTracker*> Model::getTrackers()
-{
-    return trackers;
 }
 
 vector<BaseTracker*>* Model::getPtrTrackers()

@@ -21,10 +21,7 @@ public:
     Store* getStore();
     cv::Mat* getDispImg();
 
-    std::vector<BaseFilter*> getFilters();
     std::vector<BaseFilter*>* getPtrFilters();
-
-    std::vector<BaseTracker*> getTrackers();
     std::vector<BaseTracker*>* getPtrTrackers();
 
 private:
