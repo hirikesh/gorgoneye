@@ -32,6 +32,13 @@ public:
     // MUST NOT BE ALTERED
     cv::Mat ignore;
 
+    // Gaze training and estimation
+    bool training_mode;
+    cv::Mat calibImg;
+    cv::Point calibPoint;
+    cv::Mat gazeImg;
+    cv::Point gazePoint;
+
     // Status flags
     bool faceLocated;
     bool eyesLocated;

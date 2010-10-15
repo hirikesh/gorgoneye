@@ -3,6 +3,7 @@
 #include "gazetracker.h"
 #include "filters/cannyedgefilter.h"
 #include "filters/grayscalefilter.h"
+#include "filters/ycbcrfilter.h"
 // insert gaze detection algorithm header here!
 #include "store.h"
 
@@ -17,6 +18,10 @@ GazeTracker::GazeTracker(Store* st) :
     grayscaleFilter->enable();
     filters.push_back(grayscaleFilter);
 
+    ycbcrFilter = new YCbCrFilter(st);
+    ycbcrFilter->enable();
+    filters.push_back(ycbcrFilter);
+
     BaseTracker::initImageModes();
 }
 
@@ -28,11 +33,11 @@ void GazeTracker::track()
     // Preprocessing
 
     // Filtering
-    cv::Mat gazeImg;
     cannyEdgeFilter->filter(store->eyesImg, store->ignore, store->ignore);
-    grayscaleFilter->filter(store->eyesImg, gazeImg, store->ignore);
+    grayscaleFilter->filter(store->eyesImg, store->gazeImg, store->ignore);
+    ycbcrFilter->filter(store->eyesImg, store->ignore, store->ignore);
 
-    gazeImg.convertTo(gazeImg, CV_32FC1, 1./255);
+    store->gazeImg.convertTo(store->gazeImg, CV_32FC1, 1./255);
 
 //    double t = (double)cv::getTickCount();
 //    located = someDetector->locate(store->faceImg(reducedFaceRoi), store->ignore, store->eyesRoi);
