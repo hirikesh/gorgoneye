@@ -91,10 +91,21 @@ Model::Model(int device) :
     store.faceRoi = cv::Rect(0, 0, 640, 480);
 }
 
+#if PREPROC_STAGE == 1
+#define PREPROC_FACE
+#elif PREPROC_STAGE == 2
+#define PREPROC_EYES
+#elif PREPROC_STAGE == 3
+#define PREPROC_GAZE
+#endif /* PREPROC_STAGE */
+
 void Model::update()
 {
     capture >> store.sceneImg;
+
+#ifdef PREPROC_FACE
     preProcess();
+#endif /* PREPROC_FACE */
 
     // Track face
     faceHaarTracker->track();
@@ -107,7 +118,9 @@ void Model::update()
     // failed or was disabled.
     store.faceImg = store.sceneImg(store.faceRoi);
 
-//    preProcess();
+#ifdef PREPROC_EYES
+    preProcess();
+#endif /* PREPROC_EYES */
 
     // Attempt to track eyes even if face failed or
     // was disabled.
@@ -120,7 +133,9 @@ void Model::update()
     if(store.eyesLocated)
     {
         store.eyesImg = store.faceImg(store.eyesRoi);
-//        preProcess();
+#ifdef PREPROC_GAZE
+        preProcess();
+#endif /* PREPROC_GAZE */
         gazeTracker->track();
     }
 
@@ -149,16 +164,24 @@ Mat* Model::getDispImg()
 
 void Model::preProcess()
 {
-    // run each filter in turn
-//    double t = (double)cv::getTickCount();
+
+#if(TIME_FILTERS)
+    double t = (double)cv::getTickCount();
+#endif /* TIME_FILTERS */
     for (unsigned int i = 0; i < filters.size(); i++)
     {
+#if defined(PREPROC_FACE)
         filters[i]->filter(store.sceneImg, store.sceneImg, store.ignore);
-//        filters[i]->filter(store.faceImg, store.faceImg, store.ignore);
-//        filters[i]->filter(store.eyesImg, store.eyesImg, store.ignore);
+#elif defined(PREPROC_EYES)
+        filters[i]->filter(store.faceImg, store.faceImg, store.ignore);
+#elif defined(PREPROC_GAZE)
+        filters[i]->filter(store.eyesImg, store.eyesImg, store.ignore);
+#endif
     }
-//    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//    qDebug() << "Preproc. speed:" << 1000*t << "ms";
+#if(TIME_FILTERS)
+    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+    qDebug() << "Preproc. speed:" << 1000*t << "ms";
+#endif /* TIME_FILTERS */
 }
 
 void Model::postProcess()
