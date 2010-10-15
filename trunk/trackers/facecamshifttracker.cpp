@@ -1,8 +1,8 @@
 #include <cv.h>
 #include <QDebug>
 #include "facecamshifttracker.h"
-#include "filters/ycbcrfilter.h"
 #include "filters/hsvfilter.h"
+#include "filters/ycbcrfilter.h"
 #include "filters/erodedilatefilter.h"
 #include "detectors/camshiftdetector.h"
 #include "store.h"
@@ -55,10 +55,14 @@ void FaceCAMShiftTracker::track()
 
     erodeDilateFilter->filter(tmpSceneMsk, tmpSceneMsk, store->ignore);
 
-//    double t = (double)cv::getTickCount();
+#if(TIME_FACE_TRACKERS)
+    double t = (double)cv::getTickCount();
+#endif /* TIME_FACE_TRACKERS */
     located = camShiftDetector->locate(hueImg, tmpSceneMsk, tmpFaceRoi);
-//    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//    qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#if(TIME_FACE_TRACKERS)
+    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+    qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#endif /* TIME_FACE_TRACKERS */
 
     if(located) {
         // Postprocessing

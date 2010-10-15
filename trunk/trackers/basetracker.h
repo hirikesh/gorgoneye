@@ -12,6 +12,11 @@
 #include <vector>
 #include <string>
 
+// TIME_xxxx_TRACKERS: 0 - no ticks, 1 - ticks via QDebug
+#define TIME_FACE_TRACKERS 0
+#define TIME_EYES_TRACKERS 0
+#define TIME_GAZE_TRACKERS 0
+
 class BaseDetector;
 class Store;
 class Param;

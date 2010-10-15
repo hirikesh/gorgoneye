@@ -21,15 +21,19 @@ void FaceTracker::track()
 
     // Filtering
     cannyContourFilter->filter(store->sceneImg(store->faceRoi), store->ignore, store->ignore);
+return;
+#if(TIME_FACE_TRACKERS)
+    double t = (double)cv::getTickCount();
+#endif /* TIME_FACE_TRACKERS */
+    located = someDetector->locate(store->sceneImg, store->sceneMsk, store->faceRoi);
+#if(TIME_FACE_TRACKERS)
+    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+    qDebug() << someDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#endif /* TIME_FACE_TRACKERS */
 
-//    double t = (double)cv::getTickCount();
-//    located = someDetector->locate(store->sceneImg, store->sceneMsk, store->faceRoi);
-//    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//    qDebug() << hybridDetector->name().c_str() << "speed:" << 1000*t << "ms";
-
-//    if(located) {
+    if(located) {
         // Postprocessing
-//    }
+    }
     // Updating store bool after attempting to ensures ROIs are valid
-//    store->faceLocated = located;
+    store->faceLocated = located;
 }

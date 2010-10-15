@@ -6,11 +6,11 @@ using namespace cv;
 
 HaarDetector::HaarDetector(Store *st, string td, double sf, int mn, bool fg, Size ms) :
     BaseDetector(st, "Haar"),
-    cClassifier(td),
     scaleFactor(sf),
     minNeighbours(mn),
     flags(fg),
-    minSize(ms)
+    minSize(ms),
+    cClassifier(td)
 {
     // Create Parameters that will be used
     _params.push_back(new RangeParam<double>("Scale Factor", Param::RANGE_DBL, &scaleFactor, 1.05, 2, 0.05));
@@ -23,7 +23,6 @@ HaarDetector::HaarDetector(Store *st, string td, double sf, int mn, bool fg, Siz
 bool HaarDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)
 {
     vector<Rect> rois;
-
     cClassifier.detectMultiScale(srcImg,
                                  rois,
                                  scaleFactor,

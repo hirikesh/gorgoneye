@@ -27,10 +27,14 @@ void FaceHaarTracker::track()
                           store->faceRoi.width / 2,
                           store->faceRoi.height / 2);
 
-//    double t = (double)cv::getTickCount();
+#if(TIME_FACE_TRACKERS)
+    double t = (double)cv::getTickCount();
+#endif /* TIME_FACE_TRACKERS */
     located = haarDetector->locate(tmpSceneImg, store->ignore, tmpFaceRoi);
-//    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#if(TIME_FACE_TRACKERS)
+    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#endif /* TIME_FACE_TRACKERS */
 
     if(located) {
         // Postprocessing

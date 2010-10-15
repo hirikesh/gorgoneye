@@ -1,8 +1,8 @@
 #include <cv.h>
 #include <QDebug>
 #include "facehaarcamshiftactracker.h"
-#include "filters/ycbcrfilter.h"
 #include "filters/hsvfilter.h"
+#include "filters/ycbcrfilter.h"
 #include "filters/erodedilatefilter.h"
 #include "detectors/haardetector.h"
 #include "detectors/camshiftdetector.h"
@@ -48,10 +48,14 @@ void FaceHaarCAMShiftACTracker::track()
 
     if(!store->faceLocated)
     {
-//        double t = (double)cv::getTickCount();
+#if(TIME_FACE_TRACKERS)
+        double t = (double)cv::getTickCount();
+#endif /* TIME_FACE_TRACKERS */
         located = haarDetector->locate(tmpSceneImg, store->ignore, tmpFaceRoi);
-//        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//        qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#if(TIME_FACE_TRACKERS)
+        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+        qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#endif /* TIME_FACE_TRACKERS */
 
         // Very basic threshold detection to optimise pre-CAMShift thresholding
         // Simply masks facial region to smaller central region of the haar face,
@@ -93,13 +97,6 @@ void FaceHaarCAMShiftACTracker::track()
             cv::Mat myHueChannel = 255*((HSVFilter*)hsvFilter)->hueChannel/180; // scale to range of 8bit uchar
             cv::bitwise_xor(myHueChannel, cv::Scalar(127), myHueChannel); // modulo 2 arithmetic
             myHueChannel = 180*myHueChannel/255; // skin hue is now 180degs higher
-//            for(unsigned int i = 0; i < calibImg.cols; i++)
-//            {
-//                for(unsigned int j = 0; j < calibImg.rows; j++)
-//                {
-//                    int h = calibImg.ptr(i)[j] + 90 < 180 ?
-//                            strtol(calibImg.ptr(i)[j], )
-//                    calibImg.ptr(i)[j] = cv::saturate_cast<uchar>()
 
             // Locate min. and max. channel values.
             double minhue, maxhue, minsat, maxsat, minval, maxval;
@@ -147,10 +144,14 @@ void FaceHaarCAMShiftACTracker::track()
 
         erodeDilateFilter->filter(tmpSceneMsk, tmpSceneMsk, store->ignore);
 
-//        double t = (double)cv::getTickCount();
+#if(TIME_FACE_TRACKERS)
+        double t = (double)cv::getTickCount();
+#endif /* TIME_FACE_TRACKERS */
         located = camShiftDetector->locate(hueImg, tmpSceneMsk, tmpFaceRoi);
-//        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//        qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#if(TIME_FACE_TRACKERS)
+        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+        qDebug() << camShiftDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#endif /* TIME_FACE_TRACKERS */
     }
 
     if(located) {

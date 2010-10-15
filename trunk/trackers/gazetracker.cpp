@@ -38,15 +38,19 @@ void GazeTracker::track()
     ycbcrFilter->filter(store->eyesImg, store->ignore, store->ignore);
 
     store->gazeImg.convertTo(store->gazeImg, CV_32FC1, 1./255);
+return;
+#if(TIME_GAZE_TRACKERS)
+        double t = (double)cv::getTickCount();
+#endif /* TIME_GAZE_TRACKERS */
+    located = someDetector->locate(store->eyesImg, store->eyesMsk, store->gazeRoi);
+#if(TIME_GAZE_TRACKERS)
+    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+    qDebug() << someDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#endif /* TIME_GAZE_TRACKERS */
 
-//    double t = (double)cv::getTickCount();
-//    located = someDetector->locate(store->faceImg(reducedFaceRoi), store->ignore, store->eyesRoi);
-//    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
-
-//    if(located) {
+    if(located) {
         // Postprocessing (none atm)
-//    }
-    // Updating store bool after attempting to ensures ROIs are valid
-//    store->gazeLocated = located;
+    }
+//     Updating store bool after attempting to ensures ROIs are valid
+    store->gazeLocated = located;
 }

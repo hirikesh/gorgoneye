@@ -1,7 +1,6 @@
 #include "basetracker.h"
-#include "store.h"
-#include "detectors/basedetector.h"
 #include "parameter.h"
+#include "store.h"
 
 BaseTracker::BaseTracker(Store* st, const std::string& s) :
     store(st),

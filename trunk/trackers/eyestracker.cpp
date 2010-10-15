@@ -21,16 +21,19 @@ void EyesTracker::track()
 
     // Filtering
     ycbcrFilter->filter(store->faceImg, store->ignore, store->ignore);
+return;
+#if(TIME_EYES_TRACKERS)
+    double t = (double)cv::getTickCount();
+#endif /* TIME_EYES_TRACKERS */
+    located = someDetector->locate(store->faceImg, store->faceMsk, store->eyesRoi);
+#if(TIME_EYES_TRACKERS)
+    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+    qDebug() << someDetector->name().c_str() << "speed:" << 1000*t << "ms";
+#endif /* TIME_EYES_TRACKERS */
 
-//    double t = (double)cv::getTickCount();
-//    located = someDetector->locate(store->faceImg, store->faceMsk, store->eyesRoi);
-//    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-//    qDebug() << haarDetector->name().c_str() << "speed:" << 1000*t << "ms";
-
-//    if(located) {
+    if(located) {
         // Post processing
-//    }
+    }
     // Updating store bool after attempting to ensures ROIs are valid
-//    store->eyesLocated = located;
-    store->eyesLocated = false;
+    store->eyesLocated = located;
 }
