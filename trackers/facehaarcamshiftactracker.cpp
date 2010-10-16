@@ -72,10 +72,11 @@ void FaceHaarCAMShiftACTracker::track()
             store->sceneMsk = cv::Mat(tmpSceneImg.size(), CV_8UC1, cv::Scalar(0));
 
             // Create rectangular mask for CAMShift calibration
-            float widthPerc = 0.45;
-            float heightPerc = 0.45;
+            float widthPerc = 0.60; // try to avoid
+            float heightPerc = 0.25; // the eyes and eybrows
+            float heightPercOffset = 0.48; // with this offset
             int x = tmpFaceRoi.x + tmpFaceRoi.width*(1-widthPerc)/2;
-            int y = tmpFaceRoi.x + tmpFaceRoi.height*(1-heightPerc)/2;
+            int y = tmpFaceRoi.y + tmpFaceRoi.height*heightPercOffset;
             int w = widthPerc*tmpFaceRoi.width;
             int h = heightPerc*tmpFaceRoi.height;
             cv::Rect calibRoi(x, y, w, h);
@@ -110,14 +111,11 @@ void FaceHaarCAMShiftACTracker::track()
 
             minhue = minhue - 90 > 0 ? minhue - 90 : minhue + 90;
             maxhue = maxhue - 90 > 0 ? maxhue - 90 : maxhue + 90;
-            qDebug() << "Auto-calibrating...";
-            qDebug() << "Hue:" << minhue << maxhue;
-            qDebug() << "Sat:" << minsat << maxsat;
-            qDebug() << "Val:" << minval << maxval;
-            qDebug() << "Lum:" << miny   << maxy;
-            qDebug() << "C.r:" << mincr  << maxcr;
-            qDebug() << "C.b:" << mincb  << maxcb;
-            qDebug() << "____________";
+            qDebug() << "____________ Auto Calibration ____________";
+            qDebug("Min. HSV-YCbCr: %3.0f %3.0f %3.0f - %3.0f %3.0f %3.0f",
+                   minhue, minsat, minval, miny, mincb, mincr);
+            qDebug("Max. HSV-YCbCr: %3.0f %3.0f %3.0f - %3.0f %3.0f %3.0f",
+                   maxhue, maxsat, maxval, maxy, maxcb, maxcr);
 
             // Set min. and max. channel thresholds for CAMShift's next run
             ((HSVFilter*)hsvFilter)->setParams(maxhue, minhue+1, minsat, maxsat+1, minval, maxval+1);
