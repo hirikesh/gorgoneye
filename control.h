@@ -7,10 +7,11 @@
 
 #define CAP_TIMER_MS 33
 
-class QGridLayout;
 class QButtonGroup;
+class QKeyEvent;
 class BaseDetector;
 class GLView;
+class GLGaze;
 
 namespace Ui {
     class GEyeTracker;
@@ -24,18 +25,24 @@ public:
     explicit Control(QWidget *parent = 0);
     ~Control();
 
-public slots:
-    void procFrame();
+protected slots:
+    void procViewFrame();
+    void procGazeFrame();
+    void startGazeUi();
+    void endGazeUi();
 
 private:
     void initGUI();
+    void keyPressEvent(QKeyEvent* event);
+
     Ui::GEyeTracker *ui;
 
     QTimer* timer;
     QButtonGroup* imgModeGroup;
 
     Model* model;
-    GLView* opengl;
+    GLView* viewGL;
+    GLGaze* gazeGL;
 };
 
 #endif // CONTROL_H
