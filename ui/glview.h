@@ -30,7 +30,6 @@ protected:
 
 private:
     Store* store;
-    cv::Mat* dispImg;
     GLuint texture;
     int npotCapable;
 };
