@@ -1,7 +1,6 @@
 #ifndef GLVIEW_H
 #define GLVIEW_H
 
-#include <cv.h>
 #include <qgl.h>
 
 class Store;
