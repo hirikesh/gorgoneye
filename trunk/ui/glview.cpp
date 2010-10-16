@@ -1,11 +1,11 @@
-#include "store.h"
-#include "glview.h"
+#include <QDebug>
 #include <GL/gl.h>
 #include <GL/glext.h>
-#include <QDebug>
+#include "glview.h"
+#include "store.h"
 
 GLView::GLView(Store *st, QWidget *parent) :
-    QGLWidget(parent),
+    QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
     store(st)
 {
 }
@@ -31,8 +31,8 @@ void GLView::initializeGL()
 
 void GLView::resizeGL(int width, int height)
 {
-    if (!height)    // Avoid Divide-By-Zero
-    { height = 1;}
+    if (!height) // Avoid Divide-By-Zero
+        height = 1;
 
     glViewport(0, 0, (GLsizei) width, (GLsizei) height);
     glMatrixMode(GL_PROJECTION);
@@ -45,6 +45,7 @@ void GLView::resizeGL(int width, int height)
 
 void GLView::paintGL()
 {
+    loadGLTextures();
     glClear(GL_COLOR_BUFFER_BIT); // clears window
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);

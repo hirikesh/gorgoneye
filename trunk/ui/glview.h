@@ -14,14 +14,13 @@ public:
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
 
-    void loadGLTextures();
-    void drawRois();
-
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
 
     void paintGL();
+    void loadGLTextures();
+    void drawRois();
     void drawRoi(int, int, int, int);
 
     void CheckGLError(const char*);

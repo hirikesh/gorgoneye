@@ -14,35 +14,43 @@ public:
     cv::Mat sceneImg;
     cv::Mat faceImg;
     cv::Mat eyesImg;
+    cv::Mat gazeImg;
 
     // Mask images (binary)
     cv::Mat sceneMsk;
     cv::Mat faceMsk;
     cv::Mat eyesMsk;
 
-    // Tracked region of interests
+    // Tracked regions
     cv::Rect faceRoi; // relative to sceneImg
     cv::Rect eyesRoi; // relative to faceImg
     cv::Rect gazeRoi; // relative to screen
+    cv::Point gazePoint; //
 
-    // Image to overlay
-    cv::Mat* dispImg;
+    // Gaze setup parameters
 
-    // Multipurpose unitialised image
-    // MUST NOT BE ALTERED
-    cv::Mat ignore;
 
-    // Gaze training and estimation
-    bool training_mode;
+
+    // Gaze calibration
+    bool calibMode;
     cv::Mat calibImg;
     cv::Point calibPoint;
-    cv::Mat gazeImg;
-    cv::Point gazePoint;
+
+    // ML Gaze estimation
+
+
 
     // Status flags
     bool faceLocated;
     bool eyesLocated;
     bool gazeLocated;
+
+    // Image to overlay
+    cv::Mat* dispImg;
+
+    // Multipurpose unitialised image
+    // MUST NOT BE MODIFIED
+    cv::Mat ignore;
 };
 
 #endif // STORE_H

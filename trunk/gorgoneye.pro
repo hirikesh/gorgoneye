@@ -62,7 +62,8 @@ SOURCES += main.cpp \
     ui/guiprocessdiag.cpp \
     ui/guiparamdiag.cpp \
     ui/guitrackerdiag.cpp \
-    ui/guitreewidgetitem.cpp
+    ui/guitreewidgetitem.cpp \
+    ui/glgaze.cpp
 
 HEADERS += \
     control.h\
@@ -95,6 +96,7 @@ HEADERS += \
     ui/guiprocessdiag.h \
     ui/guiparamdiag.h \
     ui/guitrackerdiag.h \
-    ui/guitreewidgetitem.h
+    ui/guitreewidgetitem.h \
+    ui/glgaze.h
 
 FORMS += ui/control.ui
