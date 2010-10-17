@@ -19,6 +19,7 @@ GLGaze::GLGaze(Store* st) :
     // Make our GL Gaze widget self-contained.
     setWindowTitle("GorgonEye - Gaze Control");
     setWindowFlags(Qt::FramelessWindowHint);
+    setFrameShape(QFrame::NoFrame);
 
     // Attempt to use full screen res for training/gaze estimation
     QDesktopWidget* desktopWidget = QApplication::desktop();
