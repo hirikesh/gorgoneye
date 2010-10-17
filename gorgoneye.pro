@@ -57,15 +57,17 @@ SOURCES += main.cpp \
     trackers/facehaarcamshifttracker.cpp \
     trackers/facehaarcamshiftactracker.cpp \
     trackers/eyeshaartracker.cpp \
+    ui/glgaze.cpp \
+    ui/glgazescene.cpp \
     ui/glview.cpp \
     ui/guiparam.cpp \
     ui/guiprocessdiag.cpp \
     ui/guiparamdiag.cpp \
     ui/guitrackerdiag.cpp \
-    ui/guitreewidgetitem.cpp \
-    ui/glgaze.cpp
+    ui/guitreewidgetitem.cpp
 
 HEADERS += \
+    config.h \
     control.h\
     model.h \
     store.h \
@@ -91,12 +93,13 @@ HEADERS += \
     trackers/facehaarcamshifttracker.h \
     trackers/facehaarcamshiftactracker.h \
     trackers/eyeshaartracker.h \
+    ui/glgaze.h \
+    ui/glgazescene.h \
     ui/glview.h \
     ui/guiparam.h \
     ui/guiprocessdiag.h \
     ui/guiparamdiag.h \
     ui/guitrackerdiag.h \
-    ui/guitreewidgetitem.h \
-    ui/glgaze.h
+    ui/guitreewidgetitem.h
 
 FORMS += ui/control.ui

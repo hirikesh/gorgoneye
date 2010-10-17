@@ -5,11 +5,7 @@
 #include <highgui.h>
 #include <vector>
 #include "store.h"
-
-// PREPROC_STAGE: 1 - face, 2 - eyes, 3 - gaze, else - none
-#define PREPROC_STAGE 1
-// TIME_FILTERS: 0 - no ticks, 1 - ticks via QDebug
-#define TIME_FILTERS 0
+#include "config.h"
 
 class BaseTracker;
 class BaseFilter;

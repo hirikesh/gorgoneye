@@ -3,8 +3,6 @@
 
 #include "basetracker.h"
 
-#define ERODE_DILATE_DEPTH 2
-
 class FaceHaarCAMShiftACTracker : public BaseTracker
 {
 public:

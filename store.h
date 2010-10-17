@@ -27,9 +27,9 @@ public:
     cv::Rect gazeRoi; // relative to screen
     cv::Point gazePoint; //
 
-    // Gaze setup parameters
-
-
+    // Gaze environment
+    int gazeWidth;
+    int gazeHeight;
 
     // Gaze calibration
     bool calibMode;

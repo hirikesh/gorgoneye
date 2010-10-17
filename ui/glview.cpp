@@ -88,18 +88,20 @@ void GLView::loadGLTextures()
         {
             if(store->dispImg->size() == store->faceImg.size())
             {
-                glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                store->faceRoi.x, store->faceRoi.y,
-                                store->dispImg->cols, store->dispImg->rows,
-                                GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
+                if(store->faceLocated)
+                    glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                    store->faceRoi.x, store->faceRoi.y,
+                                    store->dispImg->cols, store->dispImg->rows,
+                                    GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
             }
             else if(store->dispImg->size() == store->eyesImg.size())
             {
-                glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                store->faceRoi.x + store->eyesRoi.x,
-                                store->faceRoi.y + store->eyesRoi.y,
-                                store->dispImg->cols, store->dispImg->rows,
-                                GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
+                if(store->eyesLocated)
+                    glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                    store->faceRoi.x + store->eyesRoi.x,
+                                    store->faceRoi.y + store->eyesRoi.y,
+                                    store->dispImg->cols, store->dispImg->rows,
+                                    GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
             }
             else
             {
