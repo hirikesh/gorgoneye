@@ -2,6 +2,7 @@
 #define GLVIEW_H
 
 #include <qgl.h>
+#include "config.h"
 
 class Store;
 
@@ -11,17 +12,15 @@ class GLView : public QGLWidget
 public:
     GLView(Store* st, QWidget* parent = 0);
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
-
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
-
     void paintGL();
-    void loadGLTextures();
-    void drawRois();
-    void drawRoi(int, int, int, int);
+
+    void updateGLTexture();
+    void drawGLTexture();
+    void drawGLRois();
+    void drawGLRoi(int, int, int, int);
 
     void CheckGLError(const char*);
     int isExtensionSupported(const char *extension);
@@ -29,7 +28,6 @@ protected:
 private:
     Store* store;
     GLuint texture;
-    int npotCapable;
 };
 
 #endif // GLVIEW_H

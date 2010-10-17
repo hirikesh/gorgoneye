@@ -5,6 +5,7 @@
 #define STORE_H
 
 #include <cv.h>
+#include "config.h"
 
 class Store
 {

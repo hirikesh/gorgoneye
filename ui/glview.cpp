@@ -5,39 +5,34 @@
 #include "store.h"
 
 GLView::GLView(Store *st, QWidget *parent) :
-    QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
+    QGLWidget(parent),
     store(st)
 {
-}
-
-QSize GLView::minimumSizeHint() const
-{
-    return QSize(640, 480);
-}
-
-QSize GLView::sizeHint() const
-{
-    return QSize(640, 480);
+    setMinimumSize(FRAME_WIDTH, FRAME_HEIGHT);
 }
 
 void GLView::initializeGL()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // set the window clear color to black
-    glShadeModel(GL_FLAT);
+    // Generate a single simple texture, setup its environment for use
+    // and use it for the entire session, because we can.
     glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    npotCapable = isExtensionSupported("GL_ARB_texture_non_power_of_two");
+    // Check for NPOT extension support and workaround it if missing
+//    npotCapable = isExtensionSupported("GL_ARB_texture_non_power_of_two");
 }
 
 void GLView::resizeGL(int width, int height)
 {
-    if (!height) // Avoid Divide-By-Zero
-        height = 1;
-
+    height = height < 1 ? 1 : height; // avoid divide by 0
     glViewport(0, 0, (GLsizei) width, (GLsizei) height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0, 640, 0, 480);
+    gluOrtho2D(0, FRAME_WIDTH, 0, FRAME_HEIGHT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
@@ -45,106 +40,102 @@ void GLView::resizeGL(int width, int height)
 
 void GLView::paintGL()
 {
-    loadGLTextures();
-    glClear(GL_COLOR_BUFFER_BIT); // clears window
-    glLoadIdentity();
+    drawGLTexture();
+    drawGLRois();
+}
+
+
+// Drawing functions
+
+void GLView::drawGLTexture()
+{
+    // Update texture with new frame data
+    updateGLTexture();
+
+    // Render the texture
     glEnable(GL_TEXTURE_2D);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glBegin(GL_QUADS);  // Draw A Quad
-    if(npotCapable)
-    {
-        glTexCoord2i(0, 0); glVertex2d(0, 480); // Top Left
-        glTexCoord2i(1, 0); glVertex2d(640, 480); // Top Right
-        glTexCoord2i(1, 1); glVertex2d(640, 0); // Bottom Right
+        glTexCoord2i(0, 0); glVertex2d(0, FRAME_HEIGHT); // Top Left
+        glTexCoord2i(1, 0); glVertex2d(FRAME_WIDTH, FRAME_HEIGHT); // Top Right
+        glTexCoord2i(1, 1); glVertex2d(FRAME_WIDTH, 0); // Bottom Right
         glTexCoord2i(0, 1); glVertex2d(0, 0); // Bottom Left
-    } else
-    {
-//        glTexCoord2i(0, 0); glVertex2d(0, 512); // Top Left
-//        glTexCoord2i(1, 0); glVertex2d(1024, 512); // Top Right
-//        glTexCoord2i(1, 1); glVertex2d(1024, 0); // Bottom Right
-//        glTexCoord2i(0, 1); glVertex2d(0, 0); // Bottom Left
-    }
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    drawRois();
 }
 
-void GLView::loadGLTextures()
+void GLView::updateGLTexture()
 {
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    if(npotCapable)
-    {
-        // Draw scene first
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                     store->sceneImg.cols, store->sceneImg.rows,
-                     0, GL_BGR, GL_UNSIGNED_BYTE, store->sceneImg.data);
+    // Draw scene first and always
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                 store->sceneImg.cols, store->sceneImg.rows,
+                 0, GL_BGR, GL_UNSIGNED_BYTE, store->sceneImg.data);
 
-        // Draw visualisations over scene if requested
-        if(store->dispImg->data)
-        {
-            if(store->dispImg->size() == store->faceImg.size())
-            {
-                if(store->faceLocated)
-                    glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                    store->faceRoi.x, store->faceRoi.y,
-                                    store->dispImg->cols, store->dispImg->rows,
-                                    GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
-            }
-            else if(store->dispImg->size() == store->eyesImg.size())
-            {
-                if(store->eyesLocated)
-                    glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                    store->faceRoi.x + store->eyesRoi.x,
-                                    store->faceRoi.y + store->eyesRoi.y,
-                                    store->dispImg->cols, store->dispImg->rows,
-                                    GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
-            }
-            else
-            {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                             store->dispImg->cols, store->dispImg->rows,
-                             0, GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
-            }
-        }
-    } else
+    // Draw visualisations over scene if requested
+    if(store->dispImg->data)
     {
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 512, 0, GL_BGR, GL_UNSIGNED_BYTE, NULL);
-//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 32, image.cols, image.rows, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+        if(store->dispImg->size() == store->faceImg.size())
+        {
+            // Don't draw face visualisation if face wasn't found
+            if(store->faceLocated)
+                glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                store->faceRoi.x, store->faceRoi.y,
+                                store->dispImg->cols, store->dispImg->rows,
+                                GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
+        }
+        else if(store->dispImg->size() == store->eyesImg.size())
+        {
+            // Don't draw eyes visualisation if face wasn't found
+            if(store->eyesLocated)
+                glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                store->faceRoi.x + store->eyesRoi.x,
+                                store->faceRoi.y + store->eyesRoi.y,
+                                store->dispImg->cols, store->dispImg->rows,
+                                GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
+        }
+        else
+        {
+            // Always draw this - it's probably a downsampled scene visualisation
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                         store->dispImg->cols, store->dispImg->rows,
+                         0, GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
+        }
     }
 }
 
-void GLView::drawRois()
+void GLView::drawGLRois()
 {
+    // Calculate frame positions
     int tlx = store->faceRoi.tl().x;
-    int tly = 480-store->faceRoi.tl().y;
+    int tly = FRAME_HEIGHT-store->faceRoi.tl().y;
     int brx = store->faceRoi.br().x;
-    int bry = 480-store->faceRoi.br().y;
-    if(store->faceLocated)
-        drawRoi(tlx, tly, brx, bry);
+    int bry = FRAME_HEIGHT-store->faceRoi.br().y;
 
+    // Draw face rect. only if located
+    if(store->faceLocated)
+        drawGLRoi(tlx, tly, brx, bry);
+
+    // Draw eyes rect. only if located
     if(store->eyesLocated)
-        drawRoi(tlx + store->eyesRoi.tl().x,
+        drawGLRoi(tlx + store->eyesRoi.tl().x,
                 tly - store->eyesRoi.tl().y,
                 tlx + store->eyesRoi.br().x,
                 tly - store->eyesRoi.br().y);
 }
 
-void GLView::drawRoi(int tlx, int tly, int brx, int bry)
+void GLView::drawGLRoi(int tlx, int tly, int brx, int bry)
 {
     glLineWidth(1.0);
+    glColor3f(0.0f, 1.0f, 0.0f);
     glBegin(GL_LINE_LOOP);
-    glColor3f(0.0f, 1.0f, 0.5f);
-    glVertex2i(tlx, tly); // top left
-    glVertex2i(brx, tly); // top right
-    glVertex2i(brx, bry); // bottom right
-    glVertex2i(tlx, bry); // bottom left
+        glVertex2i(tlx, tly); // top left
+        glVertex2i(brx, tly); // top right
+        glVertex2i(brx, bry); // bottom right
+        glVertex2i(tlx, bry); // bottom left
     glEnd();
-    glColor3f(0.0f, 0.0f, 0.0f);
 }
+
+
+// Debugging functions
 
 void GLView::CheckGLError(const char* msg)
 {
