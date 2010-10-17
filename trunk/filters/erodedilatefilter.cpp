@@ -48,7 +48,7 @@ void ErodeDilateFilter::_filter(const cv::Mat& src)
     morphologyEx(morphImg, morphImg, cv::MORPH_OPEN, cv::Mat(), cv::Point(-1,-1), morphLevel);
 }
 
-void ErodeDilateFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
+void ErodeDilateFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
 {
     // Store erosion and dilation result
     if(dstImg.data)

@@ -10,6 +10,7 @@
 #include "filters/equalisefilter.h"
 #include "filters/cannyedgefilter.h"
 #include "filters/sobelfilter.h"
+#include "filters/harriscornerfilter.h"
 
 #include "trackers/facehaartracker.h"
 #include "trackers/facecamshifttracker.h"
@@ -63,6 +64,7 @@ Model::Model(int device) :
     filters.push_back(new ErodeDilateFilter(&store));
     filters.push_back(new CannyEdgeFilter(&store));
     filters.push_back(new SobelFilter(&store));
+    filters.push_back(new HarrisCornerFilter(&store));
 
     // Instantiate completed trackers
     faceHaarTracker->disable();

@@ -45,6 +45,7 @@ SOURCES += main.cpp \
     filters/cannycontourfilter.cpp \
     filters/cannyedgefilter.cpp \
     filters/sobelfilter.cpp \
+    filters/harriscornerfilter.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
     detectors/camshiftdetector.cpp \
@@ -81,6 +82,7 @@ HEADERS += \
     filters/cannycontourfilter.h \
     filters/cannyedgefilter.h \
     filters/sobelfilter.h \
+    filters/harriscornerfilter.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
     detectors/camshiftdetector.h \

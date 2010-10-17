@@ -56,7 +56,7 @@ void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk)
 //void HSVFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 
 
-void HSVFilter::_filter(const cv::Mat &src)
+void HSVFilter::_filter(const cv::Mat& src)
 {
     // Alias
     cv::Size size = src.size();

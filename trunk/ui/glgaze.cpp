@@ -14,8 +14,6 @@
 #include "glgazescene.h"
 #include "store.h"
 
-#include <QDebug>
-
 GLGaze::GLGaze(Store* st) :
     store(st)
 {
@@ -60,9 +58,8 @@ void GLGaze::resizeEvent(QResizeEvent *event)
 void GLGaze::updateCalibInfo()
 {
     // Prepare variables for updating store and scene
-    int scaleFactor = 2; // start off easy
-    int dpiX = scaleFactor*logicalDpiX();
-    int dpiY = scaleFactor*logicalDpiY();
+    int dpiX = DPI_SCALE*logicalDpiX();
+    int dpiY = DPI_SCALE*logicalDpiY();
     int gazeW = floor(width()/dpiX);
     int gazeH = floor(height()/dpiY);
 
@@ -74,8 +71,6 @@ void GLGaze::updateCalibInfo()
     gazeScene->setCalibInfo((width() - dpiX*gazeW) / 2,
                             (height() - dpiY*gazeH) / 2,
                             dpiX, dpiY);
-
-    qDebug() << store->gazeWidth << store->gazeHeight;
 }
 
 void GLGaze::keyPressEvent(QKeyEvent* event)

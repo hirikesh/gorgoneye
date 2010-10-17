@@ -60,7 +60,7 @@ void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk
 //void YCbCrFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, const cv::Rect& srcRoi, cv::Rect& dstRoi)
 
 
-void YCbCrFilter::_filter(const cv::Mat &src)
+void YCbCrFilter::_filter(const cv::Mat& src)
 {
     // Alias
     cv::Size size = src.size();
@@ -84,7 +84,7 @@ void YCbCrFilter::_filter(const cv::Mat &src)
             maskImg);
 }
 
-void YCbCrFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
+void YCbCrFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
 {
     // Store the conversion result
     if(dstImg.data)

@@ -19,8 +19,8 @@ private:
     cv::Mat morphImg;
     cv::Mat visMorphImg;
 
-    void _filter(const cv::Mat &src);
-    void _store(cv::Mat &dstImg, cv::Mat &dstMsk);
+    void _filter(const cv::Mat& src);
+    void _store(cv::Mat& dstImg, cv::Mat& dstMsk);
     void _visualise();
 };
 

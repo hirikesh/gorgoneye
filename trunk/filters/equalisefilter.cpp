@@ -73,7 +73,7 @@ void EqualiseFilter::_filter(const cv::Mat& src)
     }
 }
 
-void EqualiseFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
+void EqualiseFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
 {
     if (dstImg.data)
         equalisedImg.copyTo(dstImg);;
