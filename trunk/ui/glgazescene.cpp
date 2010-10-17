@@ -57,22 +57,25 @@ void GLGazeScene::drawBackground(QPainter* painter, const QRectF& rect)
     glLoadIdentity();
     gluLookAt(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
+    // Black/gray background
+    glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
     // Draw calibration visualisation
     glLineWidth(1.0);
-    glBegin(GL_LINES);
     glColor3f(0.5f, 0.5f, 0.5f);
-    for(int nextx = topLeftX; nextx <= botRightX; nextx = nextx + deltaX)
-    {
-        glVertex2i(nextx, 0);
-        glVertex2i(nextx, height());
-    }
-    for(int nexty = topLeftY; nexty <= botRightY; nexty = nexty + deltaY)
-    {
-        glVertex2i(0, nexty);
-        glVertex2i(width(), nexty);
-    }
+    glBegin(GL_LINES);
+        for(int nextx = topLeftX; nextx <= botRightX; nextx = nextx + deltaX)
+        {
+            glVertex2i(nextx, 0);
+            glVertex2i(nextx, height());
+        }
+        for(int nexty = topLeftY; nexty <= botRightY; nexty = nexty + deltaY)
+        {
+            glVertex2i(0, nexty);
+            glVertex2i(width(), nexty);
+        }
     glEnd();
-    glColor3f(0.0f, 0.0f, 0.0f);
 
     // End drawing background
     glPopMatrix();
@@ -80,8 +83,8 @@ void GLGazeScene::drawBackground(QPainter* painter, const QRectF& rect)
     glPopMatrix();
 
     // VRITUAL DEPTH PERCEPTION TEST CODE
-//    int x = width() * (store->faceRoi.x + store->faceRoi.width/2) / 640;
-//    int y = height() * (store->faceRoi.y + store->faceRoi.height/2) / 480;
+//    int x = width() * (store->faceRoi.x + store->faceRoi.width/2) / FRAME_WIDTH;
+//    int y = height() * (store->faceRoi.y + store->faceRoi.height/2) / FRAME_HEIGHT;
 //    items()[0]->setPos(x - calibModeBtn->width()/2,
 //                       height() - y - calibModeBtn->height()/2);
 }
@@ -103,12 +106,11 @@ void GLGazeScene::drawForeground(QPainter* painter, const QRectF& rect)
 
         // Draw calibration visualisation
         glPointSize(24.0);
+        glColor3f(1.0f, 1.0f, 0.0f);
         glBegin(GL_POINTS);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex2i(topLeftX + deltaX*store->calibPoint.x - 1,
-                   topLeftY + deltaY*store->calibPoint.y - 1);
+            glVertex2i(topLeftX + deltaX*store->calibPoint.x - 1,
+                       topLeftY + deltaY*store->calibPoint.y - 1);
         glEnd();
-        glColor3f(0.0f, 0.0f, 0.0f);
 
         // End drawing foreground
         glPopMatrix();
@@ -129,7 +131,11 @@ void GLGazeScene::updateWidgetPos(const QRectF& rect)
 
 void GLGazeScene::setCalibMode(bool en)
 {
+    // Notify gaze-tracker calibration has momentarily stopped
     store->calibMode = en;
+
+    // If calibration button checked, start the timer.
+    // Otherwise stop the timer from doing anything else.
     if(en)
         calibModeTimer->start(CALIB_TIME_PER_POINT * 1000);
     else

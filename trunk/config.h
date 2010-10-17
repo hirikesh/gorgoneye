@@ -21,6 +21,13 @@
 /* END:   glgazescene.{h,cpp} */
 
 
+/* START: glview.{h,cpp} */
+// Frame size for various uses in glview
+#define FRAME_WIDTH 640
+#define FRAME_HEIGHT 480
+/* END:   glview.{h,cpp} */
+
+
 /* START: control.{h,cpp} */
 // camera capture & gl update rate in milliseconds
 #define CAP_TIMER_MS 33

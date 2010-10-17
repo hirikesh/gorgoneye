@@ -87,10 +87,6 @@ Model::Model(int device) :
     trackers.push_back(faceTracker);
     trackers.push_back(eyesTracker);
     trackers.push_back(gazeTracker);
-
-    // Initialisation of runtime vars
-    store.dispImg = &store.sceneImg;
-    store.faceRoi = cv::Rect(0, 0, 640, 480);
 }
 
 #if PREPROC_STAGE == 1
