@@ -71,22 +71,22 @@ bool CAMShiftDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi
     RotatedRect rotTemp;
     rotTemp = CamShift(backProjImg, // back projected image
                        tmpSrcRoi,   // initial search window
-                       TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 5, 10));
+                       TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1, 10));
 
     // Simple but less robust method for bounds.
-    Rect tmpRoi = rotTemp.boundingRect();
+//    Rect tmpRoi = rotTemp.boundingRect();
     // Check on bounds. If ROI is invalid, don't update srcRoi.
     // camshift reports success as long as ROI is at most half the size
     // of the input image, and at least 1 20th the size of the input image.
-    if (tmpRoi.area() >= srcImg.size().area()/768 && tmpRoi.area() <= srcImg.size().area()/2) {
-        int newTLx = tmpRoi.x < 0 ? 0 : tmpRoi.x;
-        int newTLy = tmpRoi.y < 0 ? 0 : tmpRoi.y;
-        int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols - 1 : tmpRoi.br().x;
-        int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows - 1 : tmpRoi.br().y;
-        srcRoi = Rect(Point(newTLx, newTLy), Point(newBRx, newBRy));
+//    if (tmpRoi.area() >= srcImg.size().area()/768 && tmpRoi.area() <= srcImg.size().area()/2) {
+//        int newTLx = tmpRoi.x < 0 ? 0 : tmpRoi.x;
+//        int newTLy = tmpRoi.y < 0 ? 0 : tmpRoi.y;
+//        int newBRx = tmpRoi.br().x > srcImg.cols ? srcImg.cols - 1 : tmpRoi.br().x;
+//        int newBRy = tmpRoi.br().y > srcImg.rows ? srcImg.rows - 1 : tmpRoi.br().y;
+        srcRoi = Rect(tmpSrcRoi.x, tmpSrcRoi.y, tmpSrcRoi.size().width, tmpSrcRoi.size().height);
         return true;
-    } else {
-        histCalibrate = true;
-        return false;
-    }
+//    } else {
+//        histCalibrate = true;
+//        return false;
+//    }
 }
