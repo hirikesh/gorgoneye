@@ -15,6 +15,7 @@ private:
     bool enBackProjImg;
     bool histCalibrate;
 
+    cv::Rect searchRoi;
     cv::MatND hist;
     cv::Mat backProjImg;
     cv::Mat backProjVisImg;
