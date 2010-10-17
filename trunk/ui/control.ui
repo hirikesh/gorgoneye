@@ -65,6 +65,20 @@
         <number>0</number>
        </property>
        <item>
+        <widget class="QPushButton" name="startBtn">
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="stopBtn">
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="gazeBtn">
          <property name="text">
           <string>Switch</string>
@@ -77,20 +91,6 @@
          </property>
          <property name="flat">
           <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="startBtn">
-         <property name="text">
-          <string>Start</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="stopBtn">
-         <property name="text">
-          <string>Stop</string>
          </property>
         </widget>
        </item>

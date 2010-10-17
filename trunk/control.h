@@ -4,8 +4,7 @@
 #include <cv.h>
 #include <QWidget>
 #include "model.h"
-
-#define CAP_TIMER_MS 33
+#include "config.h"
 
 class QButtonGroup;
 class QKeyEvent;
