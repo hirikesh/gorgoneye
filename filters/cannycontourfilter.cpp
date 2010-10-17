@@ -44,7 +44,7 @@ void CannyContourFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat&
     _visualise();
 }
 
-void CannyContourFilter::_filter(const cv::Mat &src)
+void CannyContourFilter::_filter(const cv::Mat& src)
 {
     // Find Canny edges
     Mat tmpImg, edges;
@@ -241,7 +241,7 @@ return;
     // END TEST
 }
 
-void CannyContourFilter::_store(cv::Mat &dstImg, cv::Mat &dstMsk)
+void CannyContourFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
 {
 //    testImg.copyTo(dstImg);
 }

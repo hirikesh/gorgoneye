@@ -11,7 +11,7 @@ public:
                        double mnd = 0.6, double mxd = 0.65);
 
     void setParams();
-    void filter(const cv::Mat &srcImg, cv::Mat &dstImg, cv::Mat &dstMsk);
+    void filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk);
 
 private:
     double minGrad;
@@ -24,8 +24,8 @@ private:
     cv::Mat testImg3;
     cv::Mat testImg4;
 
-    void _filter(const cv::Mat &src);
-    void _store(cv::Mat &dstImg, cv::Mat &dstMsk);
+    void _filter(const cv::Mat& src);
+    void _store(cv::Mat& dstImg, cv::Mat& dstMsk);
     void _visualise();
 
 

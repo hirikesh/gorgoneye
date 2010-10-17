@@ -36,8 +36,8 @@ private:
     cv::Mat maskImg;
     cv::Mat visMaskImg;
 
-    void _filter(const cv::Mat &src);
-    void _store(cv::Mat &dstImg, cv::Mat &dstMsk);
+    void _filter(const cv::Mat& src);
+    void _store(cv::Mat& dstImg, cv::Mat& dstMsk);
     void _visualise();
     void _visualise3ch();
 };

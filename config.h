@@ -8,6 +8,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+/* START: glgaze.{h,cpp} */
+// Scale factor for gaze resolution:
+//     DPI_SCALE * detected_screen_dpi = X and Y distance between adjacent gaze points
+#define DPI_SCALE 3 // 2 to start off with 2" by 2" squares
+/* END:   glgaze.{h,cpp} */
+
 
 /* START: control.{h,cpp} */
 // camera capture & gl update rate in milliseconds

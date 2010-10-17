@@ -1,8 +1,6 @@
 #include <qgl.h>
 #include "glgazescene.h"
 
-#include <QDebug>
-
 GLGazeScene::GLGazeScene(Store* st, int w, int h, QObject* parent) :
     QGraphicsScene(0, 0, w, h, parent),
     store(st)

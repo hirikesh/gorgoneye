@@ -2,6 +2,7 @@
 #define GLGAZE_H
 
 #include <QGraphicsView>
+#include "config.h"
 
 class QPushButton;
 class Store;

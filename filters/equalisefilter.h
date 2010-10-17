@@ -19,7 +19,7 @@ private:
     cv::Mat equalisedImg;
 
     void _filter(const cv::Mat& src);
-    void _store(cv::Mat &dstImg, cv::Mat &dstMsk);
+    void _store(cv::Mat& dstImg, cv::Mat& dstMsk);
     void _visualise();
 };
 
