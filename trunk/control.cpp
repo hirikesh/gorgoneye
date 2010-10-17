@@ -109,7 +109,7 @@ void Control::procGazeFrame()
 }
 
 // Add key-press handlers to quit on ESC and open gaze
-// UI on space bar
+// UI on F4
 void Control::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Escape)

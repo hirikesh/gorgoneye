@@ -26,10 +26,10 @@ public:
     ~Control();
 
 protected slots:
-    void procViewFrame();
-    void procGazeFrame();
     void startGazeUi();
     void endGazeUi();
+    void procViewFrame();
+    void procGazeFrame();
 
 private:
     void initGUI();
