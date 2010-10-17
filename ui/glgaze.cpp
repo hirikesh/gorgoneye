@@ -1,15 +1,10 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QRect>
-
 #include <QResizeEvent>
 #include <QKeyEvent>
 
-#include <QPushButton>
-#include <QGraphicsScene>
-#include <QGraphicsItem>
 #include <qgl.h>
-
 #include "glgaze.h"
 #include "glgazescene.h"
 #include "store.h"
@@ -32,34 +27,17 @@ GLGaze::GLGaze(Store* st) :
 
     setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
-    // Initialise UI widgets
-    trainingModeBtn = new QPushButton("Training Mode");
-    trainingModeBtn->setCheckable(true);
-    scene()->addWidget(trainingModeBtn);
-    connect(trainingModeBtn, SIGNAL(toggled(bool)), this, SLOT(setTrainingMode(bool)));
 }
 
 void GLGaze::resizeEvent(QResizeEvent *event)
 {
-    // Resize scene and view
+    // Propagate resize event to scene and view
     scene()->setSceneRect(QRect(QPoint(0,0), event->size()));
     QGraphicsView::resizeEvent(event);
 
-    // Reposition widgets
-    scene()->items()[0]->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
-    scene()->items()[0]->setPos(scene()->width() - trainingModeBtn->width() - 8,
-                                scene()->height() - trainingModeBtn->height() - 8);
-
-    // Update calibration information
-    updateCalibInfo();
-}
-
-void GLGaze::updateCalibInfo()
-{
-    // Prepare variables for updating store and scene
-    int dpiX = DPI_SCALE*logicalDpiX();
-    int dpiY = DPI_SCALE*logicalDpiY();
+    // Prepare for updating store and scene
+    int dpiX = DPI_SCALE * logicalDpiX();
+    int dpiY = DPI_SCALE * logicalDpiY();
     int gazeW = floor(width()/dpiX);
     int gazeH = floor(height()/dpiY);
 
@@ -72,6 +50,7 @@ void GLGaze::updateCalibInfo()
                             (height() - dpiY*gazeH) / 2,
                             dpiX, dpiY);
 }
+
 
 void GLGaze::keyPressEvent(QKeyEvent* event)
 {
@@ -86,11 +65,6 @@ void GLGaze::keyPressEvent(QKeyEvent* event)
 
 void GLGaze::closeEvent(QCloseEvent* event)
 {
-    emit closed();
+    emit closed(); // for 'control' to pick up
     event->accept();
-}
-
-void GLGaze::setTrainingMode(bool en)
-{
-    store->calibMode = en;
 }
