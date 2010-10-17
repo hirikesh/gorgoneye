@@ -1,4 +1,5 @@
 #include <cv.h>
+#include <ml.h>
 #include <QDebug>
 #include "gazetracker.h"
 #include "filters/cannyedgefilter.h"
@@ -38,6 +39,31 @@ void GazeTracker::track()
     ycbcrFilter->filter(store->eyesImg, store->ignore, store->ignore);
 
     store->gazeImg.convertTo(store->gazeImg, CV_32FC1, 1./255);
+
+
+    // START TEST DECISION TREE ML
+    if(store->calibMode)
+    {
+        store->calibPoint = cv::Point(0,0);
+
+
+
+    }
+    else
+    {
+
+
+
+
+
+    }
+
+
+
+
+
+
+
 return;
 #if(TIME_GAZE_TRACKERS)
         double t = (double)cv::getTickCount();

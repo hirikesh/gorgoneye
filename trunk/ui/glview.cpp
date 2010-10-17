@@ -135,7 +135,7 @@ void GLView::drawRois()
 
 void GLView::drawRoi(int tlx, int tly, int brx, int bry)
 {
-//    glLineWidth(1.0);
+    glLineWidth(1.0);
     glBegin(GL_LINE_LOOP);
     glColor3f(0.0f, 1.0f, 0.5f);
     glVertex2i(tlx, tly); // top left

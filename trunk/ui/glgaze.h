@@ -4,7 +4,6 @@
 #include <QGraphicsView>
 #include "config.h"
 
-class QPushButton;
 class Store;
 class GLGazeScene;
 
@@ -22,15 +21,9 @@ protected:
     void keyPressEvent(QKeyEvent* event);
     void closeEvent(QCloseEvent* event);
 
-protected slots:
-    void setTrainingMode(bool en);
-
 private:
-    void updateCalibInfo();
-
     Store* store;
     GLGazeScene* gazeScene;
-    QPushButton* trainingModeBtn;
 };
 
 #endif // GLGAZE_H

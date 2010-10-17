@@ -33,7 +33,6 @@ public:
 
     // Gaze calibration
     bool calibMode;
-    cv::Mat calibImg;
     cv::Point calibPoint;
 
     // ML Gaze estimation

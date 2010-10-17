@@ -105,7 +105,7 @@ void Control::procGazeFrame()
     // Updates opengl view:
     //  Grabs updated image and ROI data from 'store'
     //  Loads results to texture and OpenGL draws
-    gazeGL->update();
+    gazeGL->scene()->update();
 }
 
 // Add key-press handlers to quit on ESC and open gaze
