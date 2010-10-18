@@ -24,9 +24,6 @@ GLGazeScene::GLGazeScene(Store* st, QObject* parent) :
     foreach(QGraphicsItem* item, items())
         item->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
-    // Make sure widgets resize/reposition on scene resize
-    connect(this, SIGNAL(sceneRectChanged(QRectF)), this, SLOT(updateWidgetPos(QRectF)));
-
     // Make calib mode buttons work
     connect(calibModeBtn, SIGNAL(toggled(bool)), this, SLOT(setCalibMode(bool)));
     connect(calibPointBtn, SIGNAL(toggled(bool)), this, SLOT(setPointCalibMode(bool)));

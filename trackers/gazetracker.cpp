@@ -1,4 +1,5 @@
 #include <cv.h>
+#include <highgui.h>
 #include <ml.h>
 #include <QDebug>
 #include "gazetracker.h"
@@ -38,13 +39,27 @@ void GazeTracker::track()
     grayscaleFilter->filter(store->eyesImg, store->gazeImg, store->ignore);
     ycbcrFilter->filter(store->eyesImg, store->ignore, store->ignore);
 
-    store->gazeImg.convertTo(store->gazeImg, CV_32FC1, 1./255);
-
 
     // START TEST DECISION TREE ML
+
+    // Data type for gaze feature input
+    cv::Mat gazeImg;
+
+    // Convert elements to compatible data type
+    store->gazeImg.convertTo(gazeImg, CV_32FC1, 1./255); // NxM matrix
+    imshow("test", gazeImg);
+
+    // Convert image to single row matrix repensenting a single gaze input
+//    gazeImg.reshape(1, 1); // 1x(N*M) matrix
+
+
+    // START TEST DESCISION TREE ML
+
     if(store->calibMode)
     {
-        store->calibPoint = cv::Point(0,0);
+        // Create new tree
+        static CvDTree* dtree = new CvDTree;
+
 
 
 
@@ -55,13 +70,12 @@ void GazeTracker::track()
 
 
 
-
     }
 
 
 
 
-
+    // END TEST DESCISION TREE ML
 
 
 return;
