@@ -118,7 +118,7 @@ void FaceHaarCAMShiftACTracker::track()
                    maxhue, maxsat, maxval, maxy, maxcb, maxcr);
 
             // Set min. and max. channel thresholds for CAMShift's next run
-            ((HSVFilter*)hsvFilter)->setParams(maxhue, minhue+1, minsat, maxsat+1, minval, maxval+1);
+            ((HSVFilter*)hsvFilter)->setParams(minhue, maxhue+1, minsat, maxsat+1, minval, maxval+1);
             ((YCbCrFilter*)ycbcrFilter)->setParams(miny, maxy+1, mincr, maxcr+1, mincb, maxcb+1);
         }
     }
