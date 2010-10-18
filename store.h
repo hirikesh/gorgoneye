@@ -29,12 +29,13 @@ public:
     cv::Point gazePoint; //
 
     // Gaze environment
-    int gazeWidth;
-    int gazeHeight;
+//    int gazeWidth;
+//    int gazeHeight;
 
     // Gaze calibration
     bool calibMode;
-    cv::Point calibPoint;
+    int calibX;
+    int calibY;
 
     // ML Gaze estimation
 

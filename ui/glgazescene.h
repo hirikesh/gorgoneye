@@ -11,28 +11,33 @@ class GLGazeScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    explicit GLGazeScene(Store* st, int w, int h, QObject *parent = 0);
+    explicit GLGazeScene(Store* st, QObject *parent = 0);
 
-    void setCalibInfo(int x, int y, int dx, int dy);
+    void setCalibInfo(int dx, int dy, int cw, int ch);
+    void updateWidgetPos();
 
 protected:
     void drawBackground(QPainter* painter, const QRectF& rect);
     void drawForeground(QPainter* painter, const QRectF& rect);
+    void keyPressEvent(QKeyEvent* event);
 
 protected slots:
-    void updateWidgetPos(const QRectF& rect);
     void setCalibMode(bool en);
+    void setPointCalibMode(bool en);
 
 private:
     QPushButton* calibModeBtn;
-    QTimer* calibModeTimer;
+    QPushButton* calibPointBtn;
+    QTimer* calibPointTimer;
 
-    int topLeftX;
-    int topLeftY;
-    int botRightX;
-    int botRightY;
     int deltaX;
     int deltaY;
+    int calibW;
+    int calibH;
+    int botLeftX;
+    int botLeftY;
+    int topRightX;
+    int topRightY;
 
     Store* store;
 };
