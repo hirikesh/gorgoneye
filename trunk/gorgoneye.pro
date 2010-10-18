@@ -49,6 +49,7 @@ SOURCES += main.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
     detectors/camshiftdetector.cpp \
+    detectors/meanshiftdetector.cpp \
     trackers/basetracker.cpp \
     trackers/facetracker.cpp \
     trackers/eyestracker.cpp \
@@ -86,6 +87,7 @@ HEADERS += \
     detectors/basedetector.h \
     detectors/haardetector.h \
     detectors/camshiftdetector.h \
+    detectors/meanshiftdetector.h \
     trackers/basetracker.h \
     trackers/facetracker.h \
     trackers/eyestracker.h \
