@@ -1,5 +1,4 @@
 #include <cv.h>
-#include <highgui.h>
 #include <QDebug>
 #include "model.h"
 
