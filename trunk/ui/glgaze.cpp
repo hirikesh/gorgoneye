@@ -1,32 +1,27 @@
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QRect>
 #include <QResizeEvent>
 #include <QKeyEvent>
 
+#include <cmath>
 #include <qgl.h>
 #include "glgaze.h"
 #include "glgazescene.h"
-#include "store.h"
 
-GLGaze::GLGaze(Store* st) :
-    store(st)
+GLGaze::GLGaze(Store* st)
 {
     // Make our GL Gaze widget self-contained.
     setWindowTitle("GorgonEye - Gaze Control");
     setWindowFlags(Qt::FramelessWindowHint);
     setFrameShape(QFrame::NoFrame);
 
-    // Attempt to use full screen res for training/gaze estimation
-    QRect screenRes = QApplication::desktop()->screenGeometry(); // other: availableGeometry
-
-    // Create new scene with OpenGL capabilities
-    gazeScene = new GLGazeScene(st, screenRes.width(), screenRes.height());
-    setScene(gazeScene);
-    setGeometry(screenRes);
-
+    // Create new viewport with OpenGL capabilities
     setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+    // Create scene and attempt to use full screen res for training/gaze estimation
+    setScene(new GLGazeScene(st));
+    setGeometry(QApplication::desktop()->screenGeometry()); // other: availableGeometry
 }
 
 void GLGaze::resizeEvent(QResizeEvent *event)
@@ -35,20 +30,15 @@ void GLGaze::resizeEvent(QResizeEvent *event)
     scene()->setSceneRect(QRect(QPoint(0,0), event->size()));
     QGraphicsView::resizeEvent(event);
 
-    // Prepare for updating store and scene
+    // Update scene with new calibration information
     int dpiX = DPI_SCALE * logicalDpiX();
     int dpiY = DPI_SCALE * logicalDpiY();
-    int gazeW = floor(width()/dpiX);
-    int gazeH = floor(height()/dpiY);
+    ((GLGazeScene*)scene())->setCalibInfo(dpiX, dpiY,
+                            floor(width()/dpiX),
+                            floor(height()/dpiY));
 
-    // Update store with new calibration parameters
-    store->gazeWidth = 1 + gazeW;
-    store->gazeHeight = 1 + gazeH;
-
-    // Update scene with new calibration information
-    gazeScene->setCalibInfo((width() - dpiX*gazeW) / 2,
-                            (height() - dpiY*gazeH) / 2,
-                            dpiX, dpiY);
+    // Update scene widget positions
+    ((GLGazeScene*)scene())->updateWidgetPos();
 }
 
 
@@ -56,11 +46,9 @@ void GLGaze::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Escape)
         close();
-    if(event->key() == Qt::Key_Space)
-    {
-        QRect screenRes = QApplication::desktop()->screenGeometry(); // other: availableGeometry
-        setGeometry(screenRes);
-    }
+    else if(event->key() == Qt::Key_Space)
+        setGeometry(QApplication::desktop()->screenGeometry()); // other: availableGeometry
+    QGraphicsView::keyPressEvent(event);
 }
 
 void GLGaze::closeEvent(QCloseEvent* event)
