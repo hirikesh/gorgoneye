@@ -22,13 +22,10 @@ protected:
     void keyPressEvent(QKeyEvent* event);
 
 protected slots:
-    void setCalibMode(bool en);
-    void setPointCalibMode(bool en);
+    void startCalibMode();
 
 private:
     QPushButton* calibModeBtn;
-    QPushButton* calibPointBtn;
-    QTimer* calibPointTimer;
 
     int deltaX;
     int deltaY;

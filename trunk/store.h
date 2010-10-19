@@ -26,7 +26,6 @@ public:
     cv::Rect faceRoi; // relative to sceneImg
     cv::Rect eyesRoi; // relative to faceImg
     cv::Rect gazeRoi; // relative to screen
-    cv::Point gazePoint; //
 
     // Gaze environment
 //    int gazeWidth;
@@ -34,12 +33,18 @@ public:
 
     // Gaze calibration
     bool calibMode;
+    bool calibNow;
     int calibX;
     int calibY;
+    int calibW;
+    int calibH;
+    cv::Mat gazeFeatures;
+    cv::Mat gazeCoords;
 
     // ML Gaze estimation
-
-
+    cv::Mat gazePoint;
+    float gazeX;
+    float gazeY;
 
     // Status flags
     bool faceLocated;

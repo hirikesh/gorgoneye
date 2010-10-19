@@ -111,6 +111,7 @@ void FaceHaarCAMShiftACTracker::track()
 
             minhue = minhue - 90 > 0 ? minhue - 90 : minhue + 90;
             maxhue = maxhue - 90 > 0 ? maxhue - 90 : maxhue + 90;
+            if(minhue > maxhue) minhue -= 1;
             qDebug() << "____________ Auto Calibration ____________";
             qDebug("Min. HSV-YCbCr: %3.0f %3.0f %3.0f - %3.0f %3.0f %3.0f",
                    minhue, minsat, minval, miny, mincb, mincr);
@@ -118,7 +119,7 @@ void FaceHaarCAMShiftACTracker::track()
                    maxhue, maxsat, maxval, maxy, maxcb, maxcr);
 
             // Set min. and max. channel thresholds for CAMShift's next run
-            ((HSVFilter*)hsvFilter)->setParams(minhue, maxhue+1, minsat, maxsat+1, minval, maxval+1);
+            ((HSVFilter*)hsvFilter)->setParams(minhue, maxhue, minsat, maxsat+1, minval, maxval+1);
             ((YCbCrFilter*)ycbcrFilter)->setParams(miny, maxy+1, mincr, maxcr+1, mincb, maxcb+1);
         }
     }
