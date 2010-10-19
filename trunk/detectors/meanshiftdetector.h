@@ -14,17 +14,14 @@ public:
 private:
     void calcWeightedHist(const cv::Mat&, const cv::Mat&, cv::MatND&, const int);
     void calcRatioHist(const cv::Mat&, const cv::Mat&, const cv::Rect&, cv::MatND&, const int);
-
+    void calcWRHist(const cv::Mat&, const cv::Rect&, const cv::Mat&, cv::MatND&);
     bool enBackProjImg;
     bool histCalibrate;
 
     cv::Rect searchRoi;
     cv::MatND hist;
-    cv::MatND ratioHist;
     cv::Mat backProjImg;
     cv::Mat backProjVisImg;
-
-    std::vector<double> _vec;
 };
 
 #endif // NEWCAMSHIFTDETECTOR_H
