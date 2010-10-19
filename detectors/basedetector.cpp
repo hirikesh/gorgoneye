@@ -12,10 +12,20 @@ BaseDetector::BaseDetector(Store* st, const string& s) :
 {
 }
 
+void BaseDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
+{
+    return;
+}
+
+bool BaseDetector::locate(const cv::Mat& input, cv::Mat& output)
+{
+    return false;
+}
+
 bool BaseDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)
 {
     srcRoi = Rect(0, 0, srcImg.cols, srcImg.rows);
-    return true;
+    return false;
 }
 
 const string BaseDetector::name() const

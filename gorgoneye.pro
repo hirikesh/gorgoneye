@@ -50,6 +50,7 @@ SOURCES += main.cpp \
     detectors/haardetector.cpp \
     detectors/camshiftdetector.cpp \
     detectors/meanshiftdetector.cpp \
+    detectors/mlearningdetector.cpp \
     trackers/basetracker.cpp \
     trackers/facetracker.cpp \
     trackers/eyestracker.cpp \
@@ -88,6 +89,7 @@ HEADERS += \
     detectors/haardetector.h \
     detectors/camshiftdetector.h \
     detectors/meanshiftdetector.h \
+    detectors/mlearningdetector.h \
     trackers/basetracker.h \
     trackers/facetracker.h \
     trackers/eyestracker.h \

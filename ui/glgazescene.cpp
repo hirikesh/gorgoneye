@@ -1,4 +1,3 @@
-#include <QTimer>
 #include <QKeyEvent>
 #include <QPushButton>
 #include <QGraphicsItem>
@@ -11,23 +10,15 @@
 
 GLGazeScene::GLGazeScene(Store* st, QObject* parent) :
     calibModeBtn(new QPushButton("Calibration Mode")),
-    calibPointBtn(new QPushButton("Calibrate Point")),
-    calibPointTimer(new QTimer()),
     store(st)
 {
     // Initialise UI widgets
-    calibModeBtn->setCheckable(true);
-    calibPointBtn->setCheckable(true);
-    calibPointBtn->setEnabled(false);
     addWidget(calibModeBtn);
-    addWidget(calibPointBtn);
     foreach(QGraphicsItem* item, items())
         item->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
     // Make calib mode buttons work
-    connect(calibModeBtn, SIGNAL(toggled(bool)), this, SLOT(setCalibMode(bool)));
-    connect(calibPointBtn, SIGNAL(toggled(bool)), this, SLOT(setPointCalibMode(bool)));
-    connect(calibPointTimer, SIGNAL(timeout()), calibPointBtn, SLOT(toggle()));
+    connect(calibModeBtn, SIGNAL(clicked()), this, SLOT(startCalibMode()));
 }
 
 // Called by GLGaze when window is resized
@@ -45,6 +36,8 @@ void GLGazeScene::setCalibInfo(int dx, int dy, int cw, int ch)
     calibModeBtn->setChecked(false); // stop any calibration
     store->calibX = 0; // start calibration from
     store->calibY = ch; // top left
+    store->calibW = cw;
+    store->calibH = ch;
 }
 
 // Called by GLGaze when window is resized
@@ -119,22 +112,43 @@ void GLGazeScene::drawBackground(QPainter* painter, const QRectF& rect)
 
 void GLGazeScene::drawForeground(QPainter* painter, const QRectF& rect)
 {
-    if(calibModeBtn->isChecked())
+    // OpenGL setup stuff
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    gluOrtho2D(0, width(), 0, height());
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    gluLookAt(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+    // Draw tracking info
+    if(store->eyesLocated)
     {
-        // OpenGL setup stuff
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
+        glPointSize(12.0);
+        glColor3f(0.0f, 0.0f, 0.8f);
+        glBegin(GL_POINTS);
+            glVertex2i(botLeftX + deltaX/2,
+                       botLeftY);
+        glEnd();
+    }
 
-        gluOrtho2D(0, width(), 0, height());
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-        gluLookAt(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    if(store->gazeLocated)
+    {
+        glPointSize(24.0);
+        glColor3f(0.0f, 0.8f, 0.4f);
+        glBegin(GL_POINT);
+            glVertex2i(botLeftX + deltaX*store->gazeX,
+                       botLeftY);
+        glEnd();
+    }
 
+    if(store->calibMode)
+    {
         // Draw calibration visualisation
         glPointSize(24.0);
-        if(calibPointBtn->isChecked())
+        if(store->calibNow)
             glColor3f(1.0f, 0.0f, 0.0f);
         else
             glColor3f(1.0f, 1.0f, 0.0f);
@@ -142,53 +156,32 @@ void GLGazeScene::drawForeground(QPainter* painter, const QRectF& rect)
             glVertex2i(botLeftX + deltaX*store->calibX,
                        botLeftY + deltaY*store->calibY);
         glEnd();
-
-        // End drawing foreground
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
     }
+
+    // End drawing foreground
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
 }
 
 
 // SLOTS
 
-
-void GLGazeScene::setCalibMode(bool en)
+void GLGazeScene::startCalibMode()
 {
-    calibPointBtn->setChecked(false);
-    calibPointBtn->setEnabled(en);
-}
-
-void GLGazeScene::setPointCalibMode(bool en)
-{
-    // Notify gaze-tracker of calibration status
-    store->calibMode = en;
-
-    if(en)
-    {
-        // If calibration button checked, start the timer.
-        calibPointTimer->start(CALIB_TIME_PER_POINT * 1000);
-    }
-    else
-    {
-        // Stop the timer from doing anything else and
-        // set up the next calibration point.
-        calibPointTimer->stop();
-        store->calibX = store->calibX >= calibW ? 0 : store->calibX + 1;
-        store->calibY = store->calibX ? store->calibY : store->calibY - 1;
-        store->calibY = store->calibY < 0 ? calibH : store->calibY;
-    }
+    store->calibMode = true;
 }
 
 
 // Shortcut keys to simplify calibration
 void GLGazeScene::keyPressEvent(QKeyEvent* event)
 {
-    if(event->key() == Qt::Key_F4)
-        calibModeBtn->toggle();
-    else if(event->key() == Qt::Key_Return && calibPointBtn->isEnabled())
-        calibPointBtn->toggle();
+    if(event->key() == Qt::Key_Return)
+        calibModeBtn->click();
+    else if(event->key() == Qt::Key_N)
+    {
+        store->calibX = store->calibX >= calibW ? 0 : store->calibX + 1;
+    }
 
     QGraphicsScene::keyPressEvent(event);
 }

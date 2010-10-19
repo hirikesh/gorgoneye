@@ -21,7 +21,7 @@ bool MeanShiftDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRo
 
     // Histogram properties ------------------
 //    const int hBins = 32; // no. of hue bins
-//    const float hRanges[] = {0, 180}; // OpenCV implements hue values from 0 to 180
+    const float hRanges[] = {0, 180}; // OpenCV implements hue values from 0 to 180
     const float* histRanges[] = {hRanges};
     const int channels[] = {0};
 

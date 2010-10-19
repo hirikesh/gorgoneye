@@ -26,7 +26,10 @@ class BaseDetector
 public:
     BaseDetector(Store *st, const std::string&);
 
+    virtual void train(const cv::Mat& inputs, const cv::Mat& outputs);
+    virtual bool locate(const cv::Mat& input, cv::Mat& output);
     virtual bool locate(const cv::Mat& srcImg, const cv::Mat& srcMsk, cv::Rect& srcRoi);
+
     const std::string name() const;
     std::vector<Param*> params() const;
     std::vector<Param*> images() const;

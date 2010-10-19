@@ -11,11 +11,14 @@ public:
     void track();
 
 private:
+    int inputTotalCount;
+    int inputPerPointCount;
+
     BaseFilter* cannyEdgeFilter;
     BaseFilter* grayscaleFilter;
     BaseFilter* ycbcrFilter;
 
-    BaseDetector* someDetector;
+    BaseDetector* mLearningDetector;
 };
 
 #endif // GAZETRACKER_H
