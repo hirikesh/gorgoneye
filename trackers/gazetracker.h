@@ -18,6 +18,8 @@ private:
     BaseFilter* grayscaleFilter;
     BaseFilter* ycbcrFilter;
     BaseFilter* harrisCornerFilter;
+    BaseFilter* equaliseFilter;
+    BaseFilter* erodeDilateFilter;
 
     BaseDetector* mLearningDetector;
 };
