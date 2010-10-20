@@ -7,7 +7,7 @@
 
 MLearningDetector::MLearningDetector(Store* st, int ml, bool sx, bool uc, int hlc, int hls, double fp) :
     BaseDetector(st, "Machine Learning"),
-    mlAlgorithm(ml), saveXml(sx),
+    mlAlgorithm(ml), saveXml(sx), trained(false),
     useClassification(uc),
     hiddenLayerCount(hlc), hiddenLayerSize(hls), freeParam(fp)
 {
