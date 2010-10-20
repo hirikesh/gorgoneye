@@ -1,12 +1,18 @@
 #include <cv.h>
+#include <cvblob.h>
 #include <QDebug>
+#include <highgui.h>
 #include "gazetracker.h"
 #include "filters/cannyedgefilter.h"
 #include "filters/grayscalefilter.h"
 #include "filters/ycbcrfilter.h"
 #include "filters/harriscornerfilter.h"
+#include "filters/equalisefilter.h"
+#include "filters/erodedilatefilter.h"
 #include "detectors/mlearningdetector.h"
 #include "store.h"
+
+using cvb::CvLabel;
 
 GazeTracker::GazeTracker(Store* st) :
     BaseTracker(st, "Gaze-test"),
@@ -28,6 +34,12 @@ GazeTracker::GazeTracker(Store* st) :
     harrisCornerFilter->enable();
     filters.push_back(harrisCornerFilter);
 
+    equaliseFilter = new EqualiseFilter(st);
+    equaliseFilter->enable();
+
+    erodeDilateFilter = new ErodeDilateFilter(st);
+    erodeDilateFilter->enable();
+
     mLearningDetector = new MLearningDetector(st);
     detectors.push_back(mLearningDetector);
 
@@ -42,11 +54,52 @@ void GazeTracker::track()
     // Preprocessing
 
     // Filtering
-    cannyEdgeFilter->filter(store->eyesImg, store->ignore, store->ignore);
-    grayscaleFilter->filter(store->eyesImg, store->ignore, store->gazeImg);
-    ycbcrFilter->filter(store->eyesImg, store->ignore, store->ignore);
-    harrisCornerFilter->filter(store->eyesImg, store->ignore, store->ignore);
+//    cannyEdgeFilter->filter(store->eyesImg, store->ignore, store->ignore);
+//    grayscaleFilter->filter(store->eyesImg, store->ignore, store->gazeImg);
+//    ycbcrFilter->filter(store->eyesImg, store->ignore, store->ignore);
+//    harrisCornerFilter->filter(store->eyesImg, store->ignore, store->ignore);
 
+    // TESTING
+//    grayscaleFilter->filter(store->eyesImg, store->eyesImg, store->ignore);
+//    equaliseFilter->filter(store->eyesImg, store->eyesImg, store->ignore);
+    //cv::Mat clonedMask = store->eyesImg.clone();
+    cv::Mat clonedImage = store->eyesImg.clone();
+    grayscaleFilter->filter(clonedImage, clonedImage, store->ignore);
+    equaliseFilter->filter(clonedImage, clonedImage, store->ignore);
+    medianBlur(clonedImage, clonedImage, 7);
+    cv::Mat clonedMask;
+
+    cv::inRange(clonedImage, cv::Scalar(0, 0, 0), cv::Scalar(60, 60, 60), clonedMask);
+    erodeDilateFilter->filter(clonedMask, clonedMask, store->ignore);
+
+    IplImage img = IplImage(clonedImage);
+    IplImage binary = IplImage(clonedMask);
+    IplImage *labelImg = cvCreateImage(clonedMask.size(), IPL_DEPTH_LABEL, 1);
+    cvb::CvBlobs blobs;
+    cvb::cvLabel(&binary, labelImg, blobs);
+    imshow("Cloned Image After Cropping", clonedMask);
+    std::vector<cvb::CvBlob*> vec;
+    if (blobs.size() > 1)
+    {
+
+    CvLabel largest = cvb::cvGreaterBlob(blobs);
+    vec.push_back(blobs.at(largest));
+    blobs.erase(largest);
+    largest = cvb::cvGreaterBlob(blobs);
+    vec.push_back(blobs.at(largest));
+    blobs.erase(largest);
+    int newY = std::max(vec[0]->miny, vec[1]->miny);
+    int newY2 = std::max(vec[0]->maxy, vec[1]->maxy);
+    cv::Rect newRoi(0, newY, store->eyesRoi.width, newY2-newY-1);
+
+    cv::Mat newEyeImg = cv::Mat(store->eyesImg(newRoi));
+    //grayscaleFilter->filter(newEyeImg, newEyeImg, store->ignore);
+    equaliseFilter->filter(newEyeImg, newEyeImg, store->ignore);
+    medianBlur(newEyeImg, newEyeImg, 7);
+    //cannyEdgeFilter->filter(newEyeImg, newEyeImg, store->ignore);
+    //harrisCornerFilter->filter(newEyeImg, newEyeImg, store->ignore);
+    }
+    return;
 
     // FAKE EYES
 #if 0

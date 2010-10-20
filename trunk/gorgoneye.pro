@@ -20,14 +20,16 @@ win32 {
             -lcv210d \
             -lhighgui210d \
             -lcxcore210d \
-            -lml210d
+            -lml210d \
+            -lcvblobd
     }
     CONFIG(release, debug|release) {
         LIBS += -L"C:\OpenCV2.1\lib\release" \
             -lcv210 \
             -lhighgui210 \
             -lcxcore210 \
-            -lml210
+            -lml210 \
+            -lcvblob
     }
 }
 
