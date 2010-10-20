@@ -4,6 +4,7 @@
 #include "filters/cannyedgefilter.h"
 #include "filters/grayscalefilter.h"
 #include "filters/ycbcrfilter.h"
+#include "filters/harriscornerfilter.h"
 #include "detectors/mlearningdetector.h"
 #include "store.h"
 
@@ -12,16 +13,20 @@ GazeTracker::GazeTracker(Store* st) :
     inputTotalCount(0)
 {
     cannyEdgeFilter = new CannyEdgeFilter(st, 800, 800);
-//    cannyEdgeFilter->enable();
-//    filters.push_back(cannyEdgeFilter);
+    cannyEdgeFilter->enable();
+    filters.push_back(cannyEdgeFilter);
 
     grayscaleFilter = new GrayscaleFilter(st, 18, 256);
-//    grayscaleFilter->enable();
-//    filters.push_back(grayscaleFilter);
+    grayscaleFilter->enable();
+    filters.push_back(grayscaleFilter);
 
     ycbcrFilter = new YCbCrFilter(st);
-//    ycbcrFilter->enable();
-//    filters.push_back(ycbcrFilter);
+    ycbcrFilter->enable();
+    filters.push_back(ycbcrFilter);
+
+    harrisCornerFilter = new HarrisCornerFilter(st);
+    harrisCornerFilter->enable();
+    filters.push_back(harrisCornerFilter);
 
     mLearningDetector = new MLearningDetector(st);
     detectors.push_back(mLearningDetector);
@@ -37,9 +42,10 @@ void GazeTracker::track()
     // Preprocessing
 
     // Filtering
-//    cannyEdgeFilter->filter(store->eyesImg, store->ignore, store->ignore);
-//    grayscaleFilter->filter(store->eyesImg, store->ignore, store->ignore);
-//    ycbcrFilter->filter(store->eyesImg, store->ignore, store->ignore);
+    cannyEdgeFilter->filter(store->eyesImg, store->ignore, store->ignore);
+    grayscaleFilter->filter(store->eyesImg, store->ignore, store->gazeImg);
+    ycbcrFilter->filter(store->eyesImg, store->ignore, store->ignore);
+    harrisCornerFilter->filter(store->eyesImg, store->ignore, store->ignore);
 
 
     // FAKE EYES
@@ -83,7 +89,7 @@ void GazeTracker::track()
             qDebug() << "Added sample number:" << inputTotalCount-1 << "@" << store->calibX << store->calibY;
         }
 #define INPUT_DIM 24
-#define OUTPUT_DIM 24
+#define OUTPUT_DIM 1
         else // move to next point
         {
             inputPerPointCount = 0; // reset for next point if there are points remaining

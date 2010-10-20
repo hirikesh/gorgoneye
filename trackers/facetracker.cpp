@@ -21,6 +21,7 @@ void FaceTracker::track()
 
     // Filtering
     cannyContourFilter->filter(store->sceneImg(store->faceRoi), store->ignore, store->ignore);
+
 return;
 #if(TIME_FACE_TRACKERS)
     double t = (double)cv::getTickCount();

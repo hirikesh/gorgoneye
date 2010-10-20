@@ -17,6 +17,7 @@ private:
     BaseFilter* cannyEdgeFilter;
     BaseFilter* grayscaleFilter;
     BaseFilter* ycbcrFilter;
+    BaseFilter* harrisCornerFilter;
 
     BaseDetector* mLearningDetector;
 };
