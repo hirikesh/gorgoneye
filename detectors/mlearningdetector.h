@@ -8,17 +8,22 @@
 class MLearningDetector : public BaseDetector
 {
 public:
-    MLearningDetector(Store* st, int ml = 1, bool sx = false,
+    MLearningDetector(Store* st, int ml = 1,
+                      bool sd = true, bool ld = false,
                       bool uc = false,
-                      int hlc = 2, int hls = 100, double fp = 0.1);
+                      int hlc = 1, int hls = 50, double fp = 0.1);
 
     void train(const cv::Mat& inputs, const cv::Mat& outputs);
     bool locate(const cv::Mat& input, cv::Mat& ouput);
 
+protected:
+    void analyse_perf(const cv::Mat& inputs, const cv::Mat& outputs);
+
 private:
     // User parameters
     int mlAlgorithm;
-    bool saveXml;
+    bool saveData;
+    bool loadData;
 
     // Common parameters
     int inputDim;

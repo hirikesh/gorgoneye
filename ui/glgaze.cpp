@@ -2,9 +2,8 @@
 #include <QDesktopWidget>
 #include <QResizeEvent>
 #include <QKeyEvent>
+#include <QGLWidget>
 
-#include <cmath>
-#include <qgl.h>
 #include "glgaze.h"
 #include "glgazescene.h"
 
@@ -20,7 +19,7 @@ GLGaze::GLGaze(Store* st)
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
     // Create scene and attempt to use full screen res for training/gaze estimation
-    setScene(new GLGazeScene(st));
+    setScene(new GLGazeScene(st, DPI_SCALE, logicalDpiX(), logicalDpiY()));
     setGeometry(QApplication::desktop()->screenGeometry()); // other: availableGeometry
 }
 
@@ -30,15 +29,8 @@ void GLGaze::resizeEvent(QResizeEvent *event)
     scene()->setSceneRect(QRect(QPoint(0,0), event->size()));
     QGraphicsView::resizeEvent(event);
 
-    // Update scene with new calibration information
-    int dpiX = DPI_SCALE * logicalDpiX();
-    int dpiY = DPI_SCALE * logicalDpiY();
-    ((GLGazeScene*)scene())->setCalibInfo(dpiX, dpiY,
-                            floor(width()/dpiX),
-                            floor(height()/dpiY));
-
     // Update scene widget positions
-    ((GLGazeScene*)scene())->updateWidgetPos();
+    ((GLGazeScene*)scene())->updateCalib();
 }
 
 
