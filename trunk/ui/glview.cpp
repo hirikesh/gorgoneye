@@ -91,6 +91,12 @@ void GLView::updateGLTexture()
                                 store->faceRoi.y + store->eyesRoi.y,
                                 store->dispImg->cols, store->dispImg->rows,
                                 GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
+            if(store->eyesLocatedL)
+                glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                store->faceRoi.x + store->eyesRoiL.x,
+                                store->faceRoi.y + store->eyesRoiL.y,
+                                store->dispImg->cols, store->dispImg->rows,
+                                GL_BGR, GL_UNSIGNED_BYTE, store->dispImg->data);
         }
         else
         {
@@ -117,9 +123,15 @@ void GLView::drawGLRois()
     // Draw eyes rect. only if located
     if(store->eyesLocated)
         drawGLRoi(tlx + store->eyesRoi.tl().x,
-                tly - store->eyesRoi.tl().y,
-                tlx + store->eyesRoi.br().x,
-                tly - store->eyesRoi.br().y);
+                  tly - store->eyesRoi.tl().y,
+                  tlx + store->eyesRoi.br().x,
+                  tly - store->eyesRoi.br().y);
+
+    if(store->eyesLocatedL)
+        drawGLRoi(tlx + store->eyesRoiL.tl().x,
+                  tly - store->eyesRoiL.tl().y,
+                  tlx + store->eyesRoiL.br().x,
+                  tly - store->eyesRoiL.br().y);
 }
 
 void GLView::drawGLRoi(int tlx, int tly, int brx, int bry)

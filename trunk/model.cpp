@@ -1,4 +1,5 @@
 #include <cv.h>
+#include <highgui.h>
 #include <QDebug>
 #include "model.h"
 
@@ -10,6 +11,7 @@
 #include "filters/cannyedgefilter.h"
 #include "filters/sobelfilter.h"
 #include "filters/harriscornerfilter.h"
+#include "filters/cornerfilter.h"
 #include "filters/gaborfilter.h"
 
 #include "trackers/facehaartracker.h"
@@ -18,7 +20,9 @@
 #include "trackers/facehaarcamshifttracker.h"
 #include "trackers/facemtracker.h"
 //#include "trackers/facehaarcamshiftactracker.h"
+
 #include "trackers/eyeshaartracker.h"
+#include "trackers/eyeshaarx2tracker.h"
 
 #include "trackers/facetracker.h"
 #include "trackers/eyestracker.h"
@@ -39,7 +43,9 @@ Model::Model(int device) :
     faceHaarCAMShiftTracker(new FaceHaarCAMShiftTracker(&store)),
     faceMTracker(new FaceMTracker(&store)),
 //    faceHaarCAMShiftACTracker(new FaceHaarCAMShiftACTracker(&store)),
+
     eyesHaarTracker(new EyesHaarTracker(&store)),
+    eyesHaarX2Tracker(new EyesHaarX2Tracker(&store)),
 
     // Work-in-progress trackers
     faceTracker(new FaceTracker(&store)),
@@ -68,27 +74,31 @@ Model::Model(int device) :
     filters.push_back(new CannyEdgeFilter(&store));
     filters.push_back(new SobelFilter(&store));
     filters.push_back(new HarrisCornerFilter(&store));
+    filters.push_back(new CornerFilter(&store));
     filters.push_back(new GaborFilter(&store));
 
     // Instantiate completed trackers
-    faceHaarTracker->disable();
+    faceHaarTracker->enable();
     faceCAMShiftTracker->disable();
     faceHaarCAMShiftTracker->disable();
     faceMTracker->enable();
 //    faceHaarCAMShiftACTracker->disable();
     eyesHaarTracker->enable();
+    eyesHaarX2Tracker->enable();
 
     trackers.push_back(faceHaarTracker);
     trackers.push_back(faceCAMShiftTracker);
     trackers.push_back(faceHaarCAMShiftTracker);
     trackers.push_back(faceMTracker);
 //    trackers.push_back(faceHaarCAMShiftACTracker);
+
+    trackers.push_back(eyesHaarX2Tracker);
     trackers.push_back(eyesHaarTracker);
 
     // Instantiate work-in-progress trackers
     faceTracker->disable();
     eyesTracker->disable();
-    gazeTracker->disable();
+    gazeTracker->enable();
 
     trackers.push_back(faceTracker);
     trackers.push_back(eyesTracker);
@@ -130,14 +140,16 @@ void Model::update()
     // Attempt to track eyes even if face failed or
     // was disabled.
     eyesHaarTracker->track();
+    eyesHaarX2Tracker->track();
     eyesTracker->track();
 
     // Update eyes image only if tracker succeeds.
     // A successful face track could render the old
     // eye ROI invalid.
-    if(store.eyesLocated)
+    if(store.eyesLocated && store.eyesLocatedL)
     {
         store.eyesImg = store.faceImg(store.eyesRoi);
+        store.eyesImgL = store.faceImg(store.eyesRoiL);
 #ifdef PREPROC_GAZE
         preProcess();
 #endif /* PREPROC_GAZE */
@@ -181,6 +193,7 @@ void Model::preProcess()
         filters[i]->filter(store.faceImg, store.faceImg, store.ignore);
 #elif defined(PREPROC_GAZE)
         filters[i]->filter(store.eyesImg, store.eyesImg, store.ignore);
+        filters[i]->filter(store.eyesImgL, store.eyesImgL, store.ignore);
 #endif
     }
 #if(TIME_FILTERS)

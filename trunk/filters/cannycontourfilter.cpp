@@ -19,8 +19,8 @@ CannyContourFilter::CannyContourFilter(Store* st, double tl, double th, double m
     _images.push_back(new ImageModeParam("Canny contours", &testImg2, &st->dispImg));
     _images.push_back(new ImageModeParam("Ellipse fit", &testImg3, &st->dispImg));
     _images.push_back(new ImageModeParam("Canny-contour fit", &testImg4, &st->dispImg));
-    _params.push_back(new RangeParam<double>("Canny threshold low", Param::RANGE_DBL, &minGrad, 0, 1200 , 5));
-    _params.push_back(new RangeParam<double>("Canny threshold high", Param::RANGE_DBL, &maxGrad, 0, 1200, 5));
+    _params.push_back(new RangeParam<double>("Canny threshold low", Param::RANGE_DBL, &minGrad, 0, 20000 , 5));
+    _params.push_back(new RangeParam<double>("Canny threshold high", Param::RANGE_DBL, &maxGrad, 0, 20000, 5));
     _params.push_back(new RangeParam<double>("Min. distance %", Param::RANGE_DBL, &minDist, 0, 1, 0.01));
     _params.push_back(new RangeParam<double>("Max. distance %", Param::RANGE_DBL, &maxDist, 0, 1, 0.01));
 }
@@ -49,7 +49,7 @@ void CannyContourFilter::_filter(const cv::Mat& src)
     // Find Canny edges
     Mat tmpImg, edges;
     cvtColor(src, tmpImg, CV_BGR2GRAY);
-    Canny(tmpImg, edges, minGrad, maxGrad, 3);
+    Canny(tmpImg, edges, minGrad, maxGrad, 7);
 
     // showme
     cvtColor(edges, testImg, CV_GRAY2BGR);
@@ -61,7 +61,7 @@ void CannyContourFilter::_filter(const cv::Mat& src)
 
     // showme
     testImg2 = src.clone();
-    drawContours(testImg2, contours, -1, Scalar(255,0,0), 1);
+    drawContours(testImg2, contours, -1, Scalar(255,255,255), 1);
 
     // ATTEMPT TO FIT POLYGON TO FACIAL CONTOUR
     // depends on reliability of canny detector.

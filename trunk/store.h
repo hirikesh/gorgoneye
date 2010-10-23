@@ -15,6 +15,7 @@ public:
     cv::Mat sceneImg;
     cv::Mat faceImg;
     cv::Mat eyesImg;
+    cv::Mat eyesImgL;
     cv::Mat gazeImg;
 
     // Mask images (binary)
@@ -25,30 +26,32 @@ public:
     // Tracked regions
     cv::Rect faceRoi; // relative to sceneImg
     cv::Rect eyesRoi; // relative to faceImg
+    cv::Rect eyesRoiL;
     cv::Rect gazeRoi; // relative to screen
 
     // Gaze environment
-//    int gazeWidth;
-//    int gazeHeight;
+    int gazeDeltaX;
+    int gazeDeltaY;
+    int gazeOuterX;
+    int gazeOuterY;
 
     // Gaze calibration
     bool calibMode;
     bool calibNow;
     int calibX;
     int calibY;
-    int calibW;
-    int calibH;
     cv::Mat gazeFeatures;
     cv::Mat gazeCoords;
 
     // ML Gaze estimation
     cv::Mat gazePoint;
-    float gazeX;
-    float gazeY;
+    int gazeX;
+    int gazeY;
 
     // Status flags
     bool faceLocated;
     bool eyesLocated;
+    bool eyesLocatedL;
     bool gazeLocated;
 
     // Image to overlay

@@ -6,7 +6,9 @@ QT += opengl \
 TARGET = gorgoneye
 TEMPLATE = app
 unix {
-    INCLUDEPATH += "/usr/include/opencv"
+    INCLUDEPATH += "/usr/include/opencv" \
+                   "/home/justin/cvblob/cvBlob"
+    LIBS += -L"/usr/local/lib/static" -lcvblob
     LIBS += -L"/usr/lib" \
         -lcv \
         -lhighgui \
@@ -48,8 +50,11 @@ SOURCES += main.cpp \
     filters/cannyedgefilter.cpp \
     filters/sobelfilter.cpp \
     filters/harriscornerfilter.cpp \
+    filters/cornerfilter.cpp \
+    filters/gaborfilter.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
+    detectors/tempmatchdetector.cpp \
     detectors/camshiftdetector.cpp \
     detectors/meanshiftdetector.cpp \
     detectors/mlearningdetector.cpp \
@@ -61,7 +66,9 @@ SOURCES += main.cpp \
     trackers/facecamshifttracker.cpp \
     trackers/facehaarcamshifttracker.cpp \
     trackers/facehaarcamshiftactracker.cpp \
+    trackers/facemtracker.cpp \
     trackers/eyeshaartracker.cpp \
+    trackers/eyeshaarx2tracker.cpp \
     ui/glgaze.cpp \
     ui/glgazescene.cpp \
     ui/glview.cpp \
@@ -69,9 +76,7 @@ SOURCES += main.cpp \
     ui/guiprocessdiag.cpp \
     ui/guiparamdiag.cpp \
     ui/guitrackerdiag.cpp \
-    ui/guitreewidgetitem.cpp \
-    trackers/facemtracker.cpp \
-    filters/gaborfilter.cpp
+    ui/guitreewidgetitem.cpp
 
 HEADERS += \
     config.h \
@@ -89,8 +94,11 @@ HEADERS += \
     filters/cannyedgefilter.h \
     filters/sobelfilter.h \
     filters/harriscornerfilter.h \
+    filters/cornerfilter.h \
+    filters/gaborfilter.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
+    detectors/tempmatchdetector.h \
     detectors/camshiftdetector.h \
     detectors/meanshiftdetector.h \
     detectors/mlearningdetector.h \
@@ -102,7 +110,9 @@ HEADERS += \
     trackers/facecamshifttracker.h \
     trackers/facehaarcamshifttracker.h \
     trackers/facehaarcamshiftactracker.h \
+    trackers/facemtracker.h \
     trackers/eyeshaartracker.h \
+    trackers/eyeshaarx2tracker.h \
     ui/glgaze.h \
     ui/glgazescene.h \
     ui/glview.h \
@@ -110,8 +120,6 @@ HEADERS += \
     ui/guiprocessdiag.h \
     ui/guiparamdiag.h \
     ui/guitrackerdiag.h \
-    ui/guitreewidgetitem.h \
-    trackers/facemtracker.h \
-    filters/gaborfilter.h
+    ui/guitreewidgetitem.h
 
 FORMS += ui/control.ui

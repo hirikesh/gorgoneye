@@ -8,10 +8,15 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+/* START: gazetracker.cpp & mlearningdetector.cpp */
+#define IGNORED_SAMPLES_PER_POINT 10
+#define SAMPLES_PER_POINT 80
+
+
 /* START: glgaze.{h,cpp} */
 // Scale factor for gaze resolution:
 //     DPI_SCALE * detected_screen_dpi = X and Y distance between adjacent gaze points
-#define DPI_SCALE 10 // large number to start off easy
+#define DPI_SCALE 0.5 // large number to start off easy
 /* END:   glgaze.{h,cpp} */
 
 
@@ -31,7 +36,7 @@
 /* START: model.{h,cpp} */
 // Set stage for preprocessing to run:
 //     1 - face, 2 - eyes, 3 - gaze, else - none
-#define PREPROC_STAGE 1
+#define PREPROC_STAGE 3
 // Output processing-time information to qDebug():
 //     0 - no timing info, 1 - timing via opencv ticks()
 #define TIME_FILTERS 0
@@ -72,6 +77,8 @@
 // Set the desired haar classifier data to use
 #define HAAR_CC_FACE HAAR_CC_DIR"haarcascade_frontalface_default.xml"
 #define HAAR_CC_EYES HAAR_CC_DIR"haarcascade_righteye_2splits.xml"
+#define HAAR_CC_EYESL HAAR_CC_DIR"haarcascade_lefteye_2splits.xml"
+#define HAAR_CC_EYES2 HAAR_CC_DIR"haarcascade_mcs_righteye.xml"
 /* END:   basedetector.{h,cpp} */
 
 

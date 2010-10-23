@@ -52,13 +52,7 @@ void Control::initGUI()
     connect(ui->startBtn, SIGNAL(clicked()), timer, SLOT(start()));
     connect(ui->stopBtn, SIGNAL(clicked()), timer, SLOT(stop()));
 
-    // Gaze control and training UI
-//    gazeGL->getScene()->addWidget(ui->startBtn);
-//    gazeGL->getScene()->addWidget(ui->stopBtn);
-//    gazeGL->getScene()->addWidget(filterList);
-//    gazeGL->getScene()->addWidget(trackerList);
-
-    // Gaze control signals to have it share the same timer
+    // Gaze control signals to share the same timer
     connect(ui->gazeBtn, SIGNAL(clicked()), this, SLOT(startGazeUi()));
     connect(gazeGL, SIGNAL(closed()), this, SLOT(endGazeUi()));
 }
@@ -66,6 +60,7 @@ void Control::initGUI()
 // Switch rendering of store's contents to gaze control UI
 void Control::startGazeUi()
 {
+//    gazeGL->showFullScreen();
     gazeGL->show();
     timer->disconnect();
     ui->gazeBtn->setEnabled(false);
