@@ -70,7 +70,8 @@ SOURCES += main.cpp \
     ui/guiparamdiag.cpp \
     ui/guitrackerdiag.cpp \
     ui/guitreewidgetitem.cpp \
-    trackers/facemtracker.cpp
+    trackers/facemtracker.cpp \
+    filters/gaborfilter.cpp
 
 HEADERS += \
     config.h \
@@ -110,6 +111,7 @@ HEADERS += \
     ui/guiparamdiag.h \
     ui/guitrackerdiag.h \
     ui/guitreewidgetitem.h \
-    trackers/facemtracker.h
+    trackers/facemtracker.h \
+    filters/gaborfilter.h
 
 FORMS += ui/control.ui

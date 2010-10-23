@@ -32,7 +32,7 @@ bool HaarDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRoi)
 
     if(rois.size()) {
         srcRoi = rois[0];
-        for(int i = 1; i < rois.size(); i++)
+        for(unsigned int i = 1; i < rois.size(); i++)
             if(rois[i].area() > srcRoi.area()) srcRoi = rois[i];
         return true;
     } else {
