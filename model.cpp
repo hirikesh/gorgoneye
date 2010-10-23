@@ -10,6 +10,7 @@
 #include "filters/cannyedgefilter.h"
 #include "filters/sobelfilter.h"
 #include "filters/harriscornerfilter.h"
+#include "filters/gaborfilter.h"
 
 #include "trackers/facehaartracker.h"
 #include "trackers/facecamshifttracker.h"
@@ -67,6 +68,7 @@ Model::Model(int device) :
     filters.push_back(new CannyEdgeFilter(&store));
     filters.push_back(new SobelFilter(&store));
     filters.push_back(new HarrisCornerFilter(&store));
+    filters.push_back(new GaborFilter(&store));
 
     // Instantiate completed trackers
     faceHaarTracker->disable();

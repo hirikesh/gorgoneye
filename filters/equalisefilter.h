@@ -3,8 +3,6 @@
 
 #include "basefilter.h"
 
-class Store;
-
 class EqualiseFilter : public BaseFilter
 {
 public:
