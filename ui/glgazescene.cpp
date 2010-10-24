@@ -130,7 +130,7 @@ void GLGazeScene::drawForeground(QPainter* painter, const QRectF& rect)
     {
         glPointSize(12.0);
         glColor3f(0.3f, 0.9f, 0.1f);
-        glBegin(GL_POINT);
+        glBegin(GL_POINTS);
             glVertex2i(outerW + store->gazeX,
                        outerH - store->gazeY);
         glEnd();
