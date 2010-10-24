@@ -41,7 +41,7 @@ void SobelFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk
 void SobelFilter::_filter(const cv::Mat& src)
 {
     // Perform Sobel operation
-    kernelSize = !(kernelSize % 2) ? kernelSize++ : kernelSize;
+    kernelSize = !(kernelSize % 2) ? kernelSize : kernelSize++;
     if(src.type() == CV_8UC1)
         Sobel(src, sobelImg, 1, derivX, derivY, kernelSize);
     else
