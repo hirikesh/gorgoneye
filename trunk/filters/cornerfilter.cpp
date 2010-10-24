@@ -57,7 +57,7 @@ void CornerFilter::_store(cv::Mat& dstImg, cv::Mat& dstMsk)
 {
     if(dstImg.data)
     {
-        for(int i = 0; i < corners.size(); i++)
+        for(unsigned int i = 0; i < corners.size(); i++)
             cv::circle(dstImg, corners[i], 2, cv::Scalar(0,0,255), -1);
     }
 }
@@ -66,7 +66,7 @@ void CornerFilter::_visualise()
 {
     if(visCorner)
     {
-        for(int i = 0; i < corners.size(); i++)
+        for(unsigned int i = 0; i < corners.size(); i++)
             cv::circle(visCornerImg, corners[i], 2, cv::Scalar(255,0,0), -1);
     }
 }
