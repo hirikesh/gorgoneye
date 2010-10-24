@@ -46,6 +46,7 @@ void HarrisCornerFilter::_filter(const cv::Mat& src)
 
     // Find Canny edges
     cvtColor(src, grayChannel, CV_BGR2GRAY);
+    sobelKernelSize = !(sobelKernelSize % 2) ? sobelKernelSize++ : sobelKernelSize;
     cornerHarris(grayChannel, harrisImgF, neighbourhoodSize, sobelKernelSize, freeParamK);
 
     // Convert from 32FC1 to 8UC1
