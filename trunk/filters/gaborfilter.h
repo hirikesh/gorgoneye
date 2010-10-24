@@ -23,6 +23,12 @@ private:
     int pulse;
     int degPhase;
     int degPsi;
+
+    double bw;
+    int psi;
+    int lambda;
+    int degTheta;
+    double gamma;
 };
 
 #endif // GABORFILTER_H
