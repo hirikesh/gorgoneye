@@ -120,7 +120,7 @@ void GLGazeScene::drawForeground(QPainter* painter, const QRectF& rect)
         else
             glColor3f(0.7f, 0.7f, 0.0f);
         glBegin(GL_POINTS);
-            glVertex2f(outerW + store->calibX,
+            glVertex2i(outerW + store->calibX,
                        outerH - store->calibY); // flip Y to match OpenCV coordinates
         glEnd();
     }
