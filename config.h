@@ -11,6 +11,7 @@
 /* START: gazetracker.cpp & mlearningdetector.cpp */
 #define IGNORED_SAMPLES_PER_POINT 10
 #define SAMPLES_PER_POINT 80
+#define XVALID_SAMPLES_PER_POINT 20
 
 
 /* START: glgaze.{h,cpp} */

@@ -43,6 +43,10 @@ public:
     cv::Mat gazeFeatures;
     cv::Mat gazeCoords;
 
+    // Gaze performance
+    cv::Mat gazeXvalFeatures;
+    cv::Mat gazeXvalCoords;
+
     // ML Gaze estimation
     cv::Mat gazePoint;
     int gazeX;

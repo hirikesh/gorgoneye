@@ -25,9 +25,11 @@ Store::Store() :
     gazeRoi = faceRoi;
 
     // Initialise calibration/trianing matrices
-    gazeFeatures = cv::Mat(4096, 4096, CV_32FC1, cv::Scalar(0)); // room for
-    gazeCoords = cv::Mat(4096, 2, CV_32FC1); // 4096 input vectors, of 4096 features per vector
-    gazePoint = cv::Mat(1, 2, CV_32FC1);
+    gazeXvalFeatures = cv::Mat(2048, 4096, CV_32FC1); // cross validation set
+    gazeXvalCoords = cv::Mat(2048, 2, CV_32FC1); // cross validation output coordinates
+    gazeFeatures = cv::Mat(4096, 4096, CV_32FC1); // training set
+    gazeCoords = cv::Mat(4096, 2, CV_32FC1); // training output coordinates
+    gazePoint = cv::Mat(1, 2, CV_32FC1); // gaze estimation result store
 
     // Set overlay image to nothing
     dispImg = &ignore;
