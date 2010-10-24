@@ -8,10 +8,10 @@
 class MLearningDetector : public BaseDetector
 {
 public:
-    MLearningDetector(Store* st, int ml = 1,
+    MLearningDetector(Store* st, int ml = 3,
                       bool sd = true, bool ld = false,
                       bool uc = false,
-                      int hlc = 1, int hls = 50, double fp = 0.1);
+                      int hlc = 2, int hls = 50, double lr = 0.001);
 
     void train(const cv::Mat& inputs, const cv::Mat& outputs);
     bool locate(const cv::Mat& input, cv::Mat& ouput);
@@ -42,7 +42,7 @@ private:
     CvANN_MLP mlpANN;
     int hiddenLayerCount;
     int hiddenLayerSize;
-    double freeParam;
+    double learningRate;
 };
 
 #endif // MLEARNINGDETECTOR_H

@@ -6,11 +6,11 @@
 #include "parameter.h"
 #include "store.h"
 
-MLearningDetector::MLearningDetector(Store* st, int ml, bool sd, bool ld, bool uc, int hlc, int hls, double fp) :
+MLearningDetector::MLearningDetector(Store* st, int ml, bool sd, bool ld, bool uc, int hlc, int hls, double lr) :
     BaseDetector(st, "Machine Learning"),
     mlAlgorithm(ml), saveData(sd), loadData(ld), trained(false),
     useClassification(uc),
-    hiddenLayerCount(hlc), hiddenLayerSize(hls), freeParam(fp)
+    hiddenLayerCount(hlc), hiddenLayerSize(hls), learningRate(lr)
 {
     // Expose parameters to UI, debugging images as well
     _images.push_back(new ImageModeParam("Visualise Input Training Data", &visInputsImg, &st->dispImg));
@@ -19,7 +19,7 @@ MLearningDetector::MLearningDetector(Store* st, int ml, bool sd, bool ld, bool u
     _params.push_back(new ModeParam("DTrees treat outputs as categories", &useClassification, false));
     _params.push_back(new RangeParam<int>("MLP ANN Hidden Layers", Param::RANGE, &hiddenLayerCount, 2, 4, 1));
     _params.push_back(new RangeParam<int>("MLP ANN Hidden Layer Size", Param::RANGE, &hiddenLayerSize, 2, 2000, 10));
-    _params.push_back(new RangeParam<double>("MLP ANN free parameter", Param::RANGE_DBL, &freeParam, 0.001, 1, 0.001));
+    _params.push_back(new RangeParam<double>("MLP ANN Learning Rate", Param::RANGE_DBL, &learningRate, 0.001, 1, 0.001));
     _params.push_back(new ModeParam("Save trained ML data", &saveData, true));
 
     // Initialise machine learning algorithms
@@ -88,12 +88,12 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
         mlpANN_layer_size.at<int>(0,i) = hiddenLayerSize;
     mlpANN_layer_size.at<int>(0,hiddenLayerCount+1) = outputDim;
     mlpANN.create(mlpANN_layer_size, CvANN_MLP::SIGMOID_SYM);
-    mlpANN.train(inputs,
+    qDebug() << mlpANN.train(inputs,
                  outputs,
-                 cv::Mat(inputs.rows,1,CV_32FC1,cv::Scalar(1.0)), // Weights for inputs - treat all as equally important
+                 cv::Mat(), // Weights for inputs
                  cv::Mat(), // Train on all inputs given
-                 CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS, 300, 0.01),
-                                       CvANN_MLP_TrainParams::BACKPROP, freeParam));
+                 CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS, 200, 0.0000001),
+                                       CvANN_MLP_TrainParams::BACKPROP, learningRate));
 
     // Save trained data to file
     if(saveData)
@@ -180,6 +180,13 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     error_total(cv::Rect(3,0,1,1)) = error_stddev;
     // Error mean and stddev of all samples
     meanStdDev(errors, error_mean, error_stddev);
+
+    // STUB FOR PROPER ERROR
+    // 1. Take absolute euclidean distance of calibration point to estimated point as error
+    // 2. Square the error in (1), and sum errrors over all trained points
+    // 3. Divide the squared sum of errors (2) by number of training samples less one
+    // 4. Take the square-root of (3) as the total mean squared error
+
     // Save errors to YML file
     cv::FileStorage error("errors.yml", cv::FileStorage::WRITE);
     error << "errors_mean" << error_mean << "errors_stddev" << error_stddev
