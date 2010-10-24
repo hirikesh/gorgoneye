@@ -8,7 +8,7 @@
 
 MLearningDetector::MLearningDetector(Store* st, int ml, bool sd, bool ld, bool uc, int hlc, int hls, double fp) :
     BaseDetector(st, "Machine Learning"),
-    mlAlgorithm(ml), saveData(sd), loadData(fm), trained(false),
+    mlAlgorithm(ml), saveData(sd), loadData(ld), trained(false),
     useClassification(uc),
     hiddenLayerCount(hlc), hiddenLayerSize(hls), freeParam(fp)
 {
@@ -170,7 +170,7 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
         error_stats(cv::Rect(1,i,1,1)) = error_mean;
         error_stats(cv::Rect(2,i,1,1)) = error_stddev;
     }
-    // Error mean and std dev of error mean (stddev) of all coordinates
+    // Error mean and std dev of error mean and stddev of all coordinates
     cv::Mat error_total(1, 4, CV_32SC1);
     meanStdDev(error_stats(cv::Rect(1,0,1,inputs.rows/SAMPLES_PER_POINT)), error_mean, error_stddev);
     error_total(cv::Rect(0,0,1,1)) = error_mean;
@@ -178,8 +178,13 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     meanStdDev(error_stats(cv::Rect(2,0,1,inputs.rows/SAMPLES_PER_POINT)), error_mean, error_stddev);
     error_total(cv::Rect(2,0,1,1)) = error_mean;
     error_total(cv::Rect(3,0,1,1)) = error_stddev;
+    // Error mean and stddev of all samples
+    meanStdDev(errors, error_mean, error_stddev);
     // Save errors to YML file
     cv::FileStorage error("errors.yml", cv::FileStorage::WRITE);
-    error << "errors_total" << error_total << "errors_per_coord" << error_stats << "errors_per_sample" << errors;
+    error << "errors_mean" << error_mean << "errors_stddev" << error_stddev
+          << "errors_total" << error_total
+          << "errors_per_coord" << error_stats
+          << "errors_per_sample" << errors;
     // PERFORMANCE ANALYSIS ON TRAINING DATA
 }
