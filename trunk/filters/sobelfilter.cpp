@@ -41,11 +41,10 @@ void SobelFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk
 void SobelFilter::_filter(const cv::Mat& src)
 {
     // Perform Sobel operation
-    kernelSize = kernelSize % 2 ? kernelSize++ : kernelSize;
     if(src.type() == CV_8UC1)
-        Sobel(src, sobelImg, 1, derivX, derivY, kernelSize);
+        Sobel(src, sobelImg, 1, derivX, derivY, kernelSize + kernelSize%2 - 1);
     else
-        Sobel(src, sobelImg, 3, derivX, derivY, kernelSize);
+        Sobel(src, sobelImg, 3, derivX, derivY, kernelSize + kernelSize%2 - 1);
 
     // Rescale pixel values
     convertScaleAbs(sobelImg, sobelImg);
