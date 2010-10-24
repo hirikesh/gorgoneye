@@ -9,7 +9,7 @@ using cv::Scalar;
 
 GaborFilter::GaborFilter(Store* st) :
         BaseFilter(st, "Gabor"),
-        kernelSize(3), // n x n odd kernel
+        kernelSize(7), // n x n odd kernel
         avar(50),// variance
         pulse(5),// pulsation
         degPhase(0),   // phase
@@ -28,7 +28,6 @@ GaborFilter::GaborFilter(Store* st) :
 
     qDebug() << "Initialising Gabor Filter ...";
 
-    kernelSize = 21;
     if (kernelSize % 2 == 0) // prevent crash on even size
         kernelSize++;
 
@@ -67,9 +66,9 @@ void GaborFilter::filter(const Mat& srcImg, Mat& dstImg, Mat& dstMsk)
         }
     }
 
-//    _filter(srcImg);
-//    _store(dstImg, dstMsk);
-    _visualise();
+    _filter(srcImg);
+    _store(dstImg, dstMsk);
+//    _visualise();
 }
 
 void GaborFilter::_filter(const Mat& src)
