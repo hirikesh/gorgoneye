@@ -44,7 +44,7 @@ void CannyEdgeFilter::_filter(const cv::Mat& src)
 
     // Find Canny edges
     cvtColor(src, grayChannel, CV_BGR2GRAY);
-    sobelKernelSize = !(sobelKernelSize % 2) ? sobelKernelSize++ : sobelKernelSize;
+    sobelKernelSize = !(sobelKernelSize % 2) ? sobelKernelSize : sobelKernelSize++;
     Canny(grayChannel, cannyImg, threshLow, threshHigh, sobelKernelSize);
 }
 
