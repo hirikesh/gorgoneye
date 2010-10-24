@@ -13,53 +13,69 @@ GaborFilter::GaborFilter(Store* st) :
         avar(50),// variance
         pulse(5),// pulsation
         degPhase(0),   // phase
-        degPsi(90)
+        degPsi(90),
+        bw(1.),
+        psi(0),
+        lambda(4),
+        degTheta(45),
+        gamma(1.25)
 {
-    //_images.push_back(new ImageModeParam("Canny edges", &visCanny, &visCannyImg, &st->dispImg));
-    _params.push_back(new RangeParam<int>("Variance", Param::RANGE, &avar, 1, 200, 1));
-    _params.push_back(new RangeParam<int>("Phase (Degrees)", Param::RANGE, &degPhase, 0, 360, 1));
-    _params.push_back(new RangeParam<int>("Psi (Degrees)", Param::RANGE, &degPsi, 0, 360, 1));
-    _params.push_back((new RangeParam<int>("Kernel Size (Odd)", Param::RANGE, &kernelSize, 3, 7, 2)));
+    _params.push_back(new RangeParam<double>("Bandwidth", Param::RANGE_DBL, &bw, 1, 7, 0.5));
+    _params.push_back(new RangeParam<int>("Phase (Degrees)", Param::RANGE, &degTheta, 0, 360, 5));
+    _params.push_back(new RangeParam<int>("Psi (Degrees)", Param::RANGE, &psi, 0, 360, 5));
+    _params.push_back((new RangeParam<int>("WaveLength", Param::RANGE, &lambda, 2, 12, 1)));
+    _params.push_back((new RangeParam<double>("Aspect Ratio (Gamma)", Param::RANGE_DBL, &gamma, 0.25, 4, 0.25)));
 
+    qDebug() << "Initialising Gabor Filter ...";
+
+    kernelSize = 21;
+    if (kernelSize % 2 == 0) // prevent crash on even size
+        kernelSize++;
+
+    kernel = Mat(kernelSize, kernelSize, CV_32F, Scalar(0));
 }
 void GaborFilter::filter(const Mat& srcImg, Mat& dstImg, Mat& dstMsk)
 {
     if (!enabled)
         return;
 
-    // TODO: Only refresh kernel on parameter change;
-    float var = 0.1*avar;
-    float w = 0.1*pulse;
-    float phase = degPhase*CV_PI/180;
-    float psi = degPsi*CV_PI/180;
 
-    if (kernelSize % 2 == 0) // prevent crash on even size
-        kernelSize++;
-
-    kernel = Mat(kernelSize, kernelSize, CV_32F, Scalar(0));
     float kernelVal;
 
-    for (int x = -kernelSize/2; x <= kernelSize/2; x++)
-    {
-        for (int y = -kernelSize/2; y <= kernelSize/2; y++)
-        {
-            kernelVal = exp(-((x*x)+(y*y))/(2*var))*cos(w*x*cos(phase)+w*y*sin(phase)+psi);
-            kernel.at<float>(x + kernelSize/2,y + kernelSize/2) = kernelVal;
-//            qDebug().nospace() << "(" << x << "," << y << ") : " << kernelVal;
-        }
+    float theta = degTheta*CV_PI/180;
 
+    float sig = lambda/CV_PI*std::sqrt(0.5*std::log(2))*((std::pow(2, bw)+1)/(std::pow(2, bw)-1));
+
+    float isigx  = 1/sig;
+    float isigy = isigx*gamma;
+
+    float cosT = std::cos(theta);
+    float sinT = std::sin(theta);
+
+    for (int y = -kernelSize/2; y <= kernelSize/2; y++)
+    {
+        for (int x = -kernelSize/2; x <= kernelSize/2; x++)
+        {
+            float flipy = -y;
+            float x_theta = x*cosT + flipy*sinT;
+            float y_theta = -x*sinT + flipy*cosT;
+            float nx = x_theta*isigx;
+            float ny = y_theta*isigy;
+            kernelVal = std::exp(-0.5*(nx*nx+ny*ny))*std::cos(2*CV_PI/lambda*x_theta+psi);
+            kernel.at<float>(y + kernelSize/2, x + kernelSize/2) = kernelVal;
+//            qDebug().nospace() << "(" << y << "," << x << ") : " << kernelVal;
+        }
     }
 
-    _filter(srcImg);
-    _store(dstImg, dstMsk);
+//    _filter(srcImg);
+//    _store(dstImg, dstMsk);
     _visualise();
 }
 
 void GaborFilter::_filter(const Mat& src)
 {
+    cv::flip(kernel, kernel, 1);
     cv::filter2D(src, tmpGabor, src.depth(), kernel);
-
-
 }
 
 void GaborFilter::_store(Mat& dstImg, Mat& dstMsk)
@@ -69,10 +85,8 @@ void GaborFilter::_store(Mat& dstImg, Mat& dstMsk)
 
 void GaborFilter::_visualise()
 {
-    // should be at least able to see a picture of the kernel.
-    Mat tmp(cv::Size(400, 400), kernel.depth());
-    Mat kernelVis;
-    cv::add(kernel, Scalar(0.5), kernelVis);
-    cv::resize(kernelVis, tmp, tmp.size());
+    Mat kernelVis = 0.5*kernel + 0.5;
+    cv::Mat tmp(cv::Size(100, 100), kernelVis.depth());
+    cv::resize(kernelVis, tmp, tmp.size(), 0, 0, cv::INTER_NEAREST);
     imshow("Kernel Visualisation", tmp);
 }
