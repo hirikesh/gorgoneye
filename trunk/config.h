@@ -13,7 +13,6 @@
 #define SAMPLES_PER_POINT 80
 #define XVALID_SAMPLES_PER_POINT 20
 
-
 /* START: glgaze.{h,cpp} */
 // Scale factor for gaze resolution:
 //     DPI_SCALE * detected_screen_dpi = X and Y distance between adjacent gaze points

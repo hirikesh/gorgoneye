@@ -46,8 +46,8 @@ GazeTracker::GazeTracker(Store* st) :
     cornerFilter->enable();
     filters.push_back(cornerFilter);
 
-    mLearningDetector = new MLearningDetector(st, 3, true, false,
-                                              false, 2, 250, 0.001);
+    mLearningDetector = new MLearningDetector(st, 3, false, true,
+                                              false, 2, 50, 0.001);
     detectors.push_back(mLearningDetector);
 
     BaseTracker::initImageModes();
@@ -178,16 +178,17 @@ void GazeTracker::track()
 #endif
     // FAKE EYES
 
-    // INPUT CONVERSION - to fixed size
-    static cv::Mat tmpGazeImg, gazeImg(1, 50, CV_8UC1);
-    cv::resize(newEyeImg, gazeImg, cv::Size(50,14), cv::INTER_AREA);
-//    for(unsigned int i = 0; i < 50; i++)
-//        gazeImg(cv::Rect(i,0,1,1)) = mean(tmpGazeImg(cv::Rect(i,0,1,14)));
+    // INPUT CONVERSION - to fixed size and compatible type for training
+    static cv::Mat tmpGazeImg, gazeImg(1, 20, CV_8UC1);
+    cv::resize(newEyeImg, tmpGazeImg, cv::Size(20,14), cv::INTER_AREA);
+    for(unsigned int i = 0; i < tmpGazeImg.cols; i++)
+        gazeImg(cv::Rect(i,0,1,1)) = mean(tmpGazeImg(cv::Rect(i,0,1,tmpGazeImg.rows)));
     gazeImg.convertTo(gazeImg, CV_32FC1, 1./255);
-    static cv::Mat tmpGazeImgL, gazeImgL(1, 50, CV_8UC1);
-    cv::resize(newEyeImgL, gazeImgL, cv::Size(50,14), cv::INTER_AREA);
-//    for(unsigned int i = 0; i < 50; i++)
-//        gazeImgL(cv::Rect(i,0,1,1)) = mean(tmpGazeImgL(cv::Rect(i,0,1,14)));
+
+    static cv::Mat tmpGazeImgL, gazeImgL(1, 20, CV_8UC1);
+    cv::resize(newEyeImgL, tmpGazeImgL, cv::Size(20,14), cv::INTER_AREA);
+    for(unsigned int i = 0; i < tmpGazeImgL.cols; i++)
+        gazeImgL(cv::Rect(i,0,1,1)) = mean(tmpGazeImgL(cv::Rect(i,0,1,tmpGazeImg.rows)));
     gazeImgL.convertTo(gazeImgL, CV_32FC1, 1./255);
     // INPUT CONVERSION
 
@@ -285,7 +286,7 @@ void GazeTracker::track()
             // Postprocessing (none atm)
             store->gazeX = (int)store->gazePoint.at<float>(0,0);
             store->gazeY = (int)store->gazePoint.at<float>(0,1);
-            qDebug() << store->gazePoint.at<float>(0,0) << store->gazePoint.at<float>(0,1);
+//            qDebug() << store->gazePoint.at<float>(0,0) << store->gazePoint.at<float>(0,1);
         }
         // Updating store bool after attempting to ensures ROIs are valid
         store->gazeLocated = located;
