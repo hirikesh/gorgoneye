@@ -29,6 +29,11 @@ private:
     int outerW;
     int outerH;
 
+    int hystThreshX;
+    int hystThreshY;
+    int currGazeX;
+    int currGazeY;
+
     Store* store;
 };
 
