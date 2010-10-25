@@ -98,13 +98,12 @@ void GUITrackerDiag::init()
         paramLayout->addWidget(paramDialogs[i]);
     }
 
+    paramLayout->setMargin(0);
+
     mainLayout->addWidget(listTitle, 0, 0);
     mainLayout->addWidget(trackerTree, 1, 0);
     mainLayout->addWidget(paramTitle, 2, 0);
     mainLayout->addWidget(scrollArea, 3, 0);
-
-    paramLayout->setMargin(0);
-    paramLayout->setSpacing(0);
 
     scrollContents->setLayout(paramLayout);
     scrollArea->setWidget(scrollContents);
