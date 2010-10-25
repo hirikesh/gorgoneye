@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>635</width>
-    <height>310</height>
+    <height>56</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -31,6 +31,9 @@
      <property name="spacing">
       <number>2</number>
      </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
      <item>
       <widget class="QFrame" name="viewFrame">
        <property name="frameShape">
@@ -40,19 +43,15 @@
         <enum>QFrame::Plain</enum>
        </property>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetFixedSize</enum>
+        </property>
         <property name="margin">
          <number>2</number>
         </property>
         <property name="spacing">
          <number>2</number>
         </property>
-        <item row="0" column="0">
-         <layout class="QVBoxLayout" name="viewLayout">
-          <property name="spacing">
-           <number>2</number>
-          </property>
-         </layout>
-        </item>
        </layout>
       </widget>
      </item>
@@ -61,6 +60,9 @@
        <property name="spacing">
         <number>2</number>
        </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
        <property name="margin">
         <number>0</number>
        </property>
@@ -68,6 +70,9 @@
         <widget class="QPushButton" name="startBtn">
          <property name="text">
           <string>Start</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -81,7 +86,7 @@
        <item>
         <widget class="QPushButton" name="gazeBtn">
          <property name="text">
-          <string>Switch</string>
+          <string>Gaze</string>
          </property>
          <property name="checkable">
           <bool>false</bool>
@@ -111,27 +116,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="sideLayout">
-     <property name="spacing">
-      <number>2</number>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" name="auxLayout">
-       <property name="spacing">
-        <number>2</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" name="paramsLayout">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-        </layout>
-       </item>
-      </layout>
      </item>
     </layout>
    </item>

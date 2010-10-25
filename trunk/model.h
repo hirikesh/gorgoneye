@@ -33,7 +33,7 @@ private:
     BaseTracker* faceCAMShiftTracker;
     BaseTracker* faceHaarCAMShiftTracker;
     BaseTracker* faceMTracker;
-//    BaseTracker* faceHaarCAMShiftACTracker;
+    BaseTracker* faceHaarCAMShiftACTracker;
 
     BaseTracker* eyesHaarTracker;
     BaseTracker* eyesHaarX2Tracker;

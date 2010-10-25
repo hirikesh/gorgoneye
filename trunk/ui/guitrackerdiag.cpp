@@ -1,13 +1,11 @@
 #include <vector>
 #include <string>
 
-#include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QLabel>
 #include <QDebug>
 #include <QTreeWidget>
-#include <QPushButton>
 #include <QHeaderView>
 #include <QGridLayout>
 #include <QButtonGroup>
@@ -32,7 +30,7 @@ GUITrackerDiag::GUITrackerDiag(const std::string& title, Model* m, QWidget *pare
     scrollArea(new QScrollArea()),
     scrollContents(new QWidget()),
     buttonGroup(new QButtonGroup()),
-    trackers(m->getPtrTrackers())   
+    trackers(m->getPtrTrackers())
 {
     initTreeList();
     init();
@@ -52,7 +50,8 @@ void GUITrackerDiag::initTreeList()
 //            firstItemAdded = false;
 //            initItemAdded = currTrackerItem;
 //        }
-        std::string trackerEntry = "Enable " + currTracker->name() + " Tracking";
+//        std::string trackerEntry = "Enable " + currTracker->name() + " Tracking";
+        std::string trackerEntry = currTracker->name();
         currTrackerItem->setText(firstColumn, trackerEntry.c_str());
         paramDialogs.push_back(currTrackerItem->getParamDialog());
 
@@ -98,9 +97,7 @@ void GUITrackerDiag::init()
 {
 
     trackerTree->header()->hide();
-//    trackerTree->header()->resizeSection(0, 190);
 //    trackerTree->expandAll();
-//    trackerTree->setMinimumWidth(300);
 
     for (unsigned int i = 0; i < paramDialogs.size(); i++)
     {
@@ -109,17 +106,13 @@ void GUITrackerDiag::init()
     }
 
     mainLayout->addWidget(listTitle, 0, 0);
-    mainLayout->addWidget(paramTitle, 0, 1);
     mainLayout->addWidget(trackerTree, 1, 0);
-    mainLayout->addWidget(scrollArea, 1, 1);
+    mainLayout->addWidget(paramTitle, 2, 0);
+    mainLayout->addWidget(scrollArea, 3, 0);
 
     scrollContents->setLayout(paramLayout);
     scrollArea->setWidget(scrollContents);
     scrollArea->setWidgetResizable(true);
-//    scrollArea->setMinimumHeight(300);
-//    scrollArea->setMinimumWidth(200);
-
-//    changeParamBox(initItemAdded, NULL);
 
     QObject::connect(trackerTree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
                      this, SLOT(trackerItemToggled(QTreeWidgetItem*, int)));
@@ -153,7 +146,6 @@ void GUITrackerDiag::changeParamBox(QTreeWidgetItem *currItem, QTreeWidgetItem *
             GUITreeWidgetItem* previousItem = static_cast<GUITreeWidgetItem*>(prevItem);
             previousItem->getParamDialog()->hide();
         }
-
         GUITreeWidgetItem* currentItem = static_cast<GUITreeWidgetItem*>(currItem);
         currentItem->getParamDialog()->show();
     }

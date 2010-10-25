@@ -36,14 +36,18 @@ void Control::initGUI()
 {
     ui->setupUi(this);
 
-    // Setup camera viewport
-    ui->viewLayout->insertWidget(0, viewGL);
-
-    // Setup tracker and filter UI
-    GUIProcessDiag* filterList = new GUIProcessDiag("Filters:" , model, this);
+    // Setup tracker UI, filter UI and camera viewport
     GUITrackerDiag* trackerList = new GUITrackerDiag("Trackers:", model, this);
-    ui->auxLayout->insertWidget(0, filterList);
-    ui->auxLayout->insertWidget(1, trackerList);
+    GUIProcessDiag* filterList = new GUIProcessDiag("Filters:" , model, this);
+    ui->horizontalLayout->insertWidget(0, trackerList);
+    ui->horizontalLayout->insertWidget(2, filterList);
+    ui->mainLayout->setAlignment(ui->viewFrame, Qt::AlignCenter);
+    ui->viewFrame->layout()->addWidget(viewGL);
+
+    // Set widget width proportions
+    ui->horizontalLayout->setStretch(0, 280);
+    ui->horizontalLayout->setStretch(1, 640);
+    ui->horizontalLayout->setStretch(2, 280);
 
     // Setup basic camera and tracker control
     timer->setInterval(CAP_TIMER_MS); // timer expires every CAP_TIMER_MS ms
