@@ -7,14 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>635</width>
-    <height>56</height>
+    <height>49</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>GorgonEye</string>
@@ -30,9 +24,6 @@
     <layout class="QVBoxLayout" name="mainLayout">
      <property name="spacing">
       <number>2</number>
-     </property>
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <item>
       <widget class="QFrame" name="viewFrame">
@@ -60,12 +51,6 @@
        <property name="spacing">
         <number>2</number>
        </property>
-       <property name="sizeConstraint">
-        <enum>QLayout::SetDefaultConstraint</enum>
-       </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
        <item>
         <widget class="QPushButton" name="startBtn">
          <property name="text">
@@ -88,13 +73,7 @@
          <property name="text">
           <string>Gaze</string>
          </property>
-         <property name="checkable">
-          <bool>false</bool>
-         </property>
          <property name="checked">
-          <bool>false</bool>
-         </property>
-         <property name="flat">
           <bool>false</bool>
          </property>
         </widget>
@@ -103,16 +82,10 @@
      </item>
      <item>
       <spacer name="viewSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>5</width>
-         <height>40</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
       </spacer>

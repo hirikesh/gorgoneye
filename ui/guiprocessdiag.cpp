@@ -63,6 +63,7 @@ void GUIProcessDiag::init()
     buttonLayout->addWidget(pbRemove, 1, 1);
 
     scrollArea->setWidgetResizable(true);
+    this->setMinimumWidth(240);
 
     // create event handlers
     QObject::connect(pbAdd, SIGNAL(clicked()), this, SLOT(addProcessItem()));

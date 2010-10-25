@@ -11,9 +11,9 @@ HarrisCornerFilter::HarrisCornerFilter(Store* st, int ns, int ks, double k) :
     freeParamK(k)
 {
     _images.push_back(new ImageModeParam("Harris corners", &visHarris, &visHarrisImg, &st->dispImg));
-    _params.push_back(new RangeParam<int>("Neighbourhood block size", Param::RANGE, &neighbourhoodSize, 1, 64, 2));
+    _params.push_back(new RangeParam<int>("Block size", Param::RANGE, &neighbourhoodSize, 1, 64, 2));
     _params.push_back(new RangeParam<double>("Free parameter k", Param::RANGE_DBL, &freeParamK, 0.00, 1.00 , 0.01));
-    _params.push_back((new RangeParam<int>("Sobel kernel size (ODD NUMBERS ONLY)", Param::RANGE, &sobelKernelSize, 1, 21, 2)));
+    _params.push_back((new RangeParam<int>("Sobel kernel size (odd)", Param::RANGE, &sobelKernelSize, 1, 21, 2)));
 }
 
 void HarrisCornerFilter::setParams(int ns, int ks, double k)

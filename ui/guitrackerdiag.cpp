@@ -113,6 +113,7 @@ void GUITrackerDiag::init()
     scrollContents->setLayout(paramLayout);
     scrollArea->setWidget(scrollContents);
     scrollArea->setWidgetResizable(true);
+    this->setMinimumWidth(240);
 
     QObject::connect(trackerTree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
                      this, SLOT(trackerItemToggled(QTreeWidgetItem*, int)));

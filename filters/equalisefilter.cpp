@@ -8,7 +8,7 @@ using namespace cv;
 EqualiseFilter::EqualiseFilter(Store* st) :
         BaseFilter(st, "Equalisation")
 {
-    _params.push_back(new ModeParam("Apply Alternative Equalisation (HSV)", &useHSV, false));
+    _params.push_back(new ModeParam("Apply HSV Equalisation", &useHSV, false));
 }
 
 void EqualiseFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk)

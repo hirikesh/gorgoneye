@@ -9,9 +9,9 @@ CornerFilter::CornerFilter(Store* st, int mxc, double ql, double md, int bs, boo
     blockSize(bs), useHarris(uh), freeK(fk)
 {
     _images.push_back(new ImageModeParam("Corners found", &visCorner, &visCornerImg, &st->dispImg));
-    _params.push_back(new RangeParam<int>("Maximum number of corners", Param::RANGE, &maxCorners, 1, 500, 1));
+    _params.push_back(new RangeParam<int>("Max. # of corners", Param::RANGE, &maxCorners, 1, 500, 1));
     _params.push_back(new RangeParam<double>("Quality level", Param::RANGE_DBL, &qualityLevel, 0.01, 1.00, 0.01));
-    _params.push_back(new RangeParam<double>("Minimum distance between 2 corners", Param::RANGE_DBL, &minDistance, 1, 100, 4));
+    _params.push_back(new RangeParam<double>("Min. distance between corners", Param::RANGE_DBL, &minDistance, 1, 100, 4));
     _params.push_back(new RangeParam<int>("Block size", Param::RANGE, &blockSize, 1, 20, 1));
     _params.push_back(new ModeParam("Use Harris Corner detection", &useHarris, uh));
     _params.push_back(new RangeParam<double>("Harris free parameter k", Param::RANGE_DBL, &freeK, 0.00, 1.00, 0.01));

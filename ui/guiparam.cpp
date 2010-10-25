@@ -25,6 +25,7 @@ GUICheckBox::GUICheckBox(ModeParam* mp) :
 void GUICheckBox::init()
 {
     layout = new QGridLayout(this);
+    layout->setMargin(0);
     layout->addWidget(checkbox);
     checkbox->setChecked(*pValue);
     QObject::connect(checkbox, SIGNAL(toggled(bool)), this, SLOT(setParamValue(bool)));
@@ -48,9 +49,11 @@ GUISlider::GUISlider(RangeParam<int>* rp) :
     slider->setValue(*pValue);
 
     spinbox->setRange(rp->getMinimum(), rp->getMaximum());
+    spinbox->setSingleStep(rp->getStep());
     spinbox->setValue(slider->value());
 
-    layout->addWidget(title, 0, 0);
+    layout->setMargin(0);
+    layout->addWidget(title, 0, 0, 1, 2);
     layout->addWidget(slider, 1, 0);
     layout->addWidget(spinbox, 1, 1);
 
@@ -71,13 +74,14 @@ GUIDSpinBox::GUIDSpinBox(RangeParam<double>* rp) :
         layout(new QGridLayout(this)),
         pValue(static_cast<double*>(rp->value()))
 {
-
     spinbox->setRange(rp->getMinimum(), rp->getMaximum());
     spinbox->setSingleStep(rp->getStep());
+    spinbox->setDecimals(3);
     spinbox->setValue(*pValue);
 
+    layout->setMargin(0);
     layout->addWidget(title, 0, 0);
-    layout->addWidget(spinbox, 0, 1);
+    layout->addWidget(spinbox, 1, 0);
 
     connect(spinbox, SIGNAL(valueChanged(double)), this, SLOT(setParamValue(double)));
 }

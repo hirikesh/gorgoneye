@@ -11,7 +11,6 @@
 GUIParamDiag::GUIParamDiag(QButtonGroup* buttonGroup, QWidget *parent) :
         QFrame(parent)
 {
-
 }
 
 GUIParamDiag::GUIParamDiag(std::vector<Param*> params, QButtonGroup* buttonGroup, QWidget *parent) :
@@ -54,6 +53,7 @@ GUIParamDiag::~GUIParamDiag()
 
 void GUIParamDiag::init()
 {
+    paramLayout->setSpacing(12);
     for (unsigned int i = 0; i < gparams.size(); i++)
     {
         paramLayout->addWidget(gparams[i]);
