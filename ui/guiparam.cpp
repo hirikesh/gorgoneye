@@ -9,14 +9,14 @@
 #include "guiparam.h"
 
 GUICheckBox::GUICheckBox(const std::string& title, bool* value) :
-    checkbox(new QCheckBox(title.c_str(), this)),
+    QCheckBox(title.c_str()),
     pValue(value)
 {
     init();
 }
 
 GUICheckBox::GUICheckBox(ModeParam* mp) :
-    checkbox(new QCheckBox(mp->name(), this)),
+    QCheckBox(mp->name()),
     pValue(static_cast<bool*>(mp->value()))
 {
     init();
@@ -24,11 +24,8 @@ GUICheckBox::GUICheckBox(ModeParam* mp) :
 
 void GUICheckBox::init()
 {
-    layout = new QGridLayout(this);
-    layout->setMargin(0);
-    layout->addWidget(checkbox);
-    checkbox->setChecked(*pValue);
-    QObject::connect(checkbox, SIGNAL(toggled(bool)), this, SLOT(setParamValue(bool)));
+    setChecked(*pValue);
+    connect(this, SIGNAL(toggled(bool)), this, SLOT(setParamValue(bool)));
 }
 
 void GUICheckBox::setParamValue(bool value)
@@ -52,14 +49,16 @@ GUISlider::GUISlider(RangeParam<int>* rp) :
     spinbox->setSingleStep(rp->getStep());
     spinbox->setValue(slider->value());
 
-    layout->setMargin(0);
     layout->addWidget(title, 0, 0, 1, 2);
     layout->addWidget(slider, 1, 0);
     layout->addWidget(spinbox, 1, 1);
 
-    QObject::connect(spinbox, SIGNAL(valueChanged(int)), slider, SLOT(setValue(int)));
-    QObject::connect(slider, SIGNAL(valueChanged(int)), spinbox, SLOT(setValue(int)));
-    QObject::connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setParamValue(int)));
+    layout->setMargin(0);
+    layout->setSpacing(2);
+
+    connect(spinbox, SIGNAL(valueChanged(int)), slider, SLOT(setValue(int)));
+    connect(slider, SIGNAL(valueChanged(int)), spinbox, SLOT(setValue(int)));
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setParamValue(int)));
 }
 
 void GUISlider::setParamValue(int value)
@@ -79,9 +78,11 @@ GUIDSpinBox::GUIDSpinBox(RangeParam<double>* rp) :
     spinbox->setDecimals(3);
     spinbox->setValue(*pValue);
 
-    layout->setMargin(0);
     layout->addWidget(title, 0, 0);
     layout->addWidget(spinbox, 1, 0);
+
+    layout->setMargin(0);
+    layout->setSpacing(2);
 
     connect(spinbox, SIGNAL(valueChanged(double)), this, SLOT(setParamValue(double)));
 }
@@ -93,20 +94,19 @@ void GUIDSpinBox::setParamValue(double value)
 
 GUIRadioButton::GUIRadioButton(ImageModeParam* imp) :
         QRadioButton(imp->name()),
-        radioButton(new QRadioButton(imp->name())),
         pValue(static_cast<cv::Mat*>(imp->value())),
         enPValue(static_cast<bool*>(imp->getPtrEnabled())),
         dispImg(imp->getDstImgPtr())
 {
-        if (*dispImg == pValue)
-        {
-            this->setChecked(true);
-        }
-        else
-        {
-            this->setChecked(false);
-        }
-        connect(this, SIGNAL(toggled(bool)), this, SLOT(setParamValues(bool)));
+    if (*dispImg == pValue)
+    {
+        this->setChecked(true);
+    }
+    else
+    {
+        this->setChecked(false);
+    }
+    connect(this, SIGNAL(toggled(bool)), this, SLOT(setParamValues(bool)));
 }
 
 void GUIRadioButton::setParamValues(bool state)
@@ -117,15 +117,3 @@ void GUIRadioButton::setParamValues(bool state)
         *dispImg = pValue;
     }
 }
-
-//GUITrackerComboBox::GUITrackerComboBox(BaseTracker* trkr) :
-//        QComboBox(),
-//        tracker(trkr)
-//{
-//    connect(this, SIGNAL(activated(int)), this, SLOT(setDetector(int)));
-//}
-
-//void GUITrackerComboBox::setDetector(int type)
-//{
-//    tracker->setDetector(type);
-//}
