@@ -81,13 +81,6 @@ void GUITrackerDiag::initTreeList()
             currDetectorItem->setText(firstColumn, trackerItemEntry.c_str());
             paramDialogs.push_back(currDetectorItem->getParamDialog());
         }
-//        GUITrackerComboBox* detectorSelection = new GUITrackerComboBox(currTracker);
-//        for (unsigned int i = 0; i < detectors.size(); i++)
-//        {
-//            detectorSelection->addItem(detectors[i]->name().c_str());
-//        }
-//        detectorSelection->setCurrentIndex(currTracker->getCurrDetectorType());
-//        trackerTree->setItemWidget(currTrackerItem, 1, detectorSelection);
     }
     // When user chooses different tracker; destroy top-level item associated with tracker, it's parameter dialogs? and re-create it.
     //delete trackerTree->takeTopLevelItem(0);
@@ -110,10 +103,14 @@ void GUITrackerDiag::init()
     mainLayout->addWidget(paramTitle, 2, 0);
     mainLayout->addWidget(scrollArea, 3, 0);
 
+    paramLayout->setMargin(0);
+    paramLayout->setSpacing(0);
+
     scrollContents->setLayout(paramLayout);
     scrollArea->setWidget(scrollContents);
     scrollArea->setWidgetResizable(true);
-    this->setMinimumWidth(240);
+
+    setMinimumWidth(240);
 
     QObject::connect(trackerTree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
                      this, SLOT(trackerItemToggled(QTreeWidgetItem*, int)));

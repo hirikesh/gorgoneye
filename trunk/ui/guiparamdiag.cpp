@@ -53,7 +53,8 @@ GUIParamDiag::~GUIParamDiag()
 
 void GUIParamDiag::init()
 {
-    paramLayout->setSpacing(12);
+    paramLayout->setMargin(4);
+    paramLayout->setSpacing(6);
     for (unsigned int i = 0; i < gparams.size(); i++)
     {
         paramLayout->addWidget(gparams[i]);

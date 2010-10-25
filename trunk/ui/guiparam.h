@@ -1,17 +1,19 @@
 #ifndef GUIPARAM_H
 #define GUIPARAM_H
 
-#include <QComboBox>
+#include <QFrame>
+#include <QCheckBox>
 #include <QRadioButton>
 #include "parameter.h"
-#include "trackers/basetracker.h"
 
 class ModeParam;
 class ImageModeParam;
-class QLabel;
+class QFrame;
 class QGridLayout;
+class QLabel;
 class QCheckBox;
 class QDoubleSpinBox;
+class QSlider;
 class QSpinBox;
 class QRadioButton;
 
@@ -19,18 +21,16 @@ namespace cv {
     class Mat;
 }
 
-class GUICheckBox : public QFrame
+class GUICheckBox : public QCheckBox
 {
     Q_OBJECT
 public:
-    GUICheckBox(const std::string& title, bool* value);
+    explicit GUICheckBox(const std::string& title, bool* value);
     explicit GUICheckBox(ModeParam* mp);
     void init();
 private slots:
     void setParamValue(bool);
 private:
-    QCheckBox* checkbox;
-    QGridLayout* layout;
     bool* const pValue;
 };
 
@@ -76,24 +76,9 @@ signals:
 private slots:
     void setParamValues(bool);
 private:
-    QGridLayout* layout;
-    QRadioButton* radioButton;
     cv::Mat* const pValue;
     bool* const enPValue;
     cv::Mat** dispImg;
 };
-
-//class GUITrackerComboBox : public QComboBox
-//{
-//    Q_OBJECT
-//public:
-//    explicit GUITrackerComboBox(BaseTracker* trkr);
-//signals:
-//    void itemSelected(int);
-//private slots:
-//    void setDetector(int);
-//private:
-//    BaseTracker* tracker;
-//};
 
 #endif // GUIPARAM_H
