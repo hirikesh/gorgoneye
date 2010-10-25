@@ -9,7 +9,7 @@
 using namespace cv;
 
 MeanShiftDetector::MeanShiftDetector(Store* st) :
-      BaseDetector(st, "CAMShift"),
+      BaseDetector(st, "Weighted Ratio Meanshift"),
       enBackProjImg(false),
       histCalibrate(true)
 {
@@ -88,7 +88,7 @@ bool MeanShiftDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRo
     }
     else
     {
-        qDebug() << "Failed to determine face using Mean Shift";
+//        qDebug() << "Failed to determine face using Mean Shift";
         histCalibrate = true;
         return false;
     }
