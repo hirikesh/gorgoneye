@@ -19,7 +19,7 @@
 #include "trackers/facemtracker.h"
 #include "trackers/facehaarcamshifttracker.h"
 #include "trackers/facemtracker.h"
-//#include "trackers/facehaarcamshiftactracker.h"
+#include "trackers/facehaarcamshiftactracker.h"
 
 #include "trackers/eyeshaartracker.h"
 #include "trackers/eyeshaarx2tracker.h"
@@ -42,7 +42,7 @@ Model::Model(int device) :
     faceCAMShiftTracker(new FaceCAMShiftTracker(&store)),
     faceHaarCAMShiftTracker(new FaceHaarCAMShiftTracker(&store)),
     faceMTracker(new FaceMTracker(&store)),
-//    faceHaarCAMShiftACTracker(new FaceHaarCAMShiftACTracker(&store)),
+    faceHaarCAMShiftACTracker(new FaceHaarCAMShiftACTracker(&store)),
 
     eyesHaarTracker(new EyesHaarTracker(&store)),
     eyesHaarX2Tracker(new EyesHaarX2Tracker(&store)),
@@ -82,7 +82,7 @@ Model::Model(int device) :
     faceCAMShiftTracker->disable();
     faceHaarCAMShiftTracker->disable();
     faceMTracker->enable();
-//    faceHaarCAMShiftACTracker->disable();
+    faceHaarCAMShiftACTracker->disable();
     eyesHaarTracker->enable();
     eyesHaarX2Tracker->enable();
 
@@ -90,7 +90,7 @@ Model::Model(int device) :
     trackers.push_back(faceCAMShiftTracker);
     trackers.push_back(faceHaarCAMShiftTracker);
     trackers.push_back(faceMTracker);
-//    trackers.push_back(faceHaarCAMShiftACTracker);
+    trackers.push_back(faceHaarCAMShiftACTracker);
 
     trackers.push_back(eyesHaarX2Tracker);
     trackers.push_back(eyesHaarTracker);
@@ -125,7 +125,7 @@ void Model::update()
     faceHaarTracker->track();
     faceCAMShiftTracker->track();
     faceHaarCAMShiftTracker->track();
-//    faceHaarCAMShiftACTracker->track();
+    faceHaarCAMShiftACTracker->track();
     faceMTracker->track();
     faceTracker->track();
 

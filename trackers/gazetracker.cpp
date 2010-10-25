@@ -46,7 +46,7 @@ GazeTracker::GazeTracker(Store* st) :
     cornerFilter->enable();
     filters.push_back(cornerFilter);
 
-    mLearningDetector = new MLearningDetector(st, 3, false, true,
+    mLearningDetector = new MLearningDetector(st, 3, false, false,
                                               false, 2, 50, 0.001);
     detectors.push_back(mLearningDetector);
 

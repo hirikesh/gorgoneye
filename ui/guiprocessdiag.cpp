@@ -54,8 +54,8 @@ void GUIProcessDiag::init()
     mainLayout->addWidget(listTitle, 0, 0);
     mainLayout->addWidget(processList, 1, 0);
     mainLayout->addLayout(buttonLayout, 2, 0);
-    mainLayout->addWidget(paramTitle, 0, 1);
-    mainLayout->addWidget(scrollArea, 1, 1, 2, 1);
+    mainLayout->addWidget(paramTitle, 3, 0);
+    mainLayout->addWidget(scrollArea, 4, 0);
 
     buttonLayout->addWidget(pbMoveUp, 0, 0);
     buttonLayout->addWidget(pbMoveDown, 0, 1);
@@ -63,7 +63,6 @@ void GUIProcessDiag::init()
     buttonLayout->addWidget(pbRemove, 1, 1);
 
     scrollArea->setWidgetResizable(true);
-//    scrollArea->setMinimumHeight(200);
 
     // create event handlers
     QObject::connect(pbAdd, SIGNAL(clicked()), this, SLOT(addProcessItem()));
@@ -134,7 +133,7 @@ void GUIProcessDiag::moveDownProcessItem()
 }
 
 void GUIProcessDiag::swapProcessItems(int currIndex, int newIndex)
-{   
+{
     QListWidgetItem* currItem = processList->takeItem(currIndex);
     processList->insertItem(newIndex, currItem);
     processList->setCurrentRow(newIndex);

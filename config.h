@@ -37,7 +37,7 @@
 /* START: model.{h,cpp} */
 // Set stage for preprocessing to run:
 //     1 - face, 2 - eyes, 3 - gaze, else - none
-#define PREPROC_STAGE 3
+#define PREPROC_STAGE 2
 // Output processing-time information to qDebug():
 //     0 - no timing info, 1 - timing via opencv ticks()
 #define TIME_FILTERS 0

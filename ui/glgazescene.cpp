@@ -27,9 +27,7 @@ void GLGazeScene::updateCalib()
     store->gazeOuterY = deltaY * floor(outerH/deltaY);
 
     // Reset calibration starting point
-//    store->calibX = -store->gazeOuterX;
     store->calibX = 0;
-//    store->calibY = -store->gazeOuterY;
     store->calibY = 0;
 }
 
