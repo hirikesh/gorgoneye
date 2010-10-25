@@ -12,7 +12,7 @@ CannyEdgeFilter::CannyEdgeFilter(Store* st, double tl, double th, int ks) :
     _images.push_back(new ImageModeParam("Canny edges", &visCanny, &visCannyImg, &st->dispImg));
     _params.push_back(new RangeParam<double>("Canny threshold low", Param::RANGE_DBL, &threshLow, 0, 90000, 10));
     _params.push_back(new RangeParam<double>("Canny threshold high", Param::RANGE_DBL, &threshHigh, 0, 90000, 10));
-    _params.push_back((new RangeParam<int>("Sobel kernel size (ODD NUMBERS ONLY)", Param::RANGE, &sobelKernelSize, 3, 7, 2)));
+    _params.push_back((new RangeParam<int>("Sobel kernel size (odd)", Param::RANGE, &sobelKernelSize, 3, 7, 2)));
 }
 
 void CannyEdgeFilter::setParams(double tl, double th, int ks)
