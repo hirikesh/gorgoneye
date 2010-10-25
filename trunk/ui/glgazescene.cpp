@@ -27,7 +27,8 @@ void GLGazeScene::updateCalib()
     store->gazeOuterY = deltaY * floor(outerH/deltaY);
 
     // Reset calibration starting point
-    store->calibX = -store->gazeOuterX;
+//    store->calibX = -store->gazeOuterX;
+    store->calibX = 0;
 //    store->calibY = -store->gazeOuterY;
     store->calibY = 0;
 }
@@ -76,14 +77,14 @@ void GLGazeScene::drawBackground(QPainter* painter, const QRectF& rect)
     glBegin(GL_LINES);
         // Draw calibration lines - intersection is calibration coordinate
         glColor3f(0.5f, 0.5f, 0.5f);
-        for(float nextx = 0; nextx <= width()/2; nextx = nextx + deltaX)
+        for(float nextx = 0; nextx <= outerW; nextx = nextx + deltaX)
         {
             glVertex2i(outerW-nextx, 0);
             glVertex2i(outerW-nextx, height());
             glVertex2i(outerW+nextx, 0);
             glVertex2i(outerW+nextx, height());
         }
-        for(float nexty = 0; nexty <= height(); nexty = nexty + deltaY)
+        for(float nexty = 0; nexty <= outerH; nexty = nexty + deltaY)
         {
             glVertex2i(0, outerH-nexty);
             glVertex2i(width(), outerH-nexty);

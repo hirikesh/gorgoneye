@@ -10,8 +10,9 @@
 
 /* START: gazetracker.cpp & mlearningdetector.cpp */
 #define IGNORED_SAMPLES_PER_POINT 10
-#define SAMPLES_PER_POINT 80
+#define SAMPLES_PER_POINT 75
 #define XVALID_SAMPLES_PER_POINT 20
+#define CALIBRATION_PASSES 1
 
 /* START: glgaze.{h,cpp} */
 // Scale factor for gaze resolution:

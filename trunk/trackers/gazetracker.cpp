@@ -1,5 +1,5 @@
 #include <cv.h>
-//#include <highgui.h>
+#include <highgui.h>
 #include <cvblob.h>
 #include <QDebug>
 #include "gazetracker.h"
@@ -72,9 +72,6 @@ void GazeTracker::track()
     cv::Mat clonedImage;
     cvtColor(store->eyesImg, clonedImage, CV_BGR2GRAY);
     equalizeHist(clonedImage, clonedImage);
-//    cv::Mat clonedImage = store->eyesImg.clone();
-//    grayscaleFilter->filter(clonedImage, clonedImage, store->ignore);
-//    equaliseFilter->filter(clonedImage, clonedImage, store->ignore);
     medianBlur(clonedImage, clonedImage, 7);
 
     cv::Mat clonedMask;
@@ -85,7 +82,6 @@ void GazeTracker::track()
     IplImage *labelImg = cvCreateImage(clonedMask.size(), IPL_DEPTH_LABEL, 1);
     cvb::CvBlobs blobs;
     cvb::cvLabel(&binary, labelImg, blobs);
-//    imshow("Cloned Image After Cropping", clonedMask);
     std::vector<cvb::CvBlob*> vec;
     cv::Mat newEyeImg;
     if (blobs.size() > 1)
@@ -113,9 +109,6 @@ void GazeTracker::track()
     cv::Mat clonedImageL;
     cvtColor(store->eyesImgL, clonedImageL, CV_BGR2GRAY);
     equalizeHist(clonedImageL, clonedImageL);
-//    cv::Mat clonedImage = store->eyesImg.clone();
-//    grayscaleFilter->filter(clonedImageL, clonedImageL, store->ignore);
-//    equaliseFilter->filter(clonedImageL, clonedImageL, store->ignore);
     medianBlur(clonedImageL, clonedImageL, 7);
 
     cv::Mat clonedMaskL;
@@ -126,7 +119,6 @@ void GazeTracker::track()
     IplImage *labelImgL = cvCreateImage(clonedMaskL.size(), IPL_DEPTH_LABEL, 1);
     cvb::CvBlobs blobsL;
     cvb::cvLabel(&binaryL, labelImgL, blobsL);
-//    imshow("Cloned Image After Cropping", clonedMaskL);
     std::vector<cvb::CvBlob*> vecL;
     cv::Mat newEyeImgL;
     if (blobsL.size() > 1)
@@ -179,16 +171,18 @@ void GazeTracker::track()
     // FAKE EYES
 
     // INPUT CONVERSION - to fixed size and compatible type for training
-    static cv::Mat tmpGazeImg, gazeImg(1, 20, CV_8UC1);
-    cv::resize(newEyeImg, tmpGazeImg, cv::Size(20,14), cv::INTER_AREA);
-    for(unsigned int i = 0; i < tmpGazeImg.cols; i++)
-        gazeImg(cv::Rect(i,0,1,1)) = mean(tmpGazeImg(cv::Rect(i,0,1,tmpGazeImg.rows)));
+    static cv::Mat tmpGazeImg, gazeImg(1, 20, CV_16UC1);
+    cv::resize(newEyeImg, gazeImg, cv::Size(20,14), cv::INTER_AREA);
+//    for(int i = 0; i < tmpGazeImg.cols; i++)
+//        gazeImg(cv::Rect(i,0,1,1)) = sum(tmpGazeImg(cv::Rect(i,0,1,tmpGazeImg.rows)));
+//    cv::normalize(gazeImg, gazeImg, 0, 255, cv::NORM_MINMAX);
     gazeImg.convertTo(gazeImg, CV_32FC1, 1./255);
 
-    static cv::Mat tmpGazeImgL, gazeImgL(1, 20, CV_8UC1);
-    cv::resize(newEyeImgL, tmpGazeImgL, cv::Size(20,14), cv::INTER_AREA);
-    for(unsigned int i = 0; i < tmpGazeImgL.cols; i++)
-        gazeImgL(cv::Rect(i,0,1,1)) = mean(tmpGazeImgL(cv::Rect(i,0,1,tmpGazeImg.rows)));
+    static cv::Mat tmpGazeImgL, gazeImgL(1, 20, CV_16UC1);
+    cv::resize(newEyeImgL, gazeImgL, cv::Size(20,14), cv::INTER_AREA);
+//    for(int i = 0; i < tmpGazeImgL.cols; i++)
+//        gazeImgL(cv::Rect(i,0,1,1)) = sum(tmpGazeImgL(cv::Rect(i,0,1,tmpGazeImg.rows)));
+//    cv::normalize(gazeImgL, gazeImgL, 0, 255, cv::NORM_MINMAX);
     gazeImgL.convertTo(gazeImgL, CV_32FC1, 1./255);
     // INPUT CONVERSION
 
@@ -209,6 +203,8 @@ void GazeTracker::track()
         {
             if(store->eyesLocated && store->eyesLocatedL)
             {
+                // Save this image for future use
+
                 // Add gaze input image as a single row in the feature matrix
                 for(int i = 0; i < size; i++)
                 {
@@ -232,16 +228,23 @@ void GazeTracker::track()
         }
         else
         {
+            // Other method for next point
+            if(store->calibX == store->gazeOuterX)
+                store->calibX = 0;
+            else if(store->calibX < 0)
+                store->calibX *= -1;
+            else
+                store->calibX = -store->calibX - store->gazeDeltaX;
+
             // Figure out the next point for training, if any
-            store->calibX = store->calibX == store->gazeOuterX ? -store->gazeOuterX : store->calibX + store->gazeDeltaX;
+//            store->calibX = store->calibX == store->gazeOuterX ? -store->gazeOuterX : store->calibX + store->gazeDeltaX;
 //            store->calibY = store->calibX == -store->gazeOuterX ? store->calibY + store->gazeDeltaY : store->calibY;
 //            store->calibY = store->calibY > store->gazeOuterY ? -store->gazeOuterY : store->calibY;
-
             // Check if we're done sampling gaze features for every point
-            if(store->calibX == -store->gazeOuterX && !store->calibY)
+            if(!store->calibX && !store->calibY)
 //            if(store->calibX == -store->gazeOuterX && store->calibY == -store->gazeOuterY)
             {
-                if(timesPerPoint == 1)
+                if(timesPerPoint == CALIBRATION_PASSES)
                 {
                     // Disable red dot so user doesn't get confused
                     store->calibMode = false;
@@ -284,8 +287,8 @@ void GazeTracker::track()
 
         if(located) {
             // Postprocessing (none atm)
-            store->gazeX = (int)store->gazePoint.at<float>(0,0);
-            store->gazeY = (int)store->gazePoint.at<float>(0,1);
+            store->gazeX = (int)(store->gazePoint.at<float>(0,0));
+            store->gazeY = (int)(store->gazePoint.at<float>(0,1));
 //            qDebug() << store->gazePoint.at<float>(0,0) << store->gazePoint.at<float>(0,1);
         }
         // Updating store bool after attempting to ensures ROIs are valid

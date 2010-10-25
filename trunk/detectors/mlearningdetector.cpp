@@ -26,6 +26,7 @@ MLearningDetector::MLearningDetector(Store* st, int ml, bool sd, bool ld, bool u
     dTree = CvDTree();
     rndTrees = CvRTrees();
     mlpANN = CvANN_MLP();
+    svMach = CvSVM();
 
     if(loadData)
     {
@@ -95,6 +96,14 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
                  CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS, 200, 0.0000001),
                                        CvANN_MLP_TrainParams::BACKPROP, learningRate));
 
+    // Train SVM
+    svMach.clear();
+    svMach.train(inputs,
+                 outputs,
+                 cv::Mat(),
+                 cv::Mat(),
+                 CvSVMParams());
+
     // Save trained data to file
     if(saveData)
     {
@@ -104,9 +113,11 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
     }
 
     // Visualise inputs and outputs for debugging
+    cv::resize(inputs,visInputsImg, cv::Size(inputs.cols, 640));
+    imshow("inputs", visInputsImg);
 //    inputs.convertTo(visInputsImg, CV_8UC1, 255);
-//    cvtColor(tmpVisInputsImg, visInputsImg, CV_GRAY2BGR);
-//    outputs.convertTo(visOutputsImg, CV_8UC1, 255./640, 255);
+//    cvtColor(inputs, visInputsImg, CV_GRAY2BGR);
+//    outputs.convertTo(visOutputsImg, CV_8UC1, 255./640);
 //    cvtColor(visOutputsImg, visOutputsImg, CV_GRAY2BGR);
 
     // Let detector know it can start detecting now
@@ -132,7 +143,7 @@ bool MLearningDetector::locate(const cv::Mat& input, cv::Mat& output)
         case 2:
             {
                 float value = rndTrees.predict(input);
-                output.at<float>(0,0) = (float)value;
+                output.at<float>(0,0) = value;
             }
             break;
         case 3:
@@ -140,6 +151,11 @@ bool MLearningDetector::locate(const cv::Mat& input, cv::Mat& output)
                 mlpANN.predict(input, output);
             }
             break;
+        case 4:
+            {
+                float value = svMach.predict(input);
+                output.at<float>(0,0) = value;
+            }
         }
         return true;
     }

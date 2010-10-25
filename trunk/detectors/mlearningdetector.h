@@ -43,6 +43,9 @@ private:
     int hiddenLayerCount;
     int hiddenLayerSize;
     double learningRate;
+
+    CvSVM svMach;
+
 };
 
 #endif // MLEARNINGDETECTOR_H
