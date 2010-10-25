@@ -45,9 +45,9 @@ void Control::initGUI()
     ui->viewFrame->layout()->addWidget(viewGL);
 
     // Set widget width proportions
-    ui->horizontalLayout->setStretch(0, 280);
-    ui->horizontalLayout->setStretch(1, 640);
-    ui->horizontalLayout->setStretch(2, 280);
+    ui->horizontalLayout->setStretch(0, 3);
+    ui->horizontalLayout->setStretch(1, 1);
+    ui->horizontalLayout->setStretch(2, 3);
 
     // Setup basic camera and tracker control
     timer->setInterval(CAP_TIMER_MS); // timer expires every CAP_TIMER_MS ms
