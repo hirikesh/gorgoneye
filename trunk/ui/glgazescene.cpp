@@ -29,6 +29,12 @@ void GLGazeScene::updateCalib()
     // Reset calibration starting point
     store->calibX = 0;
     store->calibY = 0;
+
+    // Reset hysteresis initial condition
+    hystThreshX = 2*deltaX;
+    hystThreshY = 2*deltaY;
+    currGazeX = 0;
+    currGazeY = 0;
 }
 
 
@@ -67,6 +73,20 @@ void GLGazeScene::drawBackground(QPainter* painter, const QRectF& rect)
         glBegin(GL_POINTS);
             glVertex2i(outerW + store->calibX,
                        outerH - store->calibY);
+        glEnd();
+    }
+    if(store->gazeLocated)
+    {
+        // Hysteresis effect per dimension
+        if(abs(currGazeX - store->gazeX) > hystThreshX)
+            currGazeX -= hystThreshX * floor((currGazeX - store->gazeX) / hystThreshX);
+        if(abs(currGazeY - store->gazeY) > hystThreshY)
+            currGazeY -= hystThreshX * floor((currGazeY - store->gazeY) / hystThreshY);
+        glPointSize(hystThreshX);
+        glColor3f(0.7f, 0.7f, 0.7f);
+        glBegin(GL_POINTS);
+            glVertex2i(outerW + currGazeX,
+                       outerH - currGazeY);
         glEnd();
     }
 
