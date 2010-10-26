@@ -163,7 +163,7 @@ void Model::update()
 //            std::stringstream sl;
 //            sl << "chan-eye-left-" << i << ".png";
 //            imwrite(sl.str().c_str(), store.eyesImgL);
-        }
+//        }
 
 #ifdef PREPROC_GAZE
         preProcess();
