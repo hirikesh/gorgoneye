@@ -52,6 +52,7 @@ SOURCES += main.cpp \
     filters/harriscornerfilter.cpp \
     filters/cornerfilter.cpp \
     filters/gaborfilter.cpp \
+    filters/dognormfilter.cpp \
     detectors/basedetector.cpp \
     detectors/haardetector.cpp \
     detectors/tempmatchdetector.cpp \
@@ -96,6 +97,7 @@ HEADERS += \
     filters/harriscornerfilter.h \
     filters/cornerfilter.h \
     filters/gaborfilter.h \
+    filters/dognormfilter.h \
     detectors/basedetector.h \
     detectors/haardetector.h \
     detectors/tempmatchdetector.h \

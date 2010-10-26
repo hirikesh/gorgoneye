@@ -13,6 +13,7 @@
 #include "filters/harriscornerfilter.h"
 #include "filters/cornerfilter.h"
 #include "filters/gaborfilter.h"
+#include "filters/dognormfilter.h"
 
 #include "trackers/facehaartracker.h"
 #include "trackers/facecamshifttracker.h"
@@ -67,6 +68,7 @@ Model::Model(int device) :
 
     // Add runtime filters
     filters.push_back(new EqualiseFilter(&store));
+    filters.push_back(new DoGNormFilter(&store));
     filters.push_back(new GrayscaleFilter(&store));
     filters.push_back(new HSVFilter(&store));
     filters.push_back(new YCbCrFilter(&store));
@@ -150,6 +152,19 @@ void Model::update()
     {
         store.eyesImg = store.faceImg(store.eyesRoi);
         store.eyesImgL = store.faceImg(store.eyesRoiL);
+
+//        static int i = 0;
+//        if(i < 10)
+//        {
+//            i++;
+//            std::stringstream sr;
+//            sr << "chan-eye-right-" << i << ".png";
+//            imwrite(sr.str().c_str(), store.eyesImg);
+//            std::stringstream sl;
+//            sl << "chan-eye-left-" << i << ".png";
+//            imwrite(sl.str().c_str(), store.eyesImgL);
+        }
+
 #ifdef PREPROC_GAZE
         preProcess();
 #endif /* PREPROC_GAZE */
