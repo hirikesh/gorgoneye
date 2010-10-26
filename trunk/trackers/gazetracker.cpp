@@ -46,7 +46,7 @@ GazeTracker::GazeTracker(Store* st) :
     cornerFilter->enable();
     filters.push_back(cornerFilter);
 
-    mLearningDetector = new MLearningDetector(st, 3, false, false,
+    mLearningDetector = new MLearningDetector(st, 3, true, false,
                                               false, 2, 50, 0.001);
     detectors.push_back(mLearningDetector);
 
@@ -144,23 +144,6 @@ void GazeTracker::track()
     // END DUPLICATE CODE
 #endif
 
-    // TEMPLATE MATCHING
-//    cv::Mat tmpSrc;
-//    cvtColor(store->gazeImg, tmpSrc, CV_BGR2GRAY);
-//    cv::Mat tmpLate(7,7,CV_8UC1,cv::Scalar(24)), tmpLateResult;
-//    tmpLate(cv::Rect(2,2,2,2)).setTo(cv::Scalar(64));
-//    matchTemplate(tmpSrc, tmpLate, tmpLateResult, CV_TM_SQDIFF);
-
-
-//    double a, b; cv::Point c, d;
-//    minMaxLoc(tmpLateResult, &a, &b, &c, &d);
-
-//        static cv::Mat test;
-//        cvtColor(tmpSrc, test, CV_GRAY2BGR);
-//        cv::rectangle(test, cv::Rect(c.x - tmpLate.cols/2, c.y - tmpLate.rows/2, tmpLate.cols, tmpLate.rows), cv::Scalar(128,128,128), 1);
-//        store->dispImg = &test;
-    // TEMPLATE MATCHING
-
     // FAKE EYES
 #if 0
     store->eyesLocated = true;
@@ -169,6 +152,7 @@ void GazeTracker::track()
     cv::Mat newEyeImgL(12, 50, CV_8UC3, cv::Scalar(0,0,0));
 #endif
     // FAKE EYES
+
 
     // INPUT CONVERSION - to fixed size and compatible type for training
     static cv::Mat tmpGazeImg, gazeImg(1, 20, CV_16UC1);
@@ -185,6 +169,7 @@ void GazeTracker::track()
 //    cv::normalize(gazeImgL, gazeImgL, 0, 255, cv::NORM_MINMAX);
     gazeImgL.convertTo(gazeImgL, CV_32FC1, 1./255);
     // INPUT CONVERSION
+
 
     // Calibration mode involves automated data collection and subsequent training on that data
     int size = gazeImg.rows*gazeImg.cols;
@@ -236,13 +221,18 @@ void GazeTracker::track()
             else
                 store->calibX = -store->calibX - store->gazeDeltaX;
 
-            // Figure out the next point for training, if any
-//            store->calibX = store->calibX == store->gazeOuterX ? -store->gazeOuterX : store->calibX + store->gazeDeltaX;
-//            store->calibY = store->calibX == -store->gazeOuterX ? store->calibY + store->gazeDeltaY : store->calibY;
-//            store->calibY = store->calibY > store->gazeOuterY ? -store->gazeOuterY : store->calibY;
+            if(!store->calibX)
+            {
+                if(store->calibY == store->gazeOuterY)
+                    store->calibY = 0;
+                else if(store->calibY < 0)
+                    store->calibY *= -1;
+                else
+                    store->calibY = -store->calibY - store->gazeDeltaY;
+            }
+
             // Check if we're done sampling gaze features for every point
             if(!store->calibX && !store->calibY)
-//            if(store->calibX == -store->gazeOuterX && store->calibY == -store->gazeOuterY)
             {
                 if(timesPerPoint == CALIBRATION_PASSES)
                 {
@@ -251,7 +241,7 @@ void GazeTracker::track()
 
                     // Start training all the data
                     mLearningDetector->train(store->gazeFeatures(cv::Rect(0,0,2*size,inputTotalCount)),
-                                             store->gazeCoords(cv::Rect(0,0,1,inputTotalCount)));
+                                             store->gazeCoords(cv::Rect(0,0,2,inputTotalCount)));
 
                     // Done learning this sample
                     inputTotalCount = 0;

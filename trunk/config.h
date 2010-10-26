@@ -10,14 +10,14 @@
 
 /* START: gazetracker.cpp & mlearningdetector.cpp */
 #define IGNORED_SAMPLES_PER_POINT 10
-#define SAMPLES_PER_POINT 75
+#define SAMPLES_PER_POINT 10
 #define XVALID_SAMPLES_PER_POINT 20
 #define CALIBRATION_PASSES 1
 
 /* START: glgaze.{h,cpp} */
 // Scale factor for gaze resolution:
 //     DPI_SCALE * detected_screen_dpi = X and Y distance between adjacent gaze points
-#define DPI_SCALE 0.5 // large number to start off easy
+#define DPI_SCALE 1.0 // large number to start off easy
 /* END:   glgaze.{h,cpp} */
 
 
