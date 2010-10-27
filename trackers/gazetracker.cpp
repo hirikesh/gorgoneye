@@ -308,7 +308,7 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         cv::equalizeHist(newEyeImg, newEyeImg);
 
         cv::Mat maskCorners;
-        cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(30), maskCorners);
+        cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(50), maskCorners);
 
         int leftOffset = 0, rightOffset = maskCorners.cols-1;
         bool leftFound = findLeftCorner(maskCorners, leftOffset);
@@ -323,13 +323,12 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
 
 bool GazeTracker::findLeftCorner(const cv::Mat &image, int& offset)
 {
-    int val;
     for (int x = 0; (x < image.cols); x++)
     {
         for (int y = 0; (y < image.rows); y++)
         {
-            val = image.at<int>(y, x);
-            if (val == 255)
+            const uchar& val = image.at<uchar>(y, x);
+            if (val == 255 && x > 10)
             {
                 offset = x;
                 return true;
@@ -341,15 +340,13 @@ bool GazeTracker::findLeftCorner(const cv::Mat &image, int& offset)
 
 bool GazeTracker::findRightCorner(const cv::Mat &image, int& offset)
 {
-    qDebug() << "starting right... (" << (image.cols-1) << ")";
-    int val;
+
     for (int x = image.cols-1; x >= 0; x--)
     {
-        for (int y = 0; (y < image.rows); y++)
-        {
-            val = image.at<int>(y, x);
-            qDebug() << y << val;
-            if (val == 255)
+        for (int y = 0; y < image.rows; y++)
+        {            
+            const uchar& val = image.at<uchar>(y, x);
+            if (val == 255 && x < image.cols-10)
             {
                 offset = x;
                 return true;
