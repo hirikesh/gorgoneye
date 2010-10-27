@@ -7,7 +7,7 @@ class DoGNormFilter : public BaseFilter
 {
 public:
     DoGNormFilter(Store* st, int ks = 7, double ls = 1, double us = 2,
-                  int sm = MEDIAN, int lt = -10, int ut = 10, double b = 3.0);
+                  int sm = MEDIAN, double t = 10, double b = 3.0);
 
     void setParams();
     void filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& dstMsk);
@@ -18,8 +18,7 @@ private:
     double lowerSigma;
     double upperSigma;
     int scaleMethod;
-    int lowerThresh;
-    int upperThresh;
+    double tau;
     double beta;
 
     enum { MEDIAN = 1, MEAN = 2};

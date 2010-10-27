@@ -6,24 +6,22 @@
 #include "store.h"
 #include <QDebug>
 
-DoGNormFilter::DoGNormFilter(Store* st, int ks, double ls, double us, int sm, int lt, int ut, double b) :
+DoGNormFilter::DoGNormFilter(Store* st, int ks, double ls, double us, int sm, double t, double b) :
     BaseFilter(st, "Normalisation"),
     kernelSize(ks), lowerSigma(ls), upperSigma(us),
-    scaleMethod(sm), lowerThresh(lt), upperThresh(ut), beta(b)
+    scaleMethod(sm), tau(t), beta(b)
 {
     _images.push_back(new ImageModeParam("Normalised image", &visDoGImg, &st->dispImg));
     _params.push_back(new RangeParam<int>("Gaussian Kernel Size", Param::RANGE, &kernelSize, 3, 9, 2));
     _params.push_back(new RangeParam<double>("Smaller Guassian Sigma", Param::RANGE_DBL, &lowerSigma, 0.5, 10, 0.5));
     _params.push_back(new RangeParam<double>("Larger Guassian Sigma", Param::RANGE_DBL, &upperSigma, 0.5, 10, 0.5));
     _params.push_back(new RangeParam<int>("Scaling method", Param::RANGE, &scaleMethod, 0, 2, 1));
-    _params.push_back(new RangeParam<int>("Lower Threshold", Param::RANGE, &lowerThresh, -100, 100, 1));
-    _params.push_back(new RangeParam<int>("Upper Threshold", Param::RANGE, &upperThresh, -100, 100, 1));
     _params.push_back(new RangeParam<double>("Sigmoid exponent scale", Param::RANGE_DBL, &beta, 0.1, 10, 0.1));
 
-    // Create Difference of Gaussians kernel
+    // create Difference of Gaussians kernel
     kernelSize = 7; // must be odd
-    double lowVar = 1;
-    double highVar = 4;
+    double lowVar = 1; // lower variance
+    double highVar = 4; // upper variance
 
     cv::Mat lowKernel = cv::Mat(kernelSize, kernelSize, CV_64F, cv::Scalar(0));
     cv::Mat highKernel = cv::Mat(kernelSize, kernelSize, CV_64F, cv::Scalar(0));
@@ -44,7 +42,6 @@ DoGNormFilter::DoGNormFilter(Store* st, int ks, double ls, double us, int sm, in
     }
 
     lowKernel /= lowKernelSum; // normalise to 1
-
     highKernel /= highKernelSum; // normalise to 1
     doGKernel = lowKernel - highKernel;
 }
@@ -71,11 +68,7 @@ void DoGNormFilter::setParams()
 
 void DoGNormFilter::_filter(const cv::Mat& src)
 {
-    // Convert to normalised grayscale and gamma correct
-
-//    cv::Mat malcFace = cv::imread("malc-face-1.png");
-//    imshow("Malcolm Face Image", malcFace);
-//    cv::Mat src = malcFace;
+    // convert to grayscale and alter gamma
     cv::Mat grayChannel;
     if(src.type() == CV_8UC1)
         grayChannel = src;
@@ -88,24 +81,21 @@ void DoGNormFilter::_filter(const cv::Mat& src)
 
     // convolute image with DoG kernel
     cv::filter2D(tmpSrc, doGImg, CV_32FC1, (doGKernel), cv::Point(-1, -1), 0, cv::BORDER_REPLICATE);
-//    cv::Scalar meanImg;
-//    meanImg = cv::mean(doGImg);
-    //qDebug() << "Mean" << meanImg[0];
-    // Scale pixel intensities to improve contrast
+
+
+    // scale pixel intensities to improve contrast
     switch(scaleMethod)
     {
     case MEDIAN:
         {
-//            double min, max;
-//            cv::minMaxLoc(doGImg, &min, &max);
-//            qDebug() << "doGImg Before Scale: " << min << max;
             cv::Mat tmpImg;
+            // first pass
             pow(abs(doGImg), 0.1, tmpImg);
-//            cv::minMaxLoc(tmpImg, &min, &max);
-//            qDebug() << "tmpImg After Scale: " << min << max;
             doGImg /= pow(mean(tmpImg)[0], 10);
-//            cv::minMaxLoc(doGImg, &min, &max);
-//            qDebug() << "doGImg After Scale: " << min << max;
+            // second pass
+            pow(abs(doGImg), 0.1, tmpImg);
+            cv::threshold(tmpImg, tmpImg, tau, tau, cv::THRESH_TRUNC);
+            doGImg /= pow(mean(tmpImg)[0], 10);
         }
         break;
     case MEAN:
@@ -114,19 +104,6 @@ void DoGNormFilter::_filter(const cv::Mat& src)
         }
         break;
     }
-
-//    double min, max;
-//    cv::minMaxLoc(doGImg, &min, &max);
-//    qDebug() << "doGImg After Scale: " << min << max;
-
-    // Threshold pixel values
-    cv::Mat lowerMask;
-    compare(doGImg, (double)lowerThresh, lowerMask, cv::CMP_LE);
-    doGImg.setTo(cv::Scalar((float)lowerThresh), lowerMask);
-    cv::Mat upperMask;
-    compare(doGImg, (double)upperThresh, upperMask, cv::CMP_GE);
-    doGImg.setTo(cv::Scalar((float)upperThresh), upperMask);
-//    cv::threshold(doGImg, doGImg, (double)upperThresh, NULL, cv::THRESH_TRUNC);
 
     // Pass through sigmoid
     exp(doGImg, doGImg);
