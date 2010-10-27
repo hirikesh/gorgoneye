@@ -46,6 +46,7 @@ private:
 
     CvSVM svMach;
 
+    Store* store;
 };
 
 #endif // MLEARNINGDETECTOR_H

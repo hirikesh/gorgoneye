@@ -8,7 +8,7 @@
 #include "store.h"
 
 MLearningDetector::MLearningDetector(Store* st, int ml, bool sd, bool ld, bool uc, int hlc, int hls, double lr) :
-    BaseDetector(st, "Machine Learning"),
+    BaseDetector(st, "Machine Learning"), store(st),
     mlAlgorithm(ml), saveData(sd), loadData(ld), trained(false),
     useClassification(uc),
     hiddenLayerCount(hlc), hiddenLayerSize(hls), learningRate(lr)
@@ -225,6 +225,7 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
         error_per_sample.at<int>(i,EPS_DIST) = sqrt(pow(errx,2) + pow(erry,2)); // euclidean error per coordinate
         error_per_sample.at<int>(i,EPS_X) = errx; // abs error in x direction
         error_per_sample.at<int>(i,EPS_Y) = erry; // abs error in y direction
+        store->estPoints.push_back(std::pair<int,int>(estimate.at<float>(0,X), estimate.at<float>(0,Y)));
     }
 
     // Mean and std dev of error per coordinate

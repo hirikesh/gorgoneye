@@ -52,6 +52,10 @@ public:
     int gazeX;
     int gazeY;
 
+    // Gaze performance
+    bool visPerf;
+    std::vector<std::pair<int,int> > estPoints;
+
     // Status flags
     bool faceLocated;
     bool eyesLocated;

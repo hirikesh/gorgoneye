@@ -51,7 +51,7 @@ GazeTracker::GazeTracker(Store* st) :
     doGNormFilter->enable();
     filters.push_back(doGNormFilter);
 
-    mLearningDetector = new MLearningDetector(st, 3, false, false,
+    mLearningDetector = new MLearningDetector(st, 3, true, false,
                                               false, 2, 50, 0.001);
     detectors.push_back(mLearningDetector);
 
@@ -88,23 +88,6 @@ void GazeTracker::track()
 //    imshow("newEyeImgL", newEyeImgL);
 #endif
 
-    // TEMPLATE MATCHING
-//    cv::Mat tmpSrc;
-//    cvtColor(store->gazeImg, tmpSrc, CV_BGR2GRAY);
-//    cv::Mat tmpLate(7,7,CV_8UC1,cv::Scalar(24)), tmpLateResult;
-//    tmpLate(cv::Rect(2,2,2,2)).setTo(cv::Scalar(64));
-//    matchTemplate(tmpSrc, tmpLate, tmpLateResult, CV_TM_SQDIFF);
-
-
-//    double a, b; cv::Point c, d;
-//    minMaxLoc(tmpLateResult, &a, &b, &c, &d);
-
-//        static cv::Mat test;
-//        cvtColor(tmpSrc, test, CV_GRAY2BGR);
-//        cv::rectangle(test, cv::Rect(c.x - tmpLate.cols/2, c.y - tmpLate.rows/2, tmpLate.cols, tmpLate.rows), cv::Scalar(128,128,128), 1);
-//        store->dispImg = &test;
-    // TEMPLATE MATCHING
-
     // FAKE EYES
 #if 0
     store->eyesLocated = true;
@@ -132,6 +115,7 @@ void GazeTracker::track()
 
     // Calibration mode involves automated data collection and subsequent training on that data
     int size = gazeImg.rows*gazeImg.cols;
+    int totalsize = 2*size + 10;
     if(store->calibMode)
     {
         if(inputPerPointCount < IGNORED_SAMPLES_PER_POINT) // give user a break
@@ -155,6 +139,15 @@ void GazeTracker::track()
                     store->gazeFeatures.at<float>(inputTotalCount,i) = gazeImg.at<float>(0,i);
                     store->gazeFeatures.at<float>(inputTotalCount,size+i) = gazeImgL.at<float>(0,i);
                 }
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+1) = store->faceRoi.x + store->faceRoi.width/2;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+2) = store->faceRoi.y + store->faceRoi.height/2;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+3) = store->faceRoi.width;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+4) = store->faceRoi.height;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+5) = refinedRoi.width;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+6) = refinedRoi.height;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+7) = refinedRoiL.width;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+8) = refinedRoiL.height;
+
                 // Add calibration point of gaze to outputs
                 store->gazeCoords.at<float>(inputTotalCount,0) = (float)store->calibX;
                 store->gazeCoords.at<float>(inputTotalCount,1) = (float)store->calibY;
@@ -172,21 +165,25 @@ void GazeTracker::track()
         }
         else
         {
-            // Other method for next point
+            // Figure out next point
             if(store->calibX == store->gazeOuterX)
                 store->calibX = 0;
             else if(store->calibX < 0)
                 store->calibX *= -1;
             else
                 store->calibX = -store->calibX - store->gazeDeltaX;
+            if(!store->calibX)
+            {
+                if(store->calibY == store->gazeOuterY)
+                    store->calibY = 0;
+                else if(store->calibY < 0)
+                    store->calibY *= -1;
+                else
+                    store->calibY = -store->calibY - store->gazeDeltaY;
+            }
 
-            // Figure out the next point for training, if any
-//            store->calibX = store->calibX == store->gazeOuterX ? -store->gazeOuterX : store->calibX + store->gazeDeltaX;
-//            store->calibY = store->calibX == -store->gazeOuterX ? store->calibY + store->gazeDeltaY : store->calibY;
-//            store->calibY = store->calibY > store->gazeOuterY ? -store->gazeOuterY : store->calibY;
             // Check if we're done sampling gaze features for every point
             if(!store->calibX && !store->calibY)
-//            if(store->calibX == -store->gazeOuterX && store->calibY == -store->gazeOuterY)
             {
                 if(timesPerPoint == CALIBRATION_PASSES)
                 {
@@ -194,8 +191,8 @@ void GazeTracker::track()
                     store->calibMode = false;
 
                     // Start training all the data
-                    mLearningDetector->train(store->gazeFeatures(cv::Rect(0,0,2*size,inputTotalCount)),
-                                             store->gazeCoords(cv::Rect(0,0,1,inputTotalCount)));
+                    mLearningDetector->train(store->gazeFeatures(cv::Rect(0,0,totalsize,inputTotalCount)),
+                                             store->gazeCoords(cv::Rect(0,0,2,inputTotalCount)));
 
                     // Done learning this sample
                     inputTotalCount = 0;
@@ -212,18 +209,26 @@ void GazeTracker::track()
     else
     {
         // Prepare prediction sample
-        cv::Mat gazeSample(1, 2*size, CV_32FC1);
+        cv::Mat gazeSample(1, totalsize, CV_32FC1);
         for(int i = 0; i < size; i++)
         {
             gazeSample.at<float>(0,i) = gazeImg.at<float>(0,i);
             gazeSample.at<float>(0,size+i) = gazeImgL.at<float>(0,i);
         }
+        gazeSample.at<float>(0,2*size+1) = store->faceRoi.x + store->faceRoi.width/2;
+        gazeSample.at<float>(0,2*size+2) = store->faceRoi.y + store->faceRoi.height/2;
+        gazeSample.at<float>(0,2*size+3) = store->faceRoi.width;
+        gazeSample.at<float>(0,2*size+4) = store->faceRoi.height;
+        gazeSample.at<float>(0,2*size+5) = refinedRoi.width;
+        gazeSample.at<float>(0,2*size+6) = refinedRoi.height;
+        gazeSample.at<float>(0,2*size+7) = refinedRoiL.width;
+        gazeSample.at<float>(0,2*size+8) = refinedRoiL.height;
 
         // Predict and store results
 #if(TIME_GAZE_TRACKERS)
         double t = (double)cv::getTickCount();
 #endif /* TIME_GAZE_TRACKERS */
-        located = mLearningDetector->locate(gazeSample(cv::Rect(0,0,2*size,1)), store->gazePoint);
+        located = mLearningDetector->locate(gazeSample, store->gazePoint);
 #if(TIME_GAZE_TRACKERS)
         t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
         qDebug() << someDetector->name().c_str() << "speed:" << 1000*t << "ms";
@@ -233,7 +238,6 @@ void GazeTracker::track()
             // Postprocessing (none atm)
             store->gazeX = (int)(store->gazePoint.at<float>(0,0));
             store->gazeY = (int)(store->gazePoint.at<float>(0,1));
-//            qDebug() << store->gazePoint.at<float>(0,0) << store->gazePoint.at<float>(0,1);
         }
         // Updating store bool after attempting to ensures ROIs are valid
         store->gazeLocated = located;
@@ -267,7 +271,7 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
 
     // ------------------------------
     // Determine two largest blobs, and throw the rest away
-    if (blobs.size() < 1)
+    if (blobs.size() <= 1)
     {
         return false;
     }
@@ -308,9 +312,9 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
 
         int leftOffset = 0;
         bool lCornerFound = false;
-        for (int x = 0; (x < maskCorners.cols); x++)
+        for (int x = 0; x < maskCorners.cols; x++)
         {
-            for(int y = 0; (y < maskCorners.rows); y++)
+            for(int y = 0; y < maskCorners.rows; y++)
             {
                 if(clonedMask.at<int>(y, x) != 0)
                 {
@@ -328,7 +332,7 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         bool rCornerFound = false;
         for (int x = maskCorners.cols-1; x > 0; x--)
         {
-            for(int y = 0; (y < maskCorners.rows); y++)
+            for(int y = 0; y < maskCorners.rows; y++)
             {
                 if(clonedMask.at<int>(y, x) != 0 && x < (maskCorners.cols-10))
                 {
