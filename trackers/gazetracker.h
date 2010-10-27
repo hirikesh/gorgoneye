@@ -12,6 +12,8 @@ public:
     void track();
 
 private:
+    bool refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI);
+
     int inputTotalCount;
     int inputPerPointCount;
     int timesPerPoint;
@@ -25,6 +27,8 @@ private:
 
     BaseFilter* equaliseFilter;
     BaseFilter* erodeDilateFilter;
+
+    BaseFilter* doGNormFilter;
 
     BaseDetector* mLearningDetector;
 };
