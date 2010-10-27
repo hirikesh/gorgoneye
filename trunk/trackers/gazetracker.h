@@ -13,8 +13,8 @@ public:
 
 private:
     bool refineEyeRoi(const cv::Mat &eyeImg, cv::Rect &refinedROI);
-    int findLeftCorner(const cv::Mat &image, int &offset);
-    int findRightCorner(const cv::Mat &image, int &offset);
+    int findLeftCorner(const cv::Mat &image);
+    int findRightCorner(const cv::Mat &image);
 
     int findThreshold(const cv::Mat &gray, const float &percentage);
 
