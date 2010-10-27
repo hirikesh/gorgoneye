@@ -10,19 +10,19 @@
 
 
 FaceMTracker::FaceMTracker(Store* st) : BaseTracker(st, "Haar-MeanShift Face")
-{
+{  
     haarDetector = new HaarDetector(st, HAAR_CC_FACE, 1.2, 3, NULL, cv::Size(64,72));
     detectors.push_back(haarDetector);
 
-    hsvFilter = new HSVFilter(st);
+    hsvFilter = new HSVFilter(st, MIN_HUE, MAX_HUE, MIN_SAT, MAX_SAT, MIN_VAL, MAX_VAL);
     hsvFilter->enable();
     filters.push_back(hsvFilter);
 
-    ycbcrFilter = new YCbCrFilter(st);
+    ycbcrFilter = new YCbCrFilter(st, MIN_LUM, MAX_LUM, MIN_CR, MAX_CR, MIN_CB, MAX_CB);
     ycbcrFilter->enable();
     filters.push_back(ycbcrFilter);
 
-    erodeDilateFilter = new ErodeDilateFilter(st, 0);
+    erodeDilateFilter = new ErodeDilateFilter(st, ERODE_DILATE_DEPTH);
     erodeDilateFilter->enable();
     filters.push_back(erodeDilateFilter);
 
