@@ -12,9 +12,11 @@ public:
     void track();
 
 private:
-    bool refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI);
-    bool findLeftCorner(const cv::Mat& image, int& offset);
-    bool findRightCorner(const cv::Mat& image, int& offset);
+    bool refineEyeRoi(const cv::Mat &eyeImg, cv::Rect &refinedROI);
+    int findLeftCorner(const cv::Mat &image, int &offset);
+    int findRightCorner(const cv::Mat &image, int &offset);
+
+    int findThreshold(const cv::Mat &gray, const float &percentage);
 
     int inputTotalCount;
     int inputPerPointCount;
