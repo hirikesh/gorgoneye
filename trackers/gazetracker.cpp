@@ -20,21 +20,9 @@ GazeTracker::GazeTracker(Store* st) :
     BaseTracker(st, "Gaze-test"),
     inputTotalCount(0), inputPerPointCount(0), timesPerPoint(1)
 {
-    cannyEdgeFilter = new CannyEdgeFilter(st, 13500, 13500, 7);
-    cannyEdgeFilter->enable();
-    filters.push_back(cannyEdgeFilter);
-
     grayscaleFilter = new GrayscaleFilter(st, 18, 256);
     grayscaleFilter->enable();
     filters.push_back(grayscaleFilter);
-
-    ycbcrFilter = new YCbCrFilter(st);
-    ycbcrFilter->enable();
-    filters.push_back(ycbcrFilter);
-
-    harrisCornerFilter = new HarrisCornerFilter(st);
-    harrisCornerFilter->enable();
-    filters.push_back(harrisCornerFilter);
 
     equaliseFilter = new EqualiseFilter(st);
     equaliseFilter->enable();
@@ -42,10 +30,6 @@ GazeTracker::GazeTracker(Store* st) :
 
     erodeDilateFilter = new ErodeDilateFilter(st);
     erodeDilateFilter->enable();
-
-    cornerFilter = new CornerFilter(st, 2, 0.20, 20, 3, false);
-    cornerFilter->enable();
-    filters.push_back(cornerFilter);
 
     doGNormFilter = new DoGNormFilter(st);
     doGNormFilter->enable();
@@ -66,9 +50,6 @@ void GazeTracker::track()
     // Preprocessing
 
     // Filtering
-//    cannyEdgeFilter->filter(store->eyesImg, store->ignore, store->ignore);
-//    ycbcrFilter->filter(store->eyesImg, store->ignore, store->ignore);
-//    harrisCornerFilter->filter(store->eyesImg, store->ignore, store->ignore);
 //    equaliseFilter->filter(store->eyesImg, store->gazeImg, store->ignore);
 //    grayscaleFilter->filter(store->gazeImg, store->ignore, store->ignore);
 
