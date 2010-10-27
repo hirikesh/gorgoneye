@@ -13,6 +13,8 @@ public:
 
 private:
     bool refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI);
+    bool findLeftCorner(const cv::Mat& image, int& offset);
+    bool findRightCorner(const cv::Mat& image, int& offset);
 
     int inputTotalCount;
     int inputPerPointCount;

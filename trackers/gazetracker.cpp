@@ -304,51 +304,61 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         // STAGE TWO - Extra Refinement;
         cv::Mat newEyeImg = clonedImage(refinedROI);
         doGNormFilter->filter(newEyeImg, newEyeImg, store->ignore);
-        cv::medianBlur(newEyeImg,newEyeImg,3);
+        cv::medianBlur(newEyeImg, newEyeImg,3);
         cv::equalizeHist(newEyeImg, newEyeImg);
 
         cv::Mat maskCorners;
         cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(30), maskCorners);
 
-        int leftOffset = 0;
-        bool lCornerFound = false;
-        for (int x = 0; x < maskCorners.cols; x++)
+        int leftOffset, rightOffset;
+        if (findLeftCorner(maskCorners, leftOffset) && findRightCorner(maskCorners, rightOffset))
         {
-            for(int y = 0; y < maskCorners.rows; y++)
-            {
-                if(clonedMask.at<int>(y, x) != 0)
-                {
-                    leftOffset = x;
-                    lCornerFound = true;
-                }
-                if (lCornerFound)
-                    break;
-            }
-            if (lCornerFound)
-                break;
+            refinedROI = cv::Rect(leftOffset, 0, rightOffset+1-leftOffset, maskCorners.rows) + refinedROI.tl();
         }
-
-        int rightOffset = maskCorners.cols-1;
-        bool rCornerFound = false;
-        for (int x = maskCorners.cols-1; x > 0; x--)
-        {
-            for(int y = 0; y < maskCorners.rows; y++)
-            {
-                if(clonedMask.at<int>(y, x) != 0 && x < (maskCorners.cols-10))
-                {
-                    rightOffset = x;
-                    rCornerFound = true;
-                }
-                if (rCornerFound)
-                    break;
-            }
-            if (rCornerFound)
-                break;
-        }
-
-        //        newEyeImg = newEyeImg(cv::Rect(leftOffset, 0, rightOffset+1-leftOffset, maskCorners.rows));
-        //        cv::imshow("newEyeImg Cropped", newEyeImg(cv::Rect(leftOffset, 0, rightOffset+1-leftOffset, maskCorners.rows)));
-        refinedROI = cv::Rect(leftOffset, 0, rightOffset+1-leftOffset, maskCorners.rows) + refinedROI.tl();
         return true;
     }
+}
+
+bool GazeTracker::findLeftCorner(const cv::Mat &image, int& offset)
+{
+    int val;
+    for (int x = 0; (x < image.cols); x++)
+    {
+        for (int y = 0; (y < image.rows); y++)
+        {
+            val = image.at<int>(y, x);
+            if (val == 255)
+            {
+                offset = x;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool GazeTracker::findRightCorner(const cv::Mat &image, int& offset)
+{
+    qDebug() << "starting right... (" << (image.cols-1) << ")";
+    int val;
+    for (int x = image.cols-1; x >= 0; x--)
+    {
+        for (int y = 0; (y < image.rows); y++)
+        {
+            if (!(y%3))
+            {
+                qDebug() << "right:" << y;
+            }
+            val = image.at<int>(y, x);
+            if (val == 255)
+            {
+                qDebug() << "starting right...inner loop";
+                offset = x;
+                qDebug() << "stopping right...success";
+                return true;
+            }
+        }
+    }
+    qDebug() << "stopping right...fail";
+    return false;
 }
