@@ -51,15 +51,15 @@
 #define TIME_EYES_TRACKERS 0
 #define TIME_GAZE_TRACKERS 0
 // Global CAMShift filter parameter defaults
-#define MIN_HUE 160
-#define MAX_HUE 20
-#define MIN_SAT 32
+#define MIN_HUE 0
+#define MAX_HUE 180
+#define MIN_SAT 30
 #define MAX_SAT 256
-#define MIN_VAL 32
-#define MAX_VAL 224
+#define MIN_VAL 10
+#define MAX_VAL 234
 #define MIN_LUM 0
 #define MAX_LUM 256
-#define MIN_CR 133
+#define MIN_CR 125
 #define MAX_CR 174
 #define MIN_CB 77
 #define MAX_CB 128

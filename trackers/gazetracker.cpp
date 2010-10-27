@@ -253,6 +253,7 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
     cv::Mat clonedMask;
     int check = findThreshold(clonedImage, 0.15);
     cv::inRange(clonedImage, cv::Scalar(0), cv::Scalar(check), clonedMask);
+//    imshow("cloned mask", clonedMask);
     erodeDilateFilter->filter(clonedMask, clonedMask, store->ignore);
 
     // ------------------------------
@@ -299,9 +300,10 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         doGNormFilter->filter(newEyeImg, newEyeImg, store->ignore);
         cv::medianBlur(newEyeImg, newEyeImg, 5);
 
-        int corners = findThreshold(newEyeImg, 0.20);
+        int corners = findThreshold(newEyeImg, 0.30);
         cv::Mat maskCorners;
         cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(corners), maskCorners);
+//        imshow("Mask Corners", maskCorners);
 
         int leftOffset, rightOffset;
         leftOffset = findLeftCorner(maskCorners);

@@ -66,9 +66,9 @@ void GaborFilter::filter(const Mat& srcImg, Mat& dstImg, Mat& dstMsk)
         }
     }
 
-    _filter(srcImg);
-    _store(dstImg, dstMsk);
-//    _visualise();
+//    _filter(srcImg);
+//    _store(dstImg, dstMsk);
+    _visualise();
 }
 
 void GaborFilter::_filter(const Mat& src)

@@ -59,26 +59,96 @@ bool MeanShiftDetector::locate(const Mat& srcImg, const Mat& srcMsk, Rect& srcRo
     meanShift(backProjImg, searchRoi, TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 1.0));
 
     // Determine New Search Window Size ---------------------
-    // width is based on the zeroth moment
+    // The following code sourced from ../OpenCV2.1/src/cv/cvcamshift.cpp
+
+    int tolerance = 10;
+    searchRoi.x -= tolerance;
+    searchRoi.y -= tolerance;
+    searchRoi.x = std::max(searchRoi.x, 0);
+    searchRoi.y = std::max(searchRoi.y, 0);
+    searchRoi.width += 2*tolerance;
+    searchRoi.height += 2*tolerance;
+
+    searchRoi.width = std::min(searchRoi.width, backProjImg.cols - searchRoi.x);
+    searchRoi.height = std::min(searchRoi.height, backProjImg.rows - searchRoi.y);
+
     cv::Moments currMoments = moments(backProjImg(searchRoi));
-    double newWidth = 1.8*std::sqrt(currMoments.m00/255);
 
-    // height takes into account elliptical shape of head
-    double newHeight = 1.2*newWidth;
+    int epsilon = 1;
+    if(std::fabs(currMoments.m00) < epsilon)
+    {
+        histCalibrate = true;
+        return false; // failed to detect face
+    }
 
-    double newTLx = searchRoi.x + 0.5*searchRoi.width - newWidth/2;
-    double newTLy = searchRoi.y + 0.5*searchRoi.height - newHeight/2;
+    int xc = searchRoi.x + static_cast<int>(currMoments.m10/currMoments.m00);
+    int yc = searchRoi.y + static_cast<int>(currMoments.m01/currMoments.m00);
 
-    // ensure top-left of new window is inside image
-    newWidth = std::min(newWidth, newWidth + newTLx);
-    newTLx = std::max(newTLx, 0.0);
-    newHeight = std::min(newHeight, newHeight + newTLy);
-    newTLy = std::max(newTLy, 0.0);
-    // ensure bottom-right of new window is inside image
-    newWidth = std::min(newWidth, backProjImg.cols - newTLx);
-    newHeight = std::min(newHeight, backProjImg.rows - newTLy);
+    double a = currMoments.m20/currMoments.m00;
+    double b = currMoments.m11/currMoments.m00;
+    double c = currMoments.m02/currMoments.m00;
 
-    searchRoi = Rect(int(newTLx + 0.5), int(newTLy + 0.5), int(newWidth + 0.5), int(newHeight + 0.5));
+    double square = std::sqrt(4*b*b + (a-c)*(a-c));
+    double theta = std::atan2(2*b, a - c + square);
+    double cosT = std::cos(theta);
+    double sinT = std::sin(theta);
+    double rotA = cosT * cosT * currMoments.mu20
+                  + 2 * cosT * sinT * currMoments.mu11
+                  + sinT * sinT * currMoments.mu02;
+    double rotC = sinT * sinT * currMoments.mu20
+                  - 2 * cosT * sinT * currMoments.mu11
+                  + cosT * cosT * currMoments.mu02;
+    double length = std::sqrt(rotA/currMoments.m00) * 4;
+    double width = std::sqrt(rotC/currMoments.m00) * 4;
+
+    if( length < width )
+    {
+        std::swap( length, width);
+        std::swap( cosT, sinT);
+        theta = CV_PI*0.5 - theta;
+    }
+
+    int t0, t1;
+
+    t0 = std::fabs(length*cosT);
+    t1 = std::fabs(length*sinT);
+    t0 = std::max(t0, t1) + 2;
+    searchRoi.width = std::min(t0, (backProjImg.cols - xc) * 2);
+
+    t0 = std::fabs(length*sinT);
+    t1 = std::fabs(length*cosT);
+    t0 = std::max(t0, t1) + 2;
+    searchRoi.height = std::min(t0, (backProjImg.rows - yc) * 2);
+
+    searchRoi.x = std::max(0, xc - searchRoi.width/2);
+    searchRoi.y = std::max(0, yc - searchRoi.height/2);
+
+    searchRoi.width = width;
+    searchRoi.height = length;
+    searchRoi.width = std::min(searchRoi.width, backProjImg.cols - searchRoi.x);
+    searchRoi.height = std::min(searchRoi.height, backProjImg.rows - searchRoi.y);
+
+
+//  Determine New Search Window Size -----------------
+//  Modified from original algorithm found in Bradski98
+//    double newWidth = 2.0*std::sqrt(currMoments.m00/255);
+
+//    // height takes into account elliptical shape of head
+//    double newHeight = 1.2*newWidth;
+
+//    double newTLx = searchRoi.x + 0.5*searchRoi.width - newWidth/2;
+//    double newTLy = searchRoi.y + 0.5*searchRoi.height - newHeight/2;
+
+//    // ensure top-left of new window is inside image
+//    newWidth = std::min(newWidth, newWidth + newTLx);
+//    newTLx = std::max(newTLx, 0.0);
+//    newHeight = std::min(newHeight, newHeight + newTLy);
+//    newTLy = std::max(newTLy, 0.0);
+//    // ensure bottom-right of new window is inside image
+//    newWidth = std::min(newWidth, backProjImg.cols - newTLx);
+//    newHeight = std::min(newHeight, backProjImg.rows - newTLy);
+
+//    searchRoi = Rect(int(newTLx + 0.5), int(newTLy + 0.5), int(newWidth + 0.5), int(newHeight + 0.5));
 
     // determine whether face has been found
     if (searchRoi.area() > srcImg.size().area()/40)
