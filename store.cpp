@@ -3,6 +3,7 @@
 Store::Store() :
     calibMode(false),
     calibNow(false),
+    visPerf(true),
     faceLocated(false),
     eyesLocated(false),
     eyesLocatedL(false),

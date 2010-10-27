@@ -96,14 +96,14 @@ void GLGazeScene::drawBackground(QPainter* painter, const QRectF& rect)
     glBegin(GL_LINES);
         // Draw calibration lines - intersection is calibration coordinate
         glColor3f(0.5f, 0.5f, 0.5f);
-        for(float nextx = 0; nextx <= outerW; nextx = nextx + deltaX/2)
+        for(int nextx = 0; nextx <= outerW; nextx += deltaX/2)
         {
             glVertex2i(outerW-nextx, 0);
             glVertex2i(outerW-nextx, height());
             glVertex2i(outerW+nextx, 0);
             glVertex2i(outerW+nextx, height());
         }
-        for(float nexty = 0; nexty <= outerH; nexty = nexty + deltaY/2)
+        for(int nexty = 0; nexty <= outerH; nexty += deltaY/2)
         {
             glVertex2i(0, outerH-nexty);
             glVertex2i(width(), outerH-nexty);
@@ -111,6 +111,36 @@ void GLGazeScene::drawBackground(QPainter* painter, const QRectF& rect)
             glVertex2i(width(), outerH+nexty);
         }
     glEnd();
+
+    // Draw performance analysis
+    if(store->visPerf)
+    {
+        glPointSize(8.0);
+        glBegin(GL_POINTS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        for(int nextx = 0; nextx < outerW; nextx += deltaX)
+            for(int nexty = 0; nexty < outerH; nexty += deltaY)
+            {
+                glVertex2i(outerW-nextx, outerH-nexty);
+                glVertex2i(outerW+nextx, outerH-nexty);
+                glVertex2i(outerW-nextx, outerH+nexty);
+                glVertex2i(outerW+nextx, outerH+nexty);
+            }
+        glEnd();
+
+        glPointSize(4.0);
+        glBegin(GL_POINTS);
+        float r = 0.0, g = 0.0;
+        for(int i = 0; i < store->estPoints.size(); i++)
+        {
+            g = g == 1.0 ? 0 : g;
+            g = !(i%SAMPLES_PER_POINT) ? g + 0.5 : g;
+            glColor3f(1.0, g, 0.0);
+            glVertex2i(outerW + store->estPoints[i].first,
+                       outerH - store->estPoints[i].second);
+        }
+        glEnd();
+    }
 
     // End drawing background
     glPopMatrix();
