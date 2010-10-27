@@ -115,7 +115,7 @@ void GazeTracker::track()
 
     // Calibration mode involves automated data collection and subsequent training on that data
     int size = gazeImg.rows*gazeImg.cols;
-    int totalsize = 2*size + 10;
+    int totalsize = 2*size + 8;
     if(store->calibMode)
     {
         if(inputPerPointCount < IGNORED_SAMPLES_PER_POINT) // give user a break
