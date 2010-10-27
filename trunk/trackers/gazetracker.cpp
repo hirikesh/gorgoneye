@@ -115,7 +115,7 @@ void GazeTracker::track()
 
     // Calibration mode involves automated data collection and subsequent training on that data
     int size = gazeImg.rows*gazeImg.cols;
-    int totalsize = 2*size + 8;
+    int totalsize = 2*size + 12;
     if(store->calibMode)
     {
         if(inputPerPointCount < IGNORED_SAMPLES_PER_POINT) // give user a break
@@ -132,6 +132,10 @@ void GazeTracker::track()
             if(store->eyesLocated && store->eyesLocatedL)
             {
                 // Save this image for future use
+#if 1
+                static cv::FileStorage images;
+#endif
+
 
                 // Add gaze input image as a single row in the feature matrix
                 for(int i = 0; i < size; i++)
@@ -143,10 +147,14 @@ void GazeTracker::track()
                 store->gazeFeatures.at<float>(inputTotalCount,2*size+2) = store->faceRoi.y + store->faceRoi.height/2;
                 store->gazeFeatures.at<float>(inputTotalCount,2*size+3) = store->faceRoi.width;
                 store->gazeFeatures.at<float>(inputTotalCount,2*size+4) = store->faceRoi.height;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+5) = refinedRoi.width;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+6) = refinedRoi.height;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+7) = refinedRoiL.width;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+8) = refinedRoiL.height;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+5) = refinedRoi.x + refinedRoi.width/2;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+6) = refinedRoi.y + refinedRoi.height/2;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+7) = refinedRoi.width;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+8) = refinedRoi.height;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+9) = refinedRoiL.x + refinedRoiL.width/2;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+10) = refinedRoiL.y + refinedRoiL.height/2;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+11) = refinedRoiL.width;
+                store->gazeFeatures.at<float>(inputTotalCount,2*size+12) = refinedRoiL.height;
 
                 // Add calibration point of gaze to outputs
                 store->gazeCoords.at<float>(inputTotalCount,0) = (float)store->calibX;
@@ -219,10 +227,14 @@ void GazeTracker::track()
         gazeSample.at<float>(0,2*size+2) = store->faceRoi.y + store->faceRoi.height/2;
         gazeSample.at<float>(0,2*size+3) = store->faceRoi.width;
         gazeSample.at<float>(0,2*size+4) = store->faceRoi.height;
-        gazeSample.at<float>(0,2*size+5) = refinedRoi.width;
-        gazeSample.at<float>(0,2*size+6) = refinedRoi.height;
-        gazeSample.at<float>(0,2*size+7) = refinedRoiL.width;
-        gazeSample.at<float>(0,2*size+8) = refinedRoiL.height;
+        gazeSample.at<float>(0,2*size+5) = refinedRoi.x + refinedRoi.width/2;
+        gazeSample.at<float>(0,2*size+6) = refinedRoi.y + refinedRoi.height/2;
+        gazeSample.at<float>(0,2*size+7) = refinedRoi.width;
+        gazeSample.at<float>(0,2*size+8) = refinedRoi.height;
+        gazeSample.at<float>(0,2*size+9) = refinedRoiL.x + refinedRoiL.width/2;
+        gazeSample.at<float>(0,2*size+10) = refinedRoiL.y + refinedRoiL.height/2;
+        gazeSample.at<float>(0,2*size+11) = refinedRoiL.width;
+        gazeSample.at<float>(0,2*size+12) = refinedRoiL.height;
 
         // Predict and store results
 #if(TIME_GAZE_TRACKERS)
@@ -308,7 +320,7 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         cv::equalizeHist(newEyeImg, newEyeImg);
 
         cv::Mat maskCorners;
-        cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(50), maskCorners);
+        cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(30), maskCorners);
 
         int leftOffset = 0, rightOffset = maskCorners.cols-1;
         bool leftFound = findLeftCorner(maskCorners, leftOffset);
@@ -323,12 +335,13 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
 
 bool GazeTracker::findLeftCorner(const cv::Mat &image, int& offset)
 {
+    int val;
     for (int x = 0; (x < image.cols); x++)
     {
         for (int y = 0; (y < image.rows); y++)
         {
-            const uchar& val = image.at<uchar>(y, x);
-            if (val == 255 && x > 10)
+            val = image.at<int>(y, x);
+            if (val == 255)
             {
                 offset = x;
                 return true;
@@ -340,18 +353,19 @@ bool GazeTracker::findLeftCorner(const cv::Mat &image, int& offset)
 
 bool GazeTracker::findRightCorner(const cv::Mat &image, int& offset)
 {
-
+    int val;
     for (int x = image.cols-1; x >= 0; x--)
     {
-        for (int y = 0; y < image.rows; y++)
-        {            
-            const uchar& val = image.at<uchar>(y, x);
-            if (val == 255 && x < image.cols-10)
+        for (int y = 0; (y < image.rows); y++)
+        {
+            val = image.at<int>(y, x);
+            qDebug() << y << val;
+            if (val == 255)
             {
                 offset = x;
                 return true;
             }
         }
-    }    
+    }
     return false;
 }
