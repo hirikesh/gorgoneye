@@ -30,8 +30,6 @@ MLearningDetector::MLearningDetector(Store* st, int ml, bool sd, bool ld, bool u
     mlpANN = CvANN_MLP();
     svMach = CvSVM();
 
-    mlpANN.clear();
-
     if(loadData)
     {
         cv::FileStorage load("gaze_training_data.yml", cv::FileStorage::READ);
@@ -112,7 +110,7 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
 //                   CvRTParams());
 
     // Train MLP ANN
-//    mlpANN.clear(); // we want to retrain
+    mlpANN.clear(); // we want to retrain
     cv::Mat mlpANN_layer_size(1, 2 + hiddenLayerCount, CV_32SC1);
     mlpANN_layer_size.at<int>(0,0) = inputDim;
     for(int i = 1; i <= hiddenLayerCount; i++)
@@ -123,7 +121,8 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
                  outputs,
                  cv::Mat(), // Weights for inputs
                  cv::Mat(), // Train on all inputs given
-                 CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 300, 0.0000001),
+//                 CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 250, 0.0000001),
+                 CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 50, 0.001),
                                        CvANN_MLP_TrainParams::BACKPROP, learningRate));
 
     // Train SVM

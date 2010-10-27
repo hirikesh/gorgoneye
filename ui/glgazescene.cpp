@@ -197,7 +197,10 @@ void GLGazeScene::drawForeground(QPainter* painter, const QRectF& rect)
 void GLGazeScene::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Return)
+    {
         store->calibMode = !store->calibMode;
+        store->visPerf = store->calibMode;
+    }
 
     QGraphicsScene::keyPressEvent(event);
 }

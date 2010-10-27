@@ -100,7 +100,7 @@ void Control::procGazeFrame()
     //  Grabs new frame from webcam and does tracking
     //  Updates 'store' with new results
     model->update();
-//    viewGL->updateGL();
+    viewGL->updateGL();
 
     // Updates opengl view:
     //  Grabs updated image and ROI data from 'store'

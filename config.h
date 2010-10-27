@@ -17,7 +17,7 @@
 /* START: glgaze.{h,cpp} */
 // Scale factor for gaze resolution:
 //     DPI_SCALE * detected_screen_dpi = X and Y distance between adjacent gaze points
-#define DPI_SCALE 1.0 // large number to start off easy
+#define DPI_SCALE 2.0 // large number to start off easy
 /* END:   glgaze.{h,cpp} */
 
 
