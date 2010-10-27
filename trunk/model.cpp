@@ -145,7 +145,7 @@ void Model::update()
     eyesHaarX2Tracker->track();
     eyesTracker->track();
 
-#if 1
+#if 0
     if(store.calibMode)
     {
         static int inputcount = 0;
@@ -188,7 +188,7 @@ void Model::update()
         store.eyesImg = store.faceImg(store.eyesRoi);
         store.eyesImgL = store.faceImg(store.eyesRoiL);
 
-#if 0
+#if 1
         if(store.calibMode)
         {
             static int inputcount = 0;
