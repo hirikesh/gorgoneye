@@ -277,7 +277,7 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
     IplImage *labelImg = cvCreateImage(clonedMask.size(), IPL_DEPTH_LABEL, 1);
     cvb::CvBlobs blobs;
     cvb::cvLabel(&binary, labelImg, blobs);
-    std::vector<cvb::CvBlob*> vec;
+    std::vector<cvb::CvBlob*> largeBlobs;
 
     // ------------------------------
     // Determine two largest blobs, and throw the rest away
@@ -288,28 +288,26 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
     else
     {
         CvLabel largest = cvb::cvGreaterBlob(blobs);
-        vec.push_back(blobs.at(largest));
+        largeBlobs.push_back(blobs.at(largest));
         blobs.erase(largest);
         largest = cvb::cvGreaterBlob(blobs);
-        vec.push_back(blobs.at(largest));
+        largeBlobs.push_back(blobs.at(largest));
         blobs.erase(largest);
         // -----------------------------------------------------
         // Adjusted Eye Height - we want to include the eye lid as well
-        int pupilTop = std::max(vec[0]->miny, vec[1]->miny);
-        int pupilBottom = std::max(vec[0]->maxy, vec[1]->maxy);
-
-        pupilTop -= 3;
-        if (pupilTop < 0)
-            pupilTop = 0;
-        pupilBottom += 3;
-        if (pupilBottom > clonedImage.rows)
-            pupilBottom = clonedImage.rows;
+        int irisTop = std::max(largeBlobs[0]->miny, largeBlobs[1]->miny);
+        int irisBottom = std::max(largeBlobs[0]->maxy, largeBlobs[1]->maxy);
+        const int eyeAdjust = 3;
+        irisTop -= eyeAdjust;
+        if (irisTop < 0)
+            irisTop = 0;
+        irisBottom += eyeAdjust;
+        if (irisBottom > clonedImage.rows)
+            irisBottom = clonedImage.rows;
 
         // -----------------------------------------------------
         // Determine New Roi;
-        int eyeWidth = clonedImage.cols;
-        int eyeHeight = pupilBottom - pupilTop;
-        refinedROI = cv::Rect(0, pupilTop, eyeWidth, eyeHeight);
+        refinedROI = cv::Rect(0, irisTop, clonedImage.cols , irisBottom - irisTop);
 
         // STAGE TWO - Extra Refinement;
         cv::Mat newEyeImg = clonedImage(refinedROI);
@@ -321,16 +319,15 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(corners), maskCorners);
 
         int leftOffset, rightOffset;
-        leftOffset = findLeftCorner(maskCorners, leftOffset);
-        rightOffset = findRightCorner(maskCorners, rightOffset);
+        leftOffset = findLeftCorner(maskCorners);
+        rightOffset = findRightCorner(maskCorners);
         refinedROI = cv::Rect(leftOffset, 0, rightOffset+1-leftOffset, maskCorners.rows) + refinedROI.tl();
         return true;
     }
 }
 
-int GazeTracker::findLeftCorner(const cv::Mat &image, int& offset)
+int GazeTracker::findLeftCorner(const cv::Mat &image)
 {
-    int val;
     for (int x = 0; (x < image.cols); x++)
     {
         for (int y = 0; (y < image.rows); y++)
@@ -342,9 +339,8 @@ int GazeTracker::findLeftCorner(const cv::Mat &image, int& offset)
     return 0;
 }
 
-int GazeTracker::findRightCorner(const cv::Mat &image, int& offset)
+int GazeTracker::findRightCorner(const cv::Mat &image)
 {
-    int val;
     for (int x = image.cols-1; x >= 0; x--)
     {
         for (int y = 0; y < image.rows; y++)
@@ -358,7 +354,8 @@ int GazeTracker::findRightCorner(const cv::Mat &image, int& offset)
 
 int GazeTracker::findThreshold(const cv::Mat &gray, const float &percentage)
 {
-    const int histSize[] = {256};
+    const int nBins = 256;
+    const int histSize[] = {nBins};
     cv::MatND hist;
     hist.create(1, histSize, CV_32S);
     hist = cv::Scalar(0);
@@ -375,7 +372,7 @@ int GazeTracker::findThreshold(const cv::Mat &gray, const float &percentage)
     float sum = 0;
     int totalPixels = gray.rows * gray.cols;
 
-    for (int i = 0; i < 256; i++)
+    for (int i = 0; i < nBins; i++)
     {
         sum += hist.at<int>(i);
         if (sum/totalPixels > percentage )
