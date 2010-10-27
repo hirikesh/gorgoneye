@@ -130,8 +130,8 @@ void GLGazeScene::drawBackground(QPainter* painter, const QRectF& rect)
 
         glPointSize(4.0);
         glBegin(GL_POINTS);
-        float r = 0.0, g = 0.0;
-        for(int i = 0; i < store->estPoints.size(); i++)
+        float g = 0.0;
+        for(unsigned int i = 0; i < store->estPoints.size(); i++)
         {
             g = g == 1.0 ? 0 : g;
             g = !(i%SAMPLES_PER_POINT) ? g + 0.5 : g;

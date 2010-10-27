@@ -8,10 +8,11 @@
 #include "store.h"
 
 MLearningDetector::MLearningDetector(Store* st, int ml, bool sd, bool ld, bool uc, int hlc, int hls, double lr) :
-    BaseDetector(st, "Machine Learning"), store(st),
+    BaseDetector(st, "Machine Learning"),
     mlAlgorithm(ml), saveData(sd), loadData(ld), trained(false),
     useClassification(uc),
-    hiddenLayerCount(hlc), hiddenLayerSize(hls), learningRate(lr)
+    hiddenLayerCount(hlc), hiddenLayerSize(hls), learningRate(lr),
+    store(st)
 {
     // Expose parameters to UI, debugging images as well
     _images.push_back(new ImageModeParam("Visualise Input Training Data", &visInputsImg, &st->dispImg));
