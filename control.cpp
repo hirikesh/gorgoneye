@@ -113,6 +113,10 @@ void Control::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Escape)
         close();
+    else if(event->key() == Qt::Key_S)
+        ui->startBtn->click();
+    else if(event->key() == Qt::Key_P)
+        ui->stopBtn->click();
     else if(event->key() == Qt::Key_F4)
         startGazeUi();
 }
