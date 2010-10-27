@@ -24,6 +24,7 @@ private:
 
     enum { MEDIAN = 1, MEAN = 2};
 
+    cv::Mat doGKernel;
     cv::Mat doGImg;
     cv::Mat visDoGImg;
 
