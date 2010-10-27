@@ -197,7 +197,7 @@ bool MLearningDetector::locate(const cv::Mat& input, cv::Mat& output)
 void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outputs, const int iter)
 {
     // PERFORMANCE ANALYSIS ON TRAINING DATA
-    // Enumerations of error matrix indexes
+    // Enumerations of error matrice indexes
     enum { X = 0, Y = 1, TOTAL = 2,
            EPS_DIST = 0, EPS_X = 1, EPS_Y = 2, EPS_TOTAL = 3,
 
@@ -216,6 +216,7 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     // Error per data sample
     cv::Mat error_per_sample(inputs.rows, EPS_TOTAL, CV_32SC1);
     cv::Mat estimate(inputs.rows, TOTAL, CV_32FC1);
+
     for(int i = 0; i < inputs.rows; i++)
     {
         mlpANN.predict(inputs.row(i), estimate); // estimate gaze on trained sample
@@ -229,6 +230,7 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     // Mean and std dev of error per coordinate
     cv::Mat error_per_coord(inputs.rows/SAMPLES_PER_POINT, EPC_TOTAL, CV_32SC1);
     cv::Rect samples; cv::Scalar error_mean, error_stddev;
+
     for(int i = 0; i < outputs.rows/SAMPLES_PER_POINT; i++)
     {
         error_per_coord.at<int>(i,X) = outputs.at<float>(SAMPLES_PER_POINT*i,X); // x coord
@@ -242,16 +244,17 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
         samples = cv::Rect(EPS_X,SAMPLES_PER_POINT*i,1,SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
         meanStdDev(error_per_sample(samples), error_mean, error_stddev); // calc the stats
         error_per_coord.at<int>(i,EPC_X_MEAN) = error_mean[0]; // mean of abs. error in x
-        error_per_coord.at<int>(i,EPC_X_STDDEV) = error_mean[0]; // stddev of abs. error in x
+        error_per_coord.at<int>(i,EPC_X_STDDEV) = error_stddev[0]; // stddev of abs. error in x
 
         samples = cv::Rect(EPS_Y,SAMPLES_PER_POINT*i,1,SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
         meanStdDev(error_per_sample(samples), error_mean, error_stddev); // calc the stats
         error_per_coord.at<int>(i,EPC_Y_MEAN) = error_mean[0]; // mean of abs. error in x
-        error_per_coord.at<int>(i,EPC_Y_STDDEV) = error_mean[0]; // stddev of abs. error in x
+        error_per_coord.at<int>(i,EPC_Y_STDDEV) = error_stddev[0]; // stddev of abs. error in x
     }
 
     // Mean and std dev over all error means and stddevs per coordinate
     cv::Mat error_per_coord_stat(1, EEPC_TOTAL, CV_32SC1);
+
     meanStdDev(error_per_coord.col(EPC_DIST_MEAN), error_mean, error_stddev);
     error_per_coord_stat.at<int>(0,EEPC_DIST_MEAN) = error_mean[0];
     error_per_coord_stat.at<int>(0,EEPC_DIST_STDDEV) = error_stddev[0];
@@ -267,35 +270,36 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     // Error mean and stddev of all samples
     cv::Mat error_total(1, ET_TOTAL, CV_32SC1);
     cv::Mat squared_error_per_sample;
+
     meanStdDev(error_per_sample.col(EPS_DIST), error_mean, error_stddev);
     error_total.at<int>(0,ET_DIST_MEAN) = error_mean[0];
-    error_total.at<int>(0, ET_DIST_STDDEV) = error_stddev[0];
+    error_total.at<int>(0,ET_DIST_STDDEV) = error_stddev[0];
     pow(error_per_sample.col(EPS_DIST),2,squared_error_per_sample);
     meanStdDev(squared_error_per_sample, error_mean, error_stddev);
-    error_total.at<int>(0, ET_DIST_MSE) = sqrt(error_stddev[0]);
+    error_total.at<int>(0,ET_DIST_MSE) = sqrt(error_mean[0]);
 
     meanStdDev(error_per_sample.col(EPS_X), error_mean, error_stddev);
     error_total.at<int>(0,ET_X_MEAN) = error_mean[0];
-    error_total.at<int>(0, ET_X_STDDEV) = error_stddev[0];
+    error_total.at<int>(0,ET_X_STDDEV) = error_stddev[0];
     pow(error_per_sample.col(EPS_X),2,squared_error_per_sample);
     meanStdDev(squared_error_per_sample, error_mean, error_stddev);
-    error_total.at<int>(0, ET_X_MSE) = sqrt(error_stddev[0]);
+    error_total.at<int>(0,ET_X_MSE) = sqrt(error_mean[0]);
 
     meanStdDev(error_per_sample.col(EPS_Y), error_mean, error_stddev);
     error_total.at<int>(0,ET_Y_MEAN) = error_mean[0];
-    error_total.at<int>(0, ET_Y_STDDEV) = error_stddev[0];
+    error_total.at<int>(0,ET_Y_STDDEV) = error_stddev[0];
     pow(error_per_sample.col(EPS_X),2,squared_error_per_sample);
     meanStdDev(squared_error_per_sample, error_mean, error_stddev);
-    error_total.at<int>(0, ET_Y_MSE) = sqrt(error_stddev[0]);
+    error_total.at<int>(0,ET_Y_MSE) = sqrt(error_mean[0]);
 
     // Save errors to YML file
     cv::FileStorage error; std::stringstream fname;
     fname << "errors-" << hiddenLayerCount << "hl-" << hiddenLayerSize << "n-f" << learningRate << "-e.yml";
     error.open(fname.str().c_str(), cv::FileStorage::WRITE);
-    error << "training_epochs - iterations" << iter
-          << "error_total - mean stddev mse" << error_total
-          << "error_per_coordinate_stats - mean stddev" << error_per_coord_stat
-          << "error_per_coordinate - xcoord ycoord mean stddev" << error_per_coord
-          << "error_per_sample - dist errx erry" << error_per_sample;
+    error << "training epochs - iterations" << iter
+          << "error total - mean stddev mse" << error_total
+          << "error per coordinate stats - mean stddev" << error_per_coord_stat
+          << "error per coordinate - xcoord ycoord mean stddev" << error_per_coord
+          << "error per sample - dist errx erry" << error_per_sample;
     // PERFORMANCE ANALYSIS ON TRAINING DATA
 }
