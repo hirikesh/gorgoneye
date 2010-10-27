@@ -262,16 +262,14 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
     // Preprocess eye image
     cv::Mat clonedImage;
     cvtColor(eyeImg, clonedImage, CV_BGR2GRAY);
-    equalizeHist(clonedImage, clonedImage);
     medianBlur(clonedImage, clonedImage, 7);
-
 
     // ------------------------------
     // Threshold eye image to find Blobs
     cv::Mat clonedMask;
-    cv::inRange(clonedImage, cv::Scalar(0), cv::Scalar(60), clonedMask);
+    int check = findThreshold(clonedImage, 0.15);
+    cv::inRange(clonedImage, cv::Scalar(0), cv::Scalar(check), clonedMask);
     erodeDilateFilter->filter(clonedMask, clonedMask, store->ignore);
-
 
     // ------------------------------
     // Determine and label Blobs
@@ -300,10 +298,10 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         int pupilTop = std::max(vec[0]->miny, vec[1]->miny);
         int pupilBottom = std::max(vec[0]->maxy, vec[1]->maxy);
 
-        pupilTop -= 5;
+        pupilTop -= 3;
         if (pupilTop < 0)
             pupilTop = 0;
-        pupilBottom += 5;
+        pupilBottom += 3;
         if (pupilBottom > clonedImage.rows)
             pupilBottom = clonedImage.rows;
 
@@ -316,56 +314,74 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         // STAGE TWO - Extra Refinement;
         cv::Mat newEyeImg = clonedImage(refinedROI);
         doGNormFilter->filter(newEyeImg, newEyeImg, store->ignore);
-        cv::medianBlur(newEyeImg, newEyeImg,3);
-        cv::equalizeHist(newEyeImg, newEyeImg);
+        cv::medianBlur(newEyeImg, newEyeImg, 5);
 
+        int corners = findThreshold(newEyeImg, 0.20);
         cv::Mat maskCorners;
-        cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(30), maskCorners);
+        cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(corners), maskCorners);
 
-        int leftOffset = 0, rightOffset = maskCorners.cols-1;
-        bool leftFound = findLeftCorner(maskCorners, leftOffset);
-        bool rightFound = findRightCorner(maskCorners, rightOffset);
-        if (leftFound && rightFound)
-        {
-            refinedROI = cv::Rect(leftOffset, 0, rightOffset+1-leftOffset, maskCorners.rows) + refinedROI.tl();
-        }
+        int leftOffset, rightOffset;
+        leftOffset = findLeftCorner(maskCorners, leftOffset);
+        rightOffset = findRightCorner(maskCorners, rightOffset);
+        refinedROI = cv::Rect(leftOffset, 0, rightOffset+1-leftOffset, maskCorners.rows) + refinedROI.tl();
         return true;
     }
 }
 
-bool GazeTracker::findLeftCorner(const cv::Mat &image, int& offset)
+int GazeTracker::findLeftCorner(const cv::Mat &image, int& offset)
 {
     int val;
     for (int x = 0; (x < image.cols); x++)
     {
         for (int y = 0; (y < image.rows); y++)
         {
-            val = image.at<int>(y, x);
-            if (val == 255)
-            {
-                offset = x;
-                return true;
-            }
+            if (image.at<uchar>(y, x) && x > 10)
+                return x;
         }
     }
-    return false;
+    return 0;
 }
 
-bool GazeTracker::findRightCorner(const cv::Mat &image, int& offset)
+int GazeTracker::findRightCorner(const cv::Mat &image, int& offset)
 {
     int val;
     for (int x = image.cols-1; x >= 0; x--)
     {
-        for (int y = 0; (y < image.rows); y++)
-        {
-            val = image.at<int>(y, x);
-            qDebug() << y << val;
-            if (val == 255)
-            {
-                offset = x;
-                return true;
-            }
+        for (int y = 0; y < image.rows; y++)
+        {            
+            if (image.at<uchar>(y, x) && x < image.cols-10)
+                return x;
         }
     }
-    return false;
+    return image.cols-1;
+}
+
+int GazeTracker::findThreshold(const cv::Mat &gray, const float &percentage)
+{
+    const int histSize[] = {256};
+    cv::MatND hist;
+    hist.create(1, histSize, CV_32S);
+    hist = cv::Scalar(0);
+
+    for (int y = 0; y < gray.rows; y++)
+    {
+        for (int x = 0; x < gray.cols ; x++)
+        {
+            const uchar& pix = gray.at<uchar>(y, x);
+            hist.at<int>(pix)++;
+        }
+    }
+
+    float sum = 0;
+    int totalPixels = gray.rows * gray.cols;
+
+    for (int i = 0; i < 256; i++)
+    {
+        sum += hist.at<int>(i);
+        if (sum/totalPixels > percentage )
+        {
+            return i;
+        }
+    }
+    return 0;
 }
