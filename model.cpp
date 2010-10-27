@@ -145,31 +145,71 @@ void Model::update()
     eyesHaarX2Tracker->track();
     eyesTracker->track();
 
-    // Update eyes image only if tracker succeeds.
-    // A successful face track could render the old
-    // eye ROI invalid.
-    if(store.eyesLocated && store.eyesLocatedL)
+#if 1
+    if(store.calibMode)
+    {
+        static int inputcount = 0;
+        static cv::FileStorage image_load("eyes_raw.yml", cv::FileStorage::READ);
+
+        std::stringstream image_name;
+        image_name << "right_" << inputcount;
+        image_load[image_name.str().c_str()] >> store.eyesImg;
+        std::stringstream image_nameL;
+        image_nameL << "left_" << inputcount;
+        image_load[image_nameL.str().c_str()] >> store.eyesImgL;
+
+        inputcount++;
+
+        store.eyesLocated = true;
+        store.eyesLocatedL = true;
+
+#ifdef PREPROC_GAZE
+        preProcess();
+#endif /* PREPROC_GAZE */
+        gazeTracker->track();
+
+        store.eyesLocated = false;
+        store.eyesLocatedL = false;
+    }
+    else if(store.eyesLocated && store.eyesLocatedL)
     {
         store.eyesImg = store.faceImg(store.eyesRoi);
         store.eyesImgL = store.faceImg(store.eyesRoiL);
-
-//        static int i = 0;
-//        if(i < 10)
-//        {
-//            i++;
-//            std::stringstream sr;
-//            sr << "chan-eye-right-" << i << ".png";
-//            imwrite(sr.str().c_str(), store.eyesImg);
-//            std::stringstream sl;
-//            sl << "chan-eye-left-" << i << ".png";
-//            imwrite(sl.str().c_str(), store.eyesImgL);
-//        }
 
 #ifdef PREPROC_GAZE
         preProcess();
 #endif /* PREPROC_GAZE */
         gazeTracker->track();
     }
+#else
+
+    if(store.eyesLocated && store.eyesLocatedL)
+    {
+        store.eyesImg = store.faceImg(store.eyesRoi);
+        store.eyesImgL = store.faceImg(store.eyesRoiL);
+
+#if 0
+        if(store.calibMode)
+        {
+            static int inputcount = 0;
+            static cv::FileStorage image_save("eyes_raw.yml", cv::FileStorage::WRITE);
+            std::stringstream image_name;
+            image_name << "right_" << inputcount;
+            image_save << image_name.str().c_str() << store.eyesImg;
+            std::stringstream image_nameL;
+            image_nameL << "left_" << inputcount;
+            image_save << image_nameL.str().c_str() << store.eyesImgL;
+
+            inputcount++;
+        }
+#endif
+
+#ifdef PREPROC_GAZE
+        preProcess();
+#endif /* PREPROC_GAZE */
+        gazeTracker->track();
+    }
+#endif
 
     postProcess();
 }

@@ -35,7 +35,7 @@ GazeTracker::GazeTracker(Store* st) :
     doGNormFilter->enable();
     filters.push_back(doGNormFilter);
 
-    mLearningDetector = new MLearningDetector(st, 3, true, false,
+    mLearningDetector = new MLearningDetector(st, 3, false, false,
                                               false, 2, 50, 0.001);
     detectors.push_back(mLearningDetector);
 
@@ -54,19 +54,29 @@ void GazeTracker::track()
 //    grayscaleFilter->filter(store->gazeImg, store->ignore, store->ignore);
 
 #if 1
+    // FEATURE EXTRACTION
+    cv::Mat eyesImg;
     cv::Rect refinedRoi;
-    if (!refineEyeRoi(store->eyesImg, refinedRoi))
+    cvtColor(store->eyesImg, eyesImg, CV_BGR2GRAY);
+    if (!refineEyeRoi(eyesImg, refinedRoi))
         return;
-    cv::Mat newEyeImg = store->eyesImg(refinedRoi);
-    doGNormFilter->filter(newEyeImg, newEyeImg, store->ignore);
+    cv::Mat newEyeImg = eyesImg(refinedRoi);
+    equalizeHist(newEyeImg, newEyeImg);
+    medianBlur(newEyeImg, newEyeImg, 5);
+//    doGNormFilter->filter(newEyeImg, newEyeImg, store->ignore);
 //    imshow("newEyeImg", newEyeImg);
 
+    cv::Mat eyesImgL;
     cv::Rect refinedRoiL;
-    if (!refineEyeRoi(store->eyesImgL, refinedRoiL))
+    cvtColor(store->eyesImgL, eyesImgL, CV_BGR2GRAY);
+    if (!refineEyeRoi(eyesImgL, refinedRoiL))
         return;
-    cv::Mat newEyeImgL = store->eyesImgL(refinedRoiL);
-    doGNormFilter->filter(newEyeImgL, newEyeImgL, store->ignore);
+    cv::Mat newEyeImgL = eyesImgL(refinedRoiL);
+    equalizeHist(newEyeImgL, newEyeImgL);
+    medianBlur(newEyeImgL, newEyeImgL, 5);
+//    doGNormFilter->filter(newEyeImgL, newEyeImgL, store->ignore);
 //    imshow("newEyeImgL", newEyeImgL);
+    // FEATURE EXTRACTION
 #endif
 
     // FAKE EYES
@@ -96,7 +106,7 @@ void GazeTracker::track()
 
     // Calibration mode involves automated data collection and subsequent training on that data
     int size = gazeImg.rows*gazeImg.cols;
-    int totalsize = 2*size + 12;
+    int totalsize = 2*size;
     if(store->calibMode)
     {
         if(inputPerPointCount < IGNORED_SAMPLES_PER_POINT) // give user a break
@@ -112,30 +122,24 @@ void GazeTracker::track()
         {
             if(store->eyesLocated && store->eyesLocatedL)
             {
-                // Save this image for future use
-#if 1
-                static cv::FileStorage images;
-#endif
-
-
                 // Add gaze input image as a single row in the feature matrix
                 for(int i = 0; i < size; i++)
                 {
                     store->gazeFeatures.at<float>(inputTotalCount,i) = gazeImg.at<float>(0,i);
                     store->gazeFeatures.at<float>(inputTotalCount,size+i) = gazeImgL.at<float>(0,i);
                 }
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+1) = store->faceRoi.x + store->faceRoi.width/2;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+2) = store->faceRoi.y + store->faceRoi.height/2;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+3) = store->faceRoi.width;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+4) = store->faceRoi.height;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+5) = refinedRoi.x + refinedRoi.width/2;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+6) = refinedRoi.y + refinedRoi.height/2;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+7) = refinedRoi.width;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+8) = refinedRoi.height;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+9) = refinedRoiL.x + refinedRoiL.width/2;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+10) = refinedRoiL.y + refinedRoiL.height/2;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+11) = refinedRoiL.width;
-                store->gazeFeatures.at<float>(inputTotalCount,2*size+12) = refinedRoiL.height;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+1) = store->faceRoi.x + store->faceRoi.width/2;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+2) = store->faceRoi.y + store->faceRoi.height/2;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+3) = store->faceRoi.width;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+4) = store->faceRoi.height;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+5) = refinedRoi.x + refinedRoi.width/2;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+6) = refinedRoi.y + refinedRoi.height/2;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+7) = refinedRoi.width;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+8) = refinedRoi.height;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+9) = refinedRoiL.x + refinedRoiL.width/2;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+10) = refinedRoiL.y + refinedRoiL.height/2;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+11) = refinedRoiL.width;
+//                store->gazeFeatures.at<float>(inputTotalCount,2*size+12) = refinedRoiL.height;
 
                 // Add calibration point of gaze to outputs
                 store->gazeCoords.at<float>(inputTotalCount,0) = (float)store->calibX;
@@ -144,7 +148,7 @@ void GazeTracker::track()
                 // Update total
                 inputTotalCount++;
                 inputPerPointCount++;
-                qDebug() << "Added sample number:" << inputTotalCount-1 << "@" << store->calibX << store->calibY;
+//                qDebug() << "Added sample number:" << inputTotalCount-1 << "@" << store->calibX << store->calibY;
             }
         }
         else if(inputPerPointCount == IGNORED_SAMPLES_PER_POINT + SAMPLES_PER_POINT + 1) // move to next point
@@ -204,18 +208,18 @@ void GazeTracker::track()
             gazeSample.at<float>(0,i) = gazeImg.at<float>(0,i);
             gazeSample.at<float>(0,size+i) = gazeImgL.at<float>(0,i);
         }
-        gazeSample.at<float>(0,2*size+1) = store->faceRoi.x + store->faceRoi.width/2;
-        gazeSample.at<float>(0,2*size+2) = store->faceRoi.y + store->faceRoi.height/2;
-        gazeSample.at<float>(0,2*size+3) = store->faceRoi.width;
-        gazeSample.at<float>(0,2*size+4) = store->faceRoi.height;
-        gazeSample.at<float>(0,2*size+5) = refinedRoi.x + refinedRoi.width/2;
-        gazeSample.at<float>(0,2*size+6) = refinedRoi.y + refinedRoi.height/2;
-        gazeSample.at<float>(0,2*size+7) = refinedRoi.width;
-        gazeSample.at<float>(0,2*size+8) = refinedRoi.height;
-        gazeSample.at<float>(0,2*size+9) = refinedRoiL.x + refinedRoiL.width/2;
-        gazeSample.at<float>(0,2*size+10) = refinedRoiL.y + refinedRoiL.height/2;
-        gazeSample.at<float>(0,2*size+11) = refinedRoiL.width;
-        gazeSample.at<float>(0,2*size+12) = refinedRoiL.height;
+//        gazeSample.at<float>(0,2*size+1) = store->faceRoi.x + store->faceRoi.width/2;
+//        gazeSample.at<float>(0,2*size+2) = store->faceRoi.y + store->faceRoi.height/2;
+//        gazeSample.at<float>(0,2*size+3) = store->faceRoi.width;
+//        gazeSample.at<float>(0,2*size+4) = store->faceRoi.height;
+//        gazeSample.at<float>(0,2*size+5) = refinedRoi.x + refinedRoi.width/2;
+//        gazeSample.at<float>(0,2*size+6) = refinedRoi.y + refinedRoi.height/2;
+//        gazeSample.at<float>(0,2*size+7) = refinedRoi.width;
+//        gazeSample.at<float>(0,2*size+8) = refinedRoi.height;
+//        gazeSample.at<float>(0,2*size+9) = refinedRoiL.x + refinedRoiL.width/2;
+//        gazeSample.at<float>(0,2*size+10) = refinedRoiL.y + refinedRoiL.height/2;
+//        gazeSample.at<float>(0,2*size+11) = refinedRoiL.width;
+//        gazeSample.at<float>(0,2*size+12) = refinedRoiL.height;
 
         // Predict and store results
 #if(TIME_GAZE_TRACKERS)
@@ -242,8 +246,7 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
     // --------------------------------
     // Preprocess eye image
     cv::Mat clonedImage;
-    cvtColor(eyeImg, clonedImage, CV_BGR2GRAY);
-    medianBlur(clonedImage, clonedImage, 7);
+    medianBlur(eyeImg, clonedImage, 7);
 
     // ------------------------------
     // Threshold eye image to find Blobs
@@ -274,11 +277,12 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         largest = cvb::cvGreaterBlob(blobs);
         largeBlobs.push_back(blobs.at(largest));
         blobs.erase(largest);
+
         // -----------------------------------------------------
         // Adjusted Eye Height - we want to include the eye lid as well
         int irisTop = std::max(largeBlobs[0]->miny, largeBlobs[1]->miny);
         int irisBottom = std::max(largeBlobs[0]->maxy, largeBlobs[1]->maxy);
-        const int eyeAdjust = 3;
+        const int eyeAdjust = 0; //3;
         irisTop -= eyeAdjust;
         if (irisTop < 0)
             irisTop = 0;
@@ -325,7 +329,7 @@ int GazeTracker::findRightCorner(const cv::Mat &image)
     for (int x = image.cols-1; x >= 0; x--)
     {
         for (int y = 0; y < image.rows; y++)
-        {            
+        {
             if (image.at<uchar>(y, x) && x < image.cols-10)
                 return x;
         }
