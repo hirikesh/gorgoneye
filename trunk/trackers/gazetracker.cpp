@@ -310,8 +310,10 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         cv::Mat maskCorners;
         cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(30), maskCorners);
 
-        int leftOffset, rightOffset;
-        if (findLeftCorner(maskCorners, leftOffset) && findRightCorner(maskCorners, rightOffset))
+        int leftOffset = 0, rightOffset = maskCorners.cols-1;
+        bool leftFound = findLeftCorner(maskCorners, leftOffset);
+        bool rightFound = findRightCorner(maskCorners, rightOffset);
+        if (leftFound && rightFound)
         {
             refinedROI = cv::Rect(leftOffset, 0, rightOffset+1-leftOffset, maskCorners.rows) + refinedROI.tl();
         }
@@ -350,11 +352,9 @@ bool GazeTracker::findRightCorner(const cv::Mat &image, int& offset)
             if (val == 255)
             {
                 offset = x;
-                qDebug() << "stopping right...success";
                 return true;
             }
         }
-    }
-    qDebug() << "stopping right...fail";
+    }    
     return false;
 }
