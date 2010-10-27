@@ -345,14 +345,10 @@ bool GazeTracker::findRightCorner(const cv::Mat &image, int& offset)
     {
         for (int y = 0; (y < image.rows); y++)
         {
-            if (!(y%3))
-            {
-                qDebug() << "right:" << y;
-            }
             val = image.at<int>(y, x);
+            qDebug() << y << val;
             if (val == 255)
             {
-                qDebug() << "starting right...inner loop";
                 offset = x;
                 qDebug() << "stopping right...success";
                 return true;
