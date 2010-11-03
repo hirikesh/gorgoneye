@@ -31,8 +31,8 @@ void GLGazeScene::updateCalib()
     store->calibY = 0;
 
     // Reset hysteresis initial condition
-    hystThreshX = deltaX;
-    hystThreshY = deltaY;
+    hystThreshX = deltaX/2;
+    hystThreshY = deltaY/2;
     currGazeX = 0;
     currGazeY = 0;
 }
@@ -96,14 +96,14 @@ void GLGazeScene::drawBackground(QPainter* painter, const QRectF& rect)
     glBegin(GL_LINES);
         // Draw calibration lines - intersection is calibration coordinate
         glColor3f(0.5f, 0.5f, 0.5f);
-        for(int nextx = 0; nextx <= outerW; nextx += deltaX/2)
+        for(int nextx = 0; nextx <= outerW; nextx += deltaX/4)
         {
             glVertex2i(outerW-nextx, 0);
             glVertex2i(outerW-nextx, height());
             glVertex2i(outerW+nextx, 0);
             glVertex2i(outerW+nextx, height());
         }
-        for(int nexty = 0; nexty <= outerH; nexty += deltaY/2)
+        for(int nexty = 0; nexty <= outerH; nexty += deltaY/4)
         {
             glVertex2i(0, outerH-nexty);
             glVertex2i(width(), outerH-nexty);
@@ -199,7 +199,7 @@ void GLGazeScene::keyPressEvent(QKeyEvent* event)
     if(event->key() == Qt::Key_Return)
     {
         store->calibMode = !store->calibMode;
-        store->visPerf = store->calibMode;
+        store->visPerf = !store->calibMode;
     }
 
     QGraphicsScene::keyPressEvent(event);

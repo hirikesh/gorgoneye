@@ -83,7 +83,7 @@ Model::Model(int device) :
     faceHaarTracker->enable();
     faceCAMShiftTracker->disable();
     faceHaarCAMShiftTracker->disable();
-    faceMTracker->enable();
+    faceMTracker->disable();
     faceHaarCAMShiftACTracker->disable();
     eyesHaarTracker->enable();
     eyesHaarX2Tracker->enable();

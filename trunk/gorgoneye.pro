@@ -7,7 +7,7 @@ TARGET = gorgoneye
 TEMPLATE = app
 unix {
     INCLUDEPATH += "/usr/include/opencv" \
-                   "/home/justin/cvblob/cvBlob"
+                   "/home/justin/project/cvblob/cvBlob"
     LIBS += -L"/usr/local/lib/static" -lcvblob
     LIBS += -L"/usr/lib" \
         -lcv \
@@ -77,7 +77,8 @@ SOURCES += main.cpp \
     ui/guiprocessdiag.cpp \
     ui/guiparamdiag.cpp \
     ui/guitrackerdiag.cpp \
-    ui/guitreewidgetitem.cpp
+    ui/guitreewidgetitem.cpp \
+    filters/blobfilter.cpp
 
 HEADERS += \
     config.h \
@@ -122,6 +123,7 @@ HEADERS += \
     ui/guiprocessdiag.h \
     ui/guiparamdiag.h \
     ui/guitrackerdiag.h \
-    ui/guitreewidgetitem.h
+    ui/guitreewidgetitem.h \
+    filters/blobfilter.h
 
 FORMS += ui/control.ui
