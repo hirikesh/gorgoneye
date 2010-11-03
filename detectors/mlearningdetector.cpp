@@ -80,6 +80,27 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
     inputDim = inputs.cols;
     outputDim = outputs.cols;
 
+    // Break inputs/outputs into training set & test set
+    int trainingSamplesMulti = SAMPLES_PER_POINT - XVALID_SAMPLES_PER_POINT;
+    int testSamplesMulti = XVALID_SAMPLES_PER_POINT;
+    cv::Mat trainingInputs(trainingSamplesMulti*inputs.rows/SAMPLES_PER_POINT, inputDim, CV_32FC1);
+    cv::Mat trainingOutputs(trainingSamplesMulti*outputs.rows/SAMPLES_PER_POINT, outputDim, CV_32FC1);
+    cv::Mat testInputs(testSamplesMulti*inputs.rows/SAMPLES_PER_POINT, inputDim, CV_32FC1);
+    cv::Mat testOutputs(testSamplesMulti*outputs.rows/SAMPLES_PER_POINT, outputDim, CV_32FC1);
+    cv::Mat temp;
+    for(int i = 0; i < inputs.rows/SAMPLES_PER_POINT; i++)
+    {
+        temp = trainingInputs(cv::Rect(0,trainingSamplesMulti*i,inputDim,trainingSamplesMulti));
+        inputs(cv::Rect(0,SAMPLES_PER_POINT*i,inputDim,trainingSamplesMulti)).copyTo(temp);
+        temp = trainingOutputs(cv::Rect(0,trainingSamplesMulti*i,outputDim,trainingSamplesMulti));
+        outputs(cv::Rect(0,SAMPLES_PER_POINT*i,outputDim,trainingSamplesMulti)).copyTo(temp);
+
+        temp = testInputs(cv::Rect(0,testSamplesMulti*i,inputDim,testSamplesMulti));
+        inputs(cv::Rect(0,SAMPLES_PER_POINT*i+trainingSamplesMulti,inputDim,testSamplesMulti)).copyTo(temp);
+        temp = testOutputs(cv::Rect(0,testSamplesMulti*i,outputDim,testSamplesMulti));
+        outputs(cv::Rect(0,SAMPLES_PER_POINT*i+trainingSamplesMulti,outputDim,testSamplesMulti)).copyTo(temp);
+    }
+
     // Decision Tree estimation type
 //    cv::Mat varType;
 //    if(useClassification) // don't try this for now
@@ -89,9 +110,9 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
 
     // Train Decision Tree
 //    dTree.clear(); // we want to retrain
-//    dTree.train(inputs,
+//    dTree.train(trainingInputs,
 //                CV_ROW_SAMPLE, // one input feature vectors per row
-//                outputs,
+//                trainingOutputs,
 //                cv::Mat(), // Weights for inputs - treat all as equally important
 //                cv::Mat(), // Train on all inputs
 //                varType, // Set classificationt or regression training
@@ -100,9 +121,9 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
 
     // Train Random Trees
 //    rndTrees.clear(); // we want to retrain
-//    rndTrees.train(inputs,
+//    rndTrees.train(trainingInputs,
 //                   CV_ROW_SAMPLE, // one input feature vectors per row
-//                   outputs,
+//                   trainingOutputs,
 //                   cv::Mat(), // Weights for inputs - treat all as equally important
 //                   cv::Mat(), // Train on all inputs
 //                   varType, // Set classificationt or regression training
@@ -117,18 +138,18 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
         mlpANN_layer_size.at<int>(0,i) = hiddenLayerSize;
     mlpANN_layer_size.at<int>(0,hiddenLayerCount+1) = outputDim;
     mlpANN.create(mlpANN_layer_size, CvANN_MLP::SIGMOID_SYM);
-    int iter = mlpANN.train(inputs,
-                 outputs,
-                 cv::Mat(), // Weights for inputs
-                 cv::Mat(), // Train on all inputs given
-//                 CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 250, 0.0000001),
-                 CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 50, 0.001),
-                                       CvANN_MLP_TrainParams::BACKPROP, learningRate));
+    int iter = mlpANN.train(trainingInputs,
+                            trainingOutputs,
+                            cv::Mat(), // Weights for inputs
+                            cv::Mat(), // Train on all inputs given
+//                          CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 250, 0.0000001),
+                            CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 250, 0.000001),
+                                                  CvANN_MLP_TrainParams::BACKPROP, learningRate));
 
     // Train SVM
 //    svMach.clear();
-//    svMach.train(inputs,
-//                 outputs,
+//    svMach.train(trainingInputs,
+//                 trainingOutputs,
 //                 cv::Mat(),
 //                 cv::Mat(),
 //                 CvSVMParams());
@@ -152,7 +173,7 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
     trained = true;
 
     // Check performance
-    analyse_perf(inputs, outputs, iter);
+    analyse_perf(testInputs, testOutputs, iter);
 }
 
 
@@ -229,25 +250,25 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     }
 
     // Mean and std dev of error per coordinate
-    cv::Mat error_per_coord(inputs.rows/SAMPLES_PER_POINT, EPC_TOTAL, CV_32SC1);
+    cv::Mat error_per_coord(inputs.rows/XVALID_SAMPLES_PER_POINT, EPC_TOTAL, CV_32SC1);
     cv::Rect samples; cv::Scalar error_mean, error_stddev;
 
-    for(int i = 0; i < outputs.rows/SAMPLES_PER_POINT; i++)
+    for(int i = 0; i < outputs.rows/XVALID_SAMPLES_PER_POINT; i++)
     {
-        error_per_coord.at<int>(i,X) = outputs.at<float>(SAMPLES_PER_POINT*i,X); // x coord
-        error_per_coord.at<int>(i,Y) = outputs.at<float>(SAMPLES_PER_POINT*i,Y); // y coord
+        error_per_coord.at<int>(i,X) = outputs.at<float>(XVALID_SAMPLES_PER_POINT*i,X); // x coord
+        error_per_coord.at<int>(i,Y) = outputs.at<float>(XVALID_SAMPLES_PER_POINT*i,Y); // y coord
 
-        samples = cv::Rect(EPS_DIST,SAMPLES_PER_POINT*i,1,SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
+        samples = cv::Rect(EPS_DIST,XVALID_SAMPLES_PER_POINT*i,1,XVALID_SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
         meanStdDev(error_per_sample(samples), error_mean, error_stddev); // calc the stats
         error_per_coord.at<int>(i,EPC_DIST_MEAN) = error_mean[0]; // mean of euclidean distance error
         error_per_coord.at<int>(i,EPC_DIST_STDDEV) = error_stddev[0]; // stddev of euclidean distance error
 
-        samples = cv::Rect(EPS_X,SAMPLES_PER_POINT*i,1,SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
+        samples = cv::Rect(EPS_X,XVALID_SAMPLES_PER_POINT*i,1,XVALID_SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
         meanStdDev(error_per_sample(samples), error_mean, error_stddev); // calc the stats
         error_per_coord.at<int>(i,EPC_X_MEAN) = error_mean[0]; // mean of abs. error in x
         error_per_coord.at<int>(i,EPC_X_STDDEV) = error_stddev[0]; // stddev of abs. error in x
 
-        samples = cv::Rect(EPS_Y,SAMPLES_PER_POINT*i,1,SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
+        samples = cv::Rect(EPS_Y,XVALID_SAMPLES_PER_POINT*i,1,XVALID_SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
         meanStdDev(error_per_sample(samples), error_mean, error_stddev); // calc the stats
         error_per_coord.at<int>(i,EPC_Y_MEAN) = error_mean[0]; // mean of abs. error in x
         error_per_coord.at<int>(i,EPC_Y_STDDEV) = error_stddev[0]; // stddev of abs. error in x
@@ -292,6 +313,21 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     pow(error_per_sample.col(EPS_X),2,squared_error_per_sample);
     meanStdDev(squared_error_per_sample, error_mean, error_stddev);
     error_total.at<int>(0,ET_Y_MSE) = sqrt(error_mean[0]);
+
+    // Graph errors
+//    double min, max;
+//    minMaxLoc(error_per_sample.col(EPS_X), &min, &max);
+//    cv::Mat pdfDist(1, max-min, CV_16UC1);
+//    for(int i = 0; i < error_per_sample.rows; i++)
+//    {
+//        const uchar& idx = error_per_sample.at<uchar>(i,EPS_X);
+//        pdfDist.at<int>(0,idx) += 1;
+//    }
+//    minMaxLoc(pdfDist, &min, &max);
+//    cv::Mat visPdfDist(4*pdfDist.cols, max, CV_8UC1, cv::Scalar(0));
+//    for(int i = 0; i < pdfDist.cols; i++)
+//        cv::line(visPdfDist, cv::Point(4*i,0), cv::Point(4*i,pdfDist.at<uchar>(0,i)), cv::Scalar(128), 4);
+//    imwrite("emp_dist_pdf.png", visPdfDist);
 
     // Save errors to YML file
     cv::FileStorage error; std::stringstream fname;

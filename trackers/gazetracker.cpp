@@ -20,7 +20,7 @@ GazeTracker::GazeTracker(Store* st) :
     BaseTracker(st, "Gaze-test"),
     inputTotalCount(0), inputPerPointCount(0), timesPerPoint(1)
 {
-    grayscaleFilter = new GrayscaleFilter(st, 18, 256);
+    grayscaleFilter = new GrayscaleFilter(st, 0, 40);
     grayscaleFilter->enable();
     filters.push_back(grayscaleFilter);
 
@@ -30,13 +30,14 @@ GazeTracker::GazeTracker(Store* st) :
 
     erodeDilateFilter = new ErodeDilateFilter(st);
     erodeDilateFilter->enable();
+    filters.push_back(erodeDilateFilter);
 
     doGNormFilter = new DoGNormFilter(st);
     doGNormFilter->enable();
     filters.push_back(doGNormFilter);
 
-    mLearningDetector = new MLearningDetector(st, 3, false, false,
-                                              false, 2, 50, 0.001);
+    mLearningDetector = new MLearningDetector(st, 3, false, true,
+                                              false, 3, 50, 0.001);
     detectors.push_back(mLearningDetector);
 
     BaseTracker::initImageModes();
@@ -62,8 +63,8 @@ void GazeTracker::track()
         return;
     cv::Mat newEyeImg = eyesImg(refinedRoi);
     equalizeHist(newEyeImg, newEyeImg);
-    medianBlur(newEyeImg, newEyeImg, 5);
 //    doGNormFilter->filter(newEyeImg, newEyeImg, store->ignore);
+    medianBlur(newEyeImg, newEyeImg, 5);
 //    imshow("newEyeImg", newEyeImg);
 
     cv::Mat eyesImgL;
@@ -73,8 +74,8 @@ void GazeTracker::track()
         return;
     cv::Mat newEyeImgL = eyesImgL(refinedRoiL);
     equalizeHist(newEyeImgL, newEyeImgL);
-    medianBlur(newEyeImgL, newEyeImgL, 5);
 //    doGNormFilter->filter(newEyeImgL, newEyeImgL, store->ignore);
+    medianBlur(newEyeImgL, newEyeImgL, 5);
 //    imshow("newEyeImgL", newEyeImgL);
     // FEATURE EXTRACTION
 #endif
@@ -89,18 +90,20 @@ void GazeTracker::track()
     // FAKE EYES
 
     // INPUT CONVERSION - to fixed size and compatible type for training
-    static cv::Mat tmpGazeImg, gazeImg(1, 20, CV_16UC1);
+    static cv::Mat tmpGazeImg, gazeImg(1, 40, CV_16UC1);
     cv::resize(newEyeImg, gazeImg, cv::Size(20,14), cv::INTER_AREA);
 //    for(int i = 0; i < tmpGazeImg.cols; i++)
-//        gazeImg(cv::Rect(i,0,1,1)) = sum(tmpGazeImg(cv::Rect(i,0,1,tmpGazeImg.rows)));
+//        gazeImg.at<int>(0,i) = (int)sum(tmpGazeImg.col(i))[0];
 //    cv::normalize(gazeImg, gazeImg, 0, 255, cv::NORM_MINMAX);
+//    imshow("test", gazeImg);
     gazeImg.convertTo(gazeImg, CV_32FC1, 1./255);
 
-    static cv::Mat tmpGazeImgL, gazeImgL(1, 20, CV_16UC1);
+    static cv::Mat tmpGazeImgL, gazeImgL(1, 40, CV_16UC1);
     cv::resize(newEyeImgL, gazeImgL, cv::Size(20,14), cv::INTER_AREA);
 //    for(int i = 0; i < tmpGazeImgL.cols; i++)
-//        gazeImgL(cv::Rect(i,0,1,1)) = sum(tmpGazeImgL(cv::Rect(i,0,1,tmpGazeImg.rows)));
+//        gazeImgL.at<int>(0,i) = (int)sum(tmpGazeImgL.col(i))[0];
 //    cv::normalize(gazeImgL, gazeImgL, 0, 255, cv::NORM_MINMAX);
+//    imshow("Test2", gazeImgL);
     gazeImgL.convertTo(gazeImgL, CV_32FC1, 1./255);
     // INPUT CONVERSION
 
@@ -148,7 +151,7 @@ void GazeTracker::track()
                 // Update total
                 inputTotalCount++;
                 inputPerPointCount++;
-//                qDebug() << "Added sample number:" << inputTotalCount-1 << "@" << store->calibX << store->calibY;
+                qDebug() << "Added sample number:" << inputTotalCount-1 << "@" << store->calibX << store->calibY;
             }
         }
         else if(inputPerPointCount == IGNORED_SAMPLES_PER_POINT + SAMPLES_PER_POINT + 1) // move to next point
@@ -246,13 +249,15 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
     // --------------------------------
     // Preprocess eye image
     cv::Mat clonedImage;
-    medianBlur(eyeImg, clonedImage, 7);
+    equalizeHist(eyeImg, clonedImage);
+    medianBlur(clonedImage, clonedImage, 7);
 
     // ------------------------------
     // Threshold eye image to find Blobs
-    cv::Mat clonedMask;
-    int check = findThreshold(clonedImage, 0.15);
-    cv::inRange(clonedImage, cv::Scalar(0), cv::Scalar(check), clonedMask);
+    cv::Mat clonedMask(eyeImg.size(), CV_8UC1);
+//    int check = findThreshold(clonedImage, 0.10);
+//    cv::inRange(clonedImage, cv::Scalar(0), cv::Scalar(check), clonedMask);
+    grayscaleFilter->filter(clonedImage, store->ignore, clonedMask);
 //    imshow("cloned mask", clonedMask);
     erodeDilateFilter->filter(clonedMask, clonedMask, store->ignore);
 
@@ -266,24 +271,35 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
 
     // ------------------------------
     // Determine two largest blobs, and throw the rest away
-    if (blobs.size() <= 1)
+    if (blobs.size() == 0)
     {
         return false;
     }
-    else
     {
-        CvLabel largest = cvb::cvGreaterBlob(blobs);
-        largeBlobs.push_back(blobs.at(largest));
-        blobs.erase(largest);
-        largest = cvb::cvGreaterBlob(blobs);
-        largeBlobs.push_back(blobs.at(largest));
-        blobs.erase(largest);
+        int irisTop, irisBottom;
+        if(blobs.size() == 1)
+        {
+            CvLabel largest = cvb::cvGreaterBlob(blobs);
+            largeBlobs.push_back((blobs.at(largest)));
 
-        // -----------------------------------------------------
-        // Adjusted Eye Height - we want to include the eye lid as well
-        int irisTop = std::max(largeBlobs[0]->miny, largeBlobs[1]->miny);
-        int irisBottom = std::max(largeBlobs[0]->maxy, largeBlobs[1]->maxy);
-        const int eyeAdjust = 0; //3;
+            irisTop = blobs.at(largest)->miny;
+            irisBottom = blobs.at(largest)->maxy;
+        }
+        else
+        {
+            CvLabel largest = cvb::cvGreaterBlob(blobs);
+            largeBlobs.push_back(blobs.at(largest));
+            blobs.erase(largest);
+            largest = cvb::cvGreaterBlob(blobs);
+            largeBlobs.push_back(blobs.at(largest));
+            blobs.erase(largest);
+
+            // -----------------------------------------------------
+            // Adjusted Eye Height - we want to include the eye lid as well
+            irisTop = std::max(largeBlobs[0]->miny, largeBlobs[1]->miny);
+            irisBottom = std::max(largeBlobs[0]->maxy, largeBlobs[1]->maxy);
+        }
+        const int eyeAdjust = 0;//3;
         irisTop -= eyeAdjust;
         if (irisTop < 0)
             irisTop = 0;
@@ -294,13 +310,13 @@ bool GazeTracker::refineEyeRoi(const cv::Mat& eyeImg, cv::Rect& refinedROI)
         // -----------------------------------------------------
         // Determine New Roi;
         refinedROI = cv::Rect(0, irisTop, clonedImage.cols , irisBottom - irisTop);
-
+//return true;
         // STAGE TWO - Extra Refinement;
         cv::Mat newEyeImg = clonedImage(refinedROI);
         doGNormFilter->filter(newEyeImg, newEyeImg, store->ignore);
         cv::medianBlur(newEyeImg, newEyeImg, 5);
 
-        int corners = findThreshold(newEyeImg, 0.30);
+        int corners = findThreshold(newEyeImg, 0.0);
         cv::Mat maskCorners;
         cv::inRange(newEyeImg, cv::Scalar(0), cv::Scalar(corners), maskCorners);
 //        imshow("Mask Corners", maskCorners);
@@ -344,21 +360,17 @@ int GazeTracker::findThreshold(const cv::Mat &gray, const float &percentage)
     const int nBins = 256;
     const int histSize[] = {nBins};
     cv::MatND hist;
-    hist.create(1, histSize, CV_32S);
+    hist.create(1, histSize, CV_32SC1);
     hist = cv::Scalar(0);
 
-    for (int y = 0; y < gray.rows; y++)
+    int totalPixels = gray.rows * gray.cols;
+    for(int i = 0; i < gray.rows*gray.cols; i++)
     {
-        for (int x = 0; x < gray.cols ; x++)
-        {
-            const uchar& pix = gray.at<uchar>(y, x);
-            hist.at<int>(pix)++;
-        }
+        const uchar& pix = gray.at<uchar>(0,i);
+        hist.at<int>(pix)++;
     }
 
     float sum = 0;
-    int totalPixels = gray.rows * gray.cols;
-
     for (int i = 0; i < nBins; i++)
     {
         sum += hist.at<int>(i);

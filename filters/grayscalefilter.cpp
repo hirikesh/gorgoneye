@@ -46,7 +46,10 @@ void GrayscaleFilter::filter(const cv::Mat& srcImg, cv::Mat& dstImg, cv::Mat& ds
 void GrayscaleFilter::_filter(const cv::Mat& src)
 {
     // Do colour conversion
-    cvtColor(src, grayChannel, CV_BGR2GRAY);
+    if(src.type() == CV_8UC1)
+        grayChannel = src;
+    else
+        cvtColor(src, grayChannel, CV_BGR2GRAY);
 
     // Apply thresholds
     inRange(grayChannel, cv::Scalar(minGray), cv::Scalar(maxGray), maskImg);
