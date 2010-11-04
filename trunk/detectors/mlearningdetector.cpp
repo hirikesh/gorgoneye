@@ -32,35 +32,10 @@ MLearningDetector::MLearningDetector(Store* st, int ml, bool sd, bool ld, bool u
 
     if(loadData)
     {
-        cv::FileStorage load("gaze_training_data.yml", cv::FileStorage::READ);
+        cv::FileStorage load("gtd.yml", cv::FileStorage::READ);
         cv::Mat inputs, outputs;
         load["inputs"] >> inputs;
         load["outputs"] >> outputs;
-
-//        cv::Mat realInputs(6075, 560, CV_32FC1), realOutputs(6075, 1, CV_32FC1);
-//        cv::Mat inputs, outputs;
-
-//        inputs = realInputs(cv::Rect(0,0,560,2025));
-//        outputs = realOutputs(cv::Rect(0,0,1,2025));
-//        cv::FileStorage load("gtd-1.yml", cv::FileStorage::READ);
-//        load["inputs"] >> inputs;
-//        load["outputs"] >> outputs;
-
-//        inputs = realInputs(cv::Rect(0,2025,560,2025));
-//        outputs = realOutputs(cv::Rect(0,2025,1,2025));
-//        load.open("gtd-2.yml", cv::FileStorage::READ);
-//        load["inputs"] >> inputs;
-//        load["outputs"] >> outputs;
-
-//        load.open("gtd-3.yml", cv::FileStorage::READ);
-//        inputs = realInputs(cv::Rect(0,4050,560,2025));
-//        outputs = realOutputs(cv::Rect(0,4050,1,2025));
-//        load["inputs"] >> inputs;
-//        load["outputs"] >> outputs;
-
-//        cv::resize(realInputs,visInputsImg, cv::Size(inputs.cols, 640));
-//        cv::resize(realOutputs,visOutputsImg, cv::Size(inputs.cols, 640));
-//        imshow("inputs", visInputsImg); imshow("outputs", visOutputsImg);
 
         train(inputs, outputs);
     }
@@ -72,7 +47,7 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
     // Save image data to file
     if(saveData)
     {
-        cv::FileStorage save("gaze_training_data.yml", cv::FileStorage::WRITE);
+        cv::FileStorage save("gtd.yml", cv::FileStorage::WRITE);
         save << "inputs" << inputs << "outputs" << outputs;
     }
 
@@ -83,16 +58,16 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
     // Break inputs/outputs into training set & test set
     int trainingSamplesMulti = SAMPLES_PER_POINT - XVALID_SAMPLES_PER_POINT;
     int testSamplesMulti = XVALID_SAMPLES_PER_POINT;
-    cv::Mat trainingInputs(trainingSamplesMulti*inputs.rows/SAMPLES_PER_POINT, inputDim, CV_32FC1);
-    cv::Mat trainingOutputs(trainingSamplesMulti*outputs.rows/SAMPLES_PER_POINT, outputDim, CV_32FC1);
+    cv::Mat trainInputs(trainingSamplesMulti*inputs.rows/SAMPLES_PER_POINT, inputDim, CV_32FC1);
+    cv::Mat trainOutputs(trainingSamplesMulti*outputs.rows/SAMPLES_PER_POINT, outputDim, CV_32FC1);
     cv::Mat testInputs(testSamplesMulti*inputs.rows/SAMPLES_PER_POINT, inputDim, CV_32FC1);
     cv::Mat testOutputs(testSamplesMulti*outputs.rows/SAMPLES_PER_POINT, outputDim, CV_32FC1);
     cv::Mat temp;
     for(int i = 0; i < inputs.rows/SAMPLES_PER_POINT; i++)
     {
-        temp = trainingInputs(cv::Rect(0,trainingSamplesMulti*i,inputDim,trainingSamplesMulti));
+        temp = trainInputs(cv::Rect(0,trainingSamplesMulti*i,inputDim,trainingSamplesMulti));
         inputs(cv::Rect(0,SAMPLES_PER_POINT*i,inputDim,trainingSamplesMulti)).copyTo(temp);
-        temp = trainingOutputs(cv::Rect(0,trainingSamplesMulti*i,outputDim,trainingSamplesMulti));
+        temp = trainOutputs(cv::Rect(0,trainingSamplesMulti*i,outputDim,trainingSamplesMulti));
         outputs(cv::Rect(0,SAMPLES_PER_POINT*i,outputDim,trainingSamplesMulti)).copyTo(temp);
 
         temp = testInputs(cv::Rect(0,testSamplesMulti*i,inputDim,testSamplesMulti));
@@ -137,13 +112,13 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
     for(int i = 1; i <= hiddenLayerCount; i++)
         mlpANN_layer_size.at<int>(0,i) = hiddenLayerSize;
     mlpANN_layer_size.at<int>(0,hiddenLayerCount+1) = outputDim;
+
     mlpANN.create(mlpANN_layer_size, CvANN_MLP::SIGMOID_SYM);
-    int iter = mlpANN.train(trainingInputs,
-                            trainingOutputs,
+    int iter = mlpANN.train(trainInputs,
+                            trainOutputs,
                             cv::Mat(), // Weights for inputs
                             cv::Mat(), // Train on all inputs given
-//                          CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 250, 0.0000001),
-                            CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 250, 0.000001),
+                            CvANN_MLP_TrainParams(cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 500, 0.000001),
                                                   CvANN_MLP_TrainParams::BACKPROP, learningRate));
 
     // Train SVM
@@ -155,13 +130,16 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
 //                 CvSVMParams());
 
     // Save trained data to file
-    if(saveData)
-    {
+    std::stringstream fname;
+    fname << "mlpann-" << hiddenLayerCount << "hl-" << hiddenLayerSize << "n-f" << learningRate << "-e.xml";
+    mlpANN.save(fname.str().c_str());
+//    if(saveData)
+//    {
 //        dTree.save("dtree.xml");
 //        rndTrees.save("rndtree.xml");
-        mlpANN.save("mlpann.xml");
+//        mlpANN.save("mlpann.xml");
 //        svMach.save("svm.xml");
-    }
+//    }
 
     // Visualise inputs and outputs for debugging
 //    inputs.convertTo(visInputsImg, CV_8UC1, 255);
@@ -173,7 +151,8 @@ void MLearningDetector::train(const cv::Mat& inputs, const cv::Mat& outputs)
     trained = true;
 
     // Check performance
-    analyse_perf(testInputs, testOutputs, iter);
+    analyse_perf("train", trainInputs, trainOutputs, iter, trainingSamplesMulti);
+    analyse_perf("test", testInputs, testOutputs, iter, testSamplesMulti);
 }
 
 
@@ -215,7 +194,7 @@ bool MLearningDetector::locate(const cv::Mat& input, cv::Mat& output)
 }
 
 
-void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outputs, const int iter)
+void MLearningDetector::analyse_perf(const char* descrip, const cv::Mat& inputs, const cv::Mat& outputs, const int iter, const int spp)
 {
     // PERFORMANCE ANALYSIS ON TRAINING DATA
     // Enumerations of error matrice indexes
@@ -241,8 +220,12 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     for(int i = 0; i < inputs.rows; i++)
     {
         mlpANN.predict(inputs.row(i), estimate); // estimate gaze on trained sample
-        int errx = abs(outputs.at<float>(i,X) - estimate.at<float>(0,X)); // abs error in x
-        int erry = abs(outputs.at<float>(i,Y) - estimate.at<float>(0,Y)); // abs error in y
+//        int errx = abs(outputs.at<float>(i,X) - estimate.at<float>(0,X)); // abs error in x
+//        int erry = outputDim == 2 ? abs(outputs.at<float>(i,Y) - estimate.at<float>(0,Y)) : 0; // abs error in y
+
+        int errx = outputs.at<float>(i,X) - estimate.at<float>(0,X); // abs error in x
+        int erry = outputDim == 2 ? outputs.at<float>(i,Y) - estimate.at<float>(0,Y) : 0; // abs error in y
+
         error_per_sample.at<int>(i,EPS_DIST) = sqrt(pow(errx,2) + pow(erry,2)); // euclidean error per coordinate
         error_per_sample.at<int>(i,EPS_X) = errx; // abs error in x direction
         error_per_sample.at<int>(i,EPS_Y) = erry; // abs error in y direction
@@ -250,25 +233,25 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     }
 
     // Mean and std dev of error per coordinate
-    cv::Mat error_per_coord(inputs.rows/XVALID_SAMPLES_PER_POINT, EPC_TOTAL, CV_32SC1);
+    cv::Mat error_per_coord(inputs.rows/spp, EPC_TOTAL, CV_32SC1);
     cv::Rect samples; cv::Scalar error_mean, error_stddev;
 
-    for(int i = 0; i < outputs.rows/XVALID_SAMPLES_PER_POINT; i++)
+    for(int i = 0; i < outputs.rows/spp; i++)
     {
-        error_per_coord.at<int>(i,X) = outputs.at<float>(XVALID_SAMPLES_PER_POINT*i,X); // x coord
-        error_per_coord.at<int>(i,Y) = outputs.at<float>(XVALID_SAMPLES_PER_POINT*i,Y); // y coord
+        error_per_coord.at<int>(i,X) = outputs.at<float>(spp*i,X); // x coord
+        error_per_coord.at<int>(i,Y) = outputs.at<float>(spp*i,Y); // y coord
 
-        samples = cv::Rect(EPS_DIST,XVALID_SAMPLES_PER_POINT*i,1,XVALID_SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
+        samples = cv::Rect(EPS_DIST,spp*i,1,spp); // mean & stddev of euc. dist. errors
         meanStdDev(error_per_sample(samples), error_mean, error_stddev); // calc the stats
         error_per_coord.at<int>(i,EPC_DIST_MEAN) = error_mean[0]; // mean of euclidean distance error
         error_per_coord.at<int>(i,EPC_DIST_STDDEV) = error_stddev[0]; // stddev of euclidean distance error
 
-        samples = cv::Rect(EPS_X,XVALID_SAMPLES_PER_POINT*i,1,XVALID_SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
+        samples = cv::Rect(EPS_X,spp*i,1,spp); // mean & stddev of euc. dist. errors
         meanStdDev(error_per_sample(samples), error_mean, error_stddev); // calc the stats
         error_per_coord.at<int>(i,EPC_X_MEAN) = error_mean[0]; // mean of abs. error in x
         error_per_coord.at<int>(i,EPC_X_STDDEV) = error_stddev[0]; // stddev of abs. error in x
 
-        samples = cv::Rect(EPS_Y,XVALID_SAMPLES_PER_POINT*i,1,XVALID_SAMPLES_PER_POINT); // mean & stddev of euc. dist. errors
+        samples = cv::Rect(EPS_Y,spp*i,1,spp); // mean & stddev of euc. dist. errors
         meanStdDev(error_per_sample(samples), error_mean, error_stddev); // calc the stats
         error_per_coord.at<int>(i,EPC_Y_MEAN) = error_mean[0]; // mean of abs. error in x
         error_per_coord.at<int>(i,EPC_Y_STDDEV) = error_stddev[0]; // stddev of abs. error in x
@@ -310,28 +293,50 @@ void MLearningDetector::analyse_perf(const cv::Mat& inputs, const cv::Mat& outpu
     meanStdDev(error_per_sample.col(EPS_Y), error_mean, error_stddev);
     error_total.at<int>(0,ET_Y_MEAN) = error_mean[0];
     error_total.at<int>(0,ET_Y_STDDEV) = error_stddev[0];
-    pow(error_per_sample.col(EPS_X),2,squared_error_per_sample);
+    pow(error_per_sample.col(EPS_Y),2,squared_error_per_sample);
     meanStdDev(squared_error_per_sample, error_mean, error_stddev);
     error_total.at<int>(0,ET_Y_MSE) = sqrt(error_mean[0]);
 
-    // Graph errors
-//    double min, max;
-//    minMaxLoc(error_per_sample.col(EPS_X), &min, &max);
-//    cv::Mat pdfDist(1, max-min, CV_16UC1);
-//    for(int i = 0; i < error_per_sample.rows; i++)
+    // Saving file names
+    cv::FileStorage error; std::stringstream dname, fname, pname;
+    dname << "errors-" << descrip << "-" << hiddenLayerCount << "hl-" << hiddenLayerSize << "n-f" << learningRate << "-e";
+    pname << dname.str() << ".png";
+    fname << dname.str() << ".yml";
+
+    // Graph error distribution
+    double min, max;
+    minMaxLoc(error_per_sample.col(EPS_X), &min, &max);
+    cv::Mat pdfDist(1, max-min, CV_32SC1, cv::Scalar(0));
+    for(int i = 0; i < error_per_sample.rows; i++)
+    {
+        const int idx = error_per_sample.at<int>(i,EPS_X);
+        pdfDist.at<int>(0,idx-min) += 1;
+    }
+    minMaxLoc(pdfDist, NULL, &max);
+    cv::Mat visPdfDist(max, pdfDist.cols, CV_8UC1, cv::Scalar(0));
+    for(int i = 0; i < pdfDist.cols; i++)
+        cv::line(visPdfDist, cv::Point(i,0), cv::Point(i,pdfDist.at<int>(0,i)), cv::Scalar(100), 1);
+    cv::line(visPdfDist, cv::Point(error_total.at<int>(0,ET_X_MEAN)-min,0), cv::Point(error_total.at<int>(0,ET_X_MEAN)-min,1), cv::Scalar(255), 1);
+    cv::flip(visPdfDist, visPdfDist, 0);
+    imwrite(pname.str().c_str(), visPdfDist);
+
+//    // Visualise weights
+//    double* ws = mlpANN.get_weights(0);
+//    cv::Mat visWeights(14,20,CV_32FC1);
+//    cv::Mat visWeightsL(14,20,CV_32FC1);
+//    for(int i = 0; i < 14*20; i++)
 //    {
-//        const uchar& idx = error_per_sample.at<uchar>(i,EPS_X);
-//        pdfDist.at<int>(0,idx) += 1;
+//        visWeights.at<float>(0,i) = (float)abs(ws[i]);
+//        visWeightsL.at<float>(0,i) = (float)abs(ws[280+i]);
 //    }
-//    minMaxLoc(pdfDist, &min, &max);
-//    cv::Mat visPdfDist(4*pdfDist.cols, max, CV_8UC1, cv::Scalar(0));
-//    for(int i = 0; i < pdfDist.cols; i++)
-//        cv::line(visPdfDist, cv::Point(4*i,0), cv::Point(4*i,pdfDist.at<uchar>(0,i)), cv::Scalar(128), 4);
-//    imwrite("emp_dist_pdf.png", visPdfDist);
+////    cv::normalize(visWeights, visWeights, 0, 255, cv::NORM_MINMAX);
+////    cv::normalize(visWeightsL, visWeightsL, 0, 255, cv::NORM_MINMAX);
+//    cv::threshold(visWeights, visWeights, 0, 255, cv::THRESH_BINARY);
+//    cv::threshold(visWeightsL, visWeightsL, 0, 255, cv::THRESH_BINARY);
+//    imwrite("input-weights-right.png", visWeights);
+//    imwrite("input-weights-left.png", visWeightsL);
 
     // Save errors to YML file
-    cv::FileStorage error; std::stringstream fname;
-    fname << "errors-" << hiddenLayerCount << "hl-" << hiddenLayerSize << "n-f" << learningRate << "-e.yml";
     error.open(fname.str().c_str(), cv::FileStorage::WRITE);
     error << "training epochs - iterations" << iter
           << "error total - mean stddev mse" << error_total
