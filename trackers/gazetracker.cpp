@@ -36,8 +36,29 @@ GazeTracker::GazeTracker(Store* st) :
     doGNormFilter->enable();
     filters.push_back(doGNormFilter);
 
-    mLearningDetector = new MLearningDetector(st, 3, false, true,
-                                              false, 3, 50, 0.001);
+    mLearningDetector = new MLearningDetector(st, 3, false, false,
+                                              false, 1, 50, 0.001);
+
+//    new MLearningDetector(st, 3, false, true, false, 1, 50, 0.001);
+//    new MLearningDetector(st, 3, false, true, false, 2, 50, 0.001);
+//    new MLearningDetector(st, 3, false, true, false, 3, 50, 0.001);
+
+//    new MLearningDetector(st, 3, false, true, false, 1, 50, 0.002);
+//    new MLearningDetector(st, 3, false, true, false, 2, 50, 0.002);
+//    new MLearningDetector(st, 3, false, true, false, 3, 50, 0.002);
+
+//    new MLearningDetector(st, 3, false, true, false, 1, 50, 0.004);
+//    new MLearningDetector(st, 3, false, true, false, 2, 50, 0.004);
+//    new MLearningDetector(st, 3, false, true, false, 3, 50, 0.004);
+
+//    new MLearningDetector(st, 3, false, true, false, 1, 25, 0.001);
+//    new MLearningDetector(st, 3, false, true, false, 2, 25, 0.001);
+//    new MLearningDetector(st, 3, false, true, false, 3, 25, 0.001);
+
+//    new MLearningDetector(st, 3, false, true, false, 1, 100, 0.001);
+//    new MLearningDetector(st, 3, false, true, false, 2, 100, 0.001);
+//    new MLearningDetector(st, 3, false, true, false, 3, 100, 0.001);
+
     detectors.push_back(mLearningDetector);
 
     BaseTracker::initImageModes();

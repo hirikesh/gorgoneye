@@ -17,7 +17,7 @@ public:
     bool locate(const cv::Mat& input, cv::Mat& ouput);
 
 protected:
-    void analyse_perf(const cv::Mat& inputs, const cv::Mat& outputs, const int iter);
+    void analyse_perf(const char* descrip, const cv::Mat& inputs, const cv::Mat& outputs, const int iter, const int spp);
 
 private:
     // User parameters
